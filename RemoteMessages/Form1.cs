@@ -16,10 +16,12 @@ namespace RemoteMessages
 {
     public partial class Form1 : Form
     {
+        private string previousFirst;
         private bool isPreviousMouseF11;
         private bool isPreviousMouseF1;
         private bool isPreviousAltDown;
-        private Timer t1, t2;
+        private bool isPreviousCtrlDown;
+        private Timer t1, t2, t3, t4;
         private Dictionary<string, string> drafts;
         private bool isPreviousMouseF12;
         private string url;
@@ -34,6 +36,7 @@ namespace RemoteMessages
             isPreviousMouseF11 = false;
             isPreviousMouseF1 = false;
             isPreviousAltDown = false;
+            isPreviousCtrlDown = false;
             drafts = new Dictionary<string, string>();
             documentCompleted = false;
 
@@ -115,16 +118,18 @@ namespace RemoteMessages
                 webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerText = drafts[contact];
         }
 
+        private HtmlElement getContactList()
+        {
+            HtmlElement list = webBrowser1.Document.Body.Children[2];
+            if (list.InnerHtml.Contains("search"))
+                return list.Children[1].Children[0].Children[0];
+            else
+                return list.Children[0].Children[0].Children[0];
+        }
         private string findCurrentContact()
         {
             string currentContact = "";
-            HtmlElement list = webBrowser1.Document.Body.Children[2];
-            if (list.InnerHtml.Contains("search"))
-                list = list.Children[1].Children[0].Children[0];
-            else
-                list = list.Children[0].Children[0].Children[0];
-
-            foreach (HtmlElement i in list.Children)
+            foreach (HtmlElement i in getContactList().Children)
             {
                 if (i.InnerHtml.Contains("selected"))
                 {
@@ -212,6 +217,25 @@ namespace RemoteMessages
             }
             else
                 isPreviousAltDown = false;
+
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter && !isPreviousCtrlDown)
+            {
+                webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
+                t3 = new Timer();
+                t3.Interval = 600;
+                t3.Enabled = true;
+                t3.Tick += new EventHandler(sendEnter);
+                t3.Start();
+                isPreviousCtrlDown = true;
+            }
+            else
+                isPreviousCtrlDown = false;
+        }
+        private void sendEnter(object sender, EventArgs e)
+        {
+            SendKeys.Send("~");
+            t3.Stop();
+            t3.Enabled = false;
         }
         private void DisplayPage()
         {
@@ -378,19 +402,27 @@ namespace RemoteMessages
 
         private void Form1_Deactivate(object sender, EventArgs e)
         {
-            
-            if (documentCompleted && findCurrentContact() != "" && isUnfocusing)
+            if (documentCompleted)
             {
-                if (delayUnfocusing == 0)
-                    sendEsc(null, null);
-                else
+                if (documentCompleted && findCurrentContact() != "" && isUnfocusing)
                 {
-                    t2 = new Timer();
-                    t2.Interval = delayUnfocusing;
-                    t2.Enabled = true;
-                    t2.Tick += new EventHandler(sendEsc);
-                    t2.Start();
+                    if (delayUnfocusing == 0)
+                        sendEsc(null, null);
+                    else
+                    {
+                        t2 = new Timer();
+                        t2.Interval = delayUnfocusing;
+                        t2.Enabled = true;
+                        t2.Tick += new EventHandler(sendEsc);
+                        t2.Start();
+                    }
                 }
+                previousFirst = getContactList().Children[0].InnerHtml;
+                t4 = new Timer();
+                t4.Interval = 5000;
+                t4.Enabled = true;
+                t4.Tick += new EventHandler(checkNewMsg);
+                t4.Start();
             }
         }
 
@@ -408,6 +440,72 @@ namespace RemoteMessages
                 t2.Enabled = false;
             }
         }
+        private void checkNewMsg(object sender, EventArgs e)
+        {
+            HtmlElement list = getContactList();
+            if (previousFirst != list.Children[0].InnerHtml)
+            {
+                Flash(this);
+            }
+            previousFirst = list.Children[0].InnerHtml;
+        }
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+        [StructLayout(LayoutKind.Sequential)]
+        private struct FLASHWINFO
+        {
+            /// <summary>
+            /// The size of the structure in bytes.
+            /// </summary>
+            public uint cbSize;
+            /// <summary>
+            /// A Handle to the Window to be Flashed. The window can be either opened or minimized.
+            /// </summary>
+            public IntPtr hwnd;
+            /// <summary>
+            /// The Flash Status.
+            /// </summary>
+            public uint dwFlags;
+            /// <summary>
+            /// The number of times to Flash the window.
+            /// </summary>
+            public uint uCount;
+            /// <summary>
+            /// The rate at which the Window is to be flashed, in milliseconds. If Zero, the function uses the default cursor blink rate.
+            /// </summary>
+            public uint dwTimeout;
+        }
+        /// <summary>
+        /// Flash both the window caption and taskbar button.
+        /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
+        /// </summary>
+        public const uint FLASHW_ALL = 3;
+        /// <summary>
+        /// Flash continuously until the window comes to the foreground.
+        /// </summary>
+        public const uint FLASHW_TIMERNOFG = 12;
+
+        /// <summary>
+        /// Flash the spacified Window (Form) until it recieves focus.
+        /// </summary>
+        /// <param name="form">The Form (Window) to Flash.</param>
+        /// <returns></returns>
+        public static bool Flash(System.Windows.Forms.Form form)
+        {
+                FLASHWINFO fi = Create_FLASHWINFO(form.Handle, FLASHW_ALL | FLASHW_TIMERNOFG, uint.MaxValue, 0);
+                return FlashWindowEx(ref fi);
+        }
+        private static FLASHWINFO Create_FLASHWINFO(IntPtr handle, uint flags, uint count, uint timeout)
+        {
+            FLASHWINFO fi = new FLASHWINFO();
+            fi.cbSize = Convert.ToUInt32(Marshal.SizeOf(fi));
+            fi.hwnd = handle;
+            fi.dwFlags = flags;
+            fi.uCount = count;
+            fi.dwTimeout = timeout;
+            return fi;
+        }
     }
 }
