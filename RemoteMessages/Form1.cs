@@ -320,11 +320,12 @@ namespace RemoteMessages
         ///</summary>
         private void Messages_MouseOver(object sender, HtmlElementEventArgs e)
         {
-            HtmlElement element = e.ToElement;
-            if (element.OuterHtml.StartsWith("<img class=\"flip\" src=\"/media-preview/"))
-            {
-                string img = (e.ToElement.Parent.OuterHtml).Replace("&amp;", "&");
-                img = url + (img.Split(new string[] { "href=\"" }, StringSplitOptions.None))[1].Split(new string[] { "\" " }, StringSplitOptions.None)[0];
+            //HtmlElement element = e.ToElement;
+            //if (element.OuterHtml.StartsWith("<img class=\"flip\" src=\"/media-preview/"))
+            //{
+            //    string img = (e.ToElement.Parent.OuterHtml).Replace("&amp;", "&");
+            //    img = url + (img.Split(new string[] { "href=\"" }, StringSplitOptions.None))[1].Split(new string[] { "\" " }, StringSplitOptions.None)[0];
+
                 //Uri uri = new Uri(img);
                 //WebClient Client = new WebClient();
                 //Client.Proxy = null;
@@ -332,7 +333,7 @@ namespace RemoteMessages
                 //picture.Visible = true;
 
                 //picture.Image = Image.FromFile("1.jpg");
-            }
+            //}
         }
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
