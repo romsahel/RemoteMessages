@@ -330,10 +330,6 @@ namespace RemoteMessages
             webBrowser1.Navigate(url);
             UseWaitCursor = false;
             Cursor.Current = Cursors.Default;
-            using (StreamWriter writer = new StreamWriter("remote.cfg"))
-            {
-                writer.WriteLine("http://" + ip + ":333");
-            }
         }
         ///<summary>
         ///When the form is loaded and shown.
