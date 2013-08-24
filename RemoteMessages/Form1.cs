@@ -1,43 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.IO;
-using System.Net;
 using System.Runtime.InteropServices;
 
 namespace RemoteMessages
 {
+
     public partial class Form1 : Form
     {
         private string previousFirst;
         private HtmlElement previousSelectedContact;
-        private bool isPreviousMouseF11;
-        private bool isPreviousMouseF1;
+        private bool isPreviousF11;
+        private bool isPreviousF1;
         private bool isPreviousAltDown;
         private bool isPreviousCtrlDown;
+        private bool isPreviousMouse;
         private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew;
         private Dictionary<string, string> drafts;
-        private bool isPreviousMouseF12;
+        private bool isPreviousF12;
         private string url;
-        private bool isReplacing, isAutoUpdate, isUnfocusing;
+        private bool isReplacing, isAutoUpdate, isUnfocusing, isBackgrounding;
         private int delayReplacing, delayAutoUpdate, delayUnfocusing;
         private string deviceName;
         private bool documentCompleted;
+        private bool justUnfocused;
+        private bool isExiting;
+        private bool fakeClick;
 
         public Form1()
         {
             InitializeComponent();
-            isPreviousMouseF11 = false;
-            isPreviousMouseF1 = false;
+
+            isPreviousF11 = false;
+            isPreviousF1 = false;
             isPreviousAltDown = false;
             isPreviousCtrlDown = false;
+            isExiting = false;
+            isPreviousMouse = false;
             justUnfocused = false;
             drafts = new Dictionary<string, string>();
             documentCompleted = false;
@@ -46,6 +50,7 @@ namespace RemoteMessages
             {
                 url = reader.ReadLine();
 
+                isBackgrounding = Boolean.Parse(reader.ReadLine());
                 isAutoUpdate = Boolean.Parse(reader.ReadLine());
                 isReplacing = Boolean.Parse(reader.ReadLine());
                 isUnfocusing = Boolean.Parse(reader.ReadLine());
@@ -61,7 +66,7 @@ namespace RemoteMessages
             timerUnfocusing = new Timer();
             timerUnfocusing.Interval = delayUnfocusing;
             timerUnfocusing.Tick += new EventHandler(sendEsc);
-            
+
             timerSend = new Timer();
             timerSend.Interval = 600;
             timerSend.Tick += new EventHandler(sendEnter);
@@ -71,9 +76,17 @@ namespace RemoteMessages
             timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
             timerCheckNew = new Timer();
-            timerCheckNew.Interval = 5000;
+            timerCheckNew.Interval = 2000;
             timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
+
+            if (isBackgrounding)
+            {
+                notify.Visible = true;
+                notify.MouseClick += new MouseEventHandler(ShowMe);
+                notify.BalloonTipClicked += new EventHandler(ShowMe);
+                notify.ContextMenuStrip = contextMenu;
+            }
 
         }
         private void saveDraftToFile()
@@ -121,7 +134,6 @@ namespace RemoteMessages
             string currentDraft = editable.InnerText;
 
             // Finds to which contact it belongs to
-
             string currentContact = findCurrentContactName();
             if (currentContact != "")
             {
@@ -175,6 +187,48 @@ namespace RemoteMessages
             foreach (Match match in matches)
                 yield return match.Groups[1].Value;
         }
+
+        private void displayOptions()
+        {
+            using (Form2 form2 = new Form2(isBackgrounding, isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
+            {
+                DialogResult res = form2.ShowDialog();
+                if (res == System.Windows.Forms.DialogResult.OK)
+                {
+                    isBackgrounding = form2.getBackgrounderActivated();
+                    isAutoUpdate = form2.getAutoIPActivated();
+                    isReplacing = form2.getReplacementActivated();
+                    isUnfocusing = form2.getUnfocusActivated();
+
+                    delayAutoUpdate = form2.getAutoIPDelay();
+                    delayReplacing = form2.getReplacementDelay();
+                    delayUnfocusing = form2.getUnfocusDelay();
+
+                    using (StreamWriter writer = new StreamWriter("remote.cfg"))
+                    {
+                        writer.WriteLine(url);
+
+                        writer.WriteLine(isBackgrounding);
+                        writer.WriteLine(isAutoUpdate);
+                        writer.WriteLine(isReplacing);
+                        writer.WriteLine(isUnfocusing);
+
+                        writer.WriteLine(deviceName);
+                        writer.WriteLine(delayAutoUpdate);
+
+                        writer.WriteLine(delayReplacing);
+
+                        writer.WriteLine(delayUnfocusing);
+                    }
+                }
+                else if (res == System.Windows.Forms.DialogResult.Abort)
+                {
+                    isExiting = true;
+                    this.Close();
+                }
+            }
+
+        }
         ///<summary>
         ///Called when a key is down
         ///</summary>
@@ -183,43 +237,15 @@ namespace RemoteMessages
             if (e.KeyCode == Keys.Escape)
                 saveDraft();
 
-            if (e.KeyCode == Keys.F1 && !isPreviousMouseF1)
+            if (e.KeyCode == Keys.F1 && !isPreviousF1)
             {
-                using (Form2 form2 = new Form2(isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
-                {
-                    if (form2.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        isAutoUpdate = form2.getAutoIPActivated();
-                        isReplacing = form2.getReplacementActivated();
-                        isUnfocusing = form2.getUnfocusActivated();
-
-                        delayAutoUpdate = form2.getAutoIPDelay();
-                        delayReplacing = form2.getReplacementDelay();
-                        delayUnfocusing = form2.getUnfocusDelay();
-
-                        using (StreamWriter writer = new StreamWriter("remote.cfg"))
-                        {
-                            writer.WriteLine(url);
-
-                            writer.WriteLine(isAutoUpdate);
-                            writer.WriteLine(isReplacing);
-                            writer.WriteLine(isUnfocusing);
-
-                            writer.WriteLine(deviceName);
-                            writer.WriteLine(delayAutoUpdate);
-
-                            writer.WriteLine(delayReplacing);
-
-                            writer.WriteLine(delayUnfocusing);
-                        }
-                    }
-                }
-                isPreviousMouseF1 = true;
+                displayOptions();
+                isPreviousF1 = true;
             }
             else
-                isPreviousMouseF1 = false;
+                isPreviousF1 = false;
 
-            if (e.KeyCode == Keys.F11 && !isPreviousMouseF11)
+            if (e.KeyCode == Keys.F11 && !isPreviousF11)
             {
                 if (FormBorderStyle == System.Windows.Forms.FormBorderStyle.None)
                     FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
@@ -230,18 +256,18 @@ namespace RemoteMessages
                     Height = 1080;
                     Location = new Point(1920 - Width, 0);
                 }
-                isPreviousMouseF11 = true;
+                isPreviousF11 = true;
             }
             else
-                isPreviousMouseF11 = false;
+                isPreviousF11 = false;
 
-            if (e.KeyCode == Keys.F12 && !isPreviousMouseF12)
+            if (e.KeyCode == Keys.F12 && !isPreviousF12)
             {
                 FindNewIP();
-                isPreviousMouseF12 = true;
+                isPreviousF12 = true;
             }
             else
-                isPreviousMouseF12 = false;
+                isPreviousF12 = false;
 
             if (e.Modifiers == Keys.Alt && e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9 && !isPreviousAltDown)
             {
@@ -263,24 +289,19 @@ namespace RemoteMessages
                 isPreviousCtrlDown = false;
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
         public void DoMouseClick(int X, int Y)
         {
             Point prevPos = Cursor.Position;
             //Call the imported function with the cursor's current position
             Cursor.Position = PointToScreen(new Point(X, Y));
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
+            fakeClick = true;
+            Native.mouse_event(Native.MOUSEEVENTF_LEFTDOWN | Native.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
             Cursor.Position = prevPos;
         }
 
         private void sendEnter(object sender, EventArgs e)
         {
+            ConversationChanged();
             SendKeys.Send("~");
             timerSend.Enabled = false;
         }
@@ -317,10 +338,6 @@ namespace RemoteMessages
             progressBar1.Value += 10;
             p.Start();
             progressBar1.Value += 10;
-            // Do not wait for the child process to exit before
-            // reading to the end of its redirected stream.
-            // p.WaitForExit();
-            // Read the output stream first and then wait.
             p.StandardInput.WriteLine("ping -t " + deviceName + " -n 1\nexit");
             progressBar1.Value += 15;
             string output = p.StandardOutput.ReadToEnd();
@@ -346,9 +363,7 @@ namespace RemoteMessages
         {
             documentCompleted = true;
             webBrowser1.ScrollBarsEnabled = false;
-            //webBrowser1.Document.Body.Children[2].LosingFocus += new HtmlElementEventHandler(webBrowser_LostFocus);
-            webBrowser1.Document.Body.Children[2].MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-            webBrowser1.Document.Body.Children[1].MouseOver += new HtmlElementEventHandler(Messages_MouseOver);
+            getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
             progressBar1.Visible = false;
         }
         ///<summary>
@@ -356,28 +371,18 @@ namespace RemoteMessages
         ///</summary>
         private void ConversationsList_MouseDown(object sender, HtmlElementEventArgs e)
         {
-            ConversationChanged();
+            if (!fakeClick && e.MouseButtonsPressed == System.Windows.Forms.MouseButtons.Left && !isPreviousMouse)
+            {
+                ConversationChanged();
+                isPreviousMouse = true;
+            }
+            else
+            {
+                fakeClick = false;
+                isPreviousMouse = false;
+            }
         }
-        ///<summary>
-        /// This function is called when user clicks in the messages area.
-        ///</summary>
-        private void Messages_MouseOver(object sender, HtmlElementEventArgs e)
-        {
-            //HtmlElement element = e.ToElement;
-            //if (element.OuterHtml.StartsWith("<img class=\"flip\" src=\"/media-preview/"))
-            //{
-            //    string img = (e.ToElement.Parent.OuterHtml).Replace("&amp;", "&");
-            //    img = url + (img.Split(new string[] { "href=\"" }, StringSplitOptions.None))[1].Split(new string[] { "\" " }, StringSplitOptions.None)[0];
 
-            //Uri uri = new Uri(img); 
-            //WebClient Client = new WebClient();
-            //Client.Proxy = null;
-            //Client.DownloadFile(uri, "1.jpg");
-            //picture.Visible = true;
-
-            //picture.Image = Image.FromFile("1.jpg");
-            //}
-        }
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
         ///</summary>
@@ -438,12 +443,22 @@ namespace RemoteMessages
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             saveDraftToFile();
+
+            if (!isExiting && isBackgrounding)
+            {
+                //notify.ShowBalloonTip(3000, "Remote Messages minimized", "The application has been minimized.", ToolTipIcon.Info);
+                e.Cancel = true;
+                this.Hide();
+            }
         }
 
         private void Form1_Deactivate(object sender, EventArgs e)
         {
             if (documentCompleted)
             {
+                previousSelectedContact = findCurrentContactElement();
+                previousFirst = getContactList().Children[0].InnerHtml;
+
                 if (documentCompleted && findCurrentContactName() != "" && isUnfocusing)
                 {
                     if (delayUnfocusing == 0)
@@ -453,23 +468,18 @@ namespace RemoteMessages
                         timerUnfocusing.Start();
                     }
                 }
-                previousFirst = getContactList().Children[0].InnerHtml;
                 timerCheckNew.Start();
             }
         }
 
-        private const int WM_KEYDOWN = 0x0100;
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
         private void sendEsc(object sender, EventArgs e)
         {
             if (!webBrowser1.Document.Focused)
             {
                 timerUnfocusing.Stop();
-                previousSelectedContact = findCurrentContactElement();
-                PostMessage(webBrowser1.Handle, WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
-                PostMessage(webBrowser1.Handle, WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
-                PostMessage(webBrowser1.Handle, WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
+                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
+                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
+                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
                 justUnfocused = true;
             }
         }
@@ -483,70 +493,12 @@ namespace RemoteMessages
                     justUnfocused = false;
                 else
                 {
-                    Flash(this);
+                    notify.ShowBalloonTip(2000, "New message!", "You just received a new message.", ToolTipIcon.Info);
+                    Native.Flash(this);
                     previousFirst = list.Children[0].InnerHtml;
                 }
             }
             timerCheckNew.Enabled = true;
-        }
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-        [StructLayout(LayoutKind.Sequential)]
-        private struct FLASHWINFO
-        {
-            /// <summary>
-            /// The size of the structure in bytes.
-            /// </summary>
-            public uint cbSize;
-            /// <summary>
-            /// A Handle to the Window to be Flashed. The window can be either opened or minimized.
-            /// </summary>
-            public IntPtr hwnd;
-            /// <summary>
-            /// The Flash Status.
-            /// </summary>
-            public uint dwFlags;
-            /// <summary>
-            /// The number of times to Flash the window.
-            /// </summary>
-            public uint uCount;
-            /// <summary>
-            /// The rate at which the Window is to be flashed, in milliseconds. If Zero, the function uses the default cursor blink rate.
-            /// </summary>
-            public uint dwTimeout;
-        }
-        /// <summary>
-        /// Flash both the window caption and taskbar button.
-        /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
-        /// </summary>
-        public const uint FLASHW_ALL = 3;
-        /// <summary>
-        /// Flash continuously until the window comes to the foreground.
-        /// </summary>
-        public const uint FLASHW_TIMERNOFG = 12;
-        private bool justUnfocused;
-
-        /// <summary>
-        /// Flash the spacified Window (Form) until it recieves focus.
-        /// </summary>
-        /// <param name="form">The Form (Window) to Flash.</param>
-        /// <returns></returns>
-        public static bool Flash(System.Windows.Forms.Form form)
-        {
-            FLASHWINFO fi = Create_FLASHWINFO(form.Handle, FLASHW_ALL | FLASHW_TIMERNOFG, uint.MaxValue, 0);
-            return FlashWindowEx(ref fi);
-        }
-        private static FLASHWINFO Create_FLASHWINFO(IntPtr handle, uint flags, uint count, uint timeout)
-        {
-            FLASHWINFO fi = new FLASHWINFO();
-            fi.cbSize = Convert.ToUInt32(Marshal.SizeOf(fi));
-            fi.hwnd = handle;
-            fi.dwFlags = flags;
-            fi.uCount = count;
-            fi.dwTimeout = timeout;
-            return fi;
         }
 
         private void Form1_Activated(object sender, EventArgs e)
@@ -562,6 +514,51 @@ namespace RemoteMessages
                 Y += curr.Y;
                 DoMouseClick(X, Y);
             }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Native.WM_SHOWME)
+            {
+                ShowMe();
+            }
+            base.WndProc(ref m);
+        }
+        private void ShowMe(object sender = null, EventArgs e = null)
+        {
+            this.Show();
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
+        }
+        private void ShowMe(object sender, MouseEventArgs e)
+        {
+            if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                if (!this.Visible)
+                    ShowMe();
+                else
+                    this.Close();
+            }
+        }
+
+        private void contextShowHide_Click(object sender, EventArgs e)
+        {
+            ShowMe(sender, null);
+        }
+
+        private void contextExit_Click(object sender, EventArgs e)
+        {
+            isExiting = true;
+            this.Close();
+        }
+
+        private void contextOptions_Click(object sender, EventArgs e)
+        {
+            displayOptions();
         }
     }
 }

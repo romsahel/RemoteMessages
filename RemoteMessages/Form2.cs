@@ -14,10 +14,11 @@ namespace RemoteMessages
         private const int defaultAutoIP = 3;
         private const int defaultReplacement = 500;
         private const int defaultUnfocus = 3000;
-        public Form2(bool bA, bool bR, bool bU, int iA, int iR, int iU, string sA)
+        public Form2(bool bB, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sA)
         {
             InitializeComponent();
             cancel.Select();
+            activateBackgrounder.Checked = bB;
             activateAutoIP.Checked = bA;
             activateReplacement.Checked = bR;
             activateUnfocus.Checked = bU;
@@ -119,6 +120,7 @@ namespace RemoteMessages
         }
 
 
+        public bool getBackgrounderActivated() { return activateBackgrounder.Checked; }
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
@@ -128,6 +130,17 @@ namespace RemoteMessages
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
 
         public string getDeviceName() { return deviceName.Text; }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = System.Windows.Forms.DialogResult.Abort;
+            this.Close();
+        }
+
+        private void tips_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Press F1 to display this window.\nPress F11 to switch to fullscreen mode.\nPress F12 to manually update your IP.\nYou can press Ctrl+Enter instead of click the send button.", "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
     }
 }
