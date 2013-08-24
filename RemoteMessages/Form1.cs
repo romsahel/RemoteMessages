@@ -301,7 +301,7 @@ namespace RemoteMessages
 
         private void sendEnter(object sender, EventArgs e)
         {
-            ConversationChanged();
+            ConversationChanged(true);
             SendKeys.Send("~");
             timerSend.Enabled = false;
         }
@@ -386,9 +386,10 @@ namespace RemoteMessages
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
         ///</summary>
-        private void ConversationChanged()
+        private void ConversationChanged(bool sending = false)
         {
-            saveDraft();
+            if (!sending)
+                saveDraft();
             if (isReplacing)
             {
                 if (delayReplacing == 0)
