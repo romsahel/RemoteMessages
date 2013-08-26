@@ -36,41 +36,47 @@ namespace RemoteMessages
 
         public Form1()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            isPreviousF11 = false;
-            isPreviousF1 = false;
-            isPreviousAltDown = false;
-            isPreviousCtrlDown = false;
-            isExiting = false;
-            isPreviousMouse = false;
-            justUnfocused = false;
-            drafts = new Dictionary<string, string>();
-            documentCompleted = false;
-            using (StreamWriter w = File.AppendText("drafts")) { }
-            loadConfig();
+                isPreviousF11 = false;
+                isPreviousF1 = false;
+                isPreviousAltDown = false;
+                isPreviousCtrlDown = false;
+                isExiting = false;
+                isPreviousMouse = false;
+                justUnfocused = false;
+                drafts = new Dictionary<string, string>();
+                documentCompleted = false;
+                using (StreamWriter w = File.AppendText("drafts")) { }
+                loadConfig();
 
-            timerUnfocusing = new Timer();
-            timerUnfocusing.Interval = delayUnfocusing;
-            timerUnfocusing.Tick += new EventHandler(sendEsc);
+                timerUnfocusing = new Timer();
+                timerUnfocusing.Interval = delayUnfocusing;
+                timerUnfocusing.Tick += new EventHandler(sendEsc);
 
-            timerSend = new Timer();
-            timerSend.Interval = 600;
-            timerSend.Tick += new EventHandler(sendEnter);
+                timerSend = new Timer();
+                timerSend.Interval = 600;
+                timerSend.Tick += new EventHandler(sendEnter);
 
-            timerReplacing = new Timer();
-            timerReplacing.Interval = delayReplacing;
-            timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
+                timerReplacing = new Timer();
+                timerReplacing.Interval = delayReplacing;
+                timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
-            timerCheckNew = new Timer();
-            timerCheckNew.Interval = 2000;
-            timerCheckNew.Tick += new EventHandler(checkNewMsg);
+                timerCheckNew = new Timer();
+                timerCheckNew.Interval = 2000;
+                timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
-            notify.Visible = true;
-            notify.MouseClick += new MouseEventHandler(ShowMe);
-            notify.BalloonTipClicked += new EventHandler(ShowMe);
-            notify.ContextMenuStrip = contextMenu;
-
+                notify.Visible = true;
+                notify.MouseClick += new MouseEventHandler(ShowMe);
+                notify.BalloonTipClicked += new EventHandler(ShowMe);
+                notify.ContextMenuStrip = contextMenu;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
