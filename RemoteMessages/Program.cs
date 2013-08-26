@@ -80,14 +80,14 @@ namespace RemoteMessages
             return FlashWindowEx(ref fi);
         }
         /// <summary>
-        /// Flash the specified Window (form) for the specified number of times
+        /// Flash the specified Window (form) for the specified number of times or until it receives focus
         /// </summary>
         /// <param name="form">The Form (Window) to Flash.</param>
         /// <param name="count">The number of times to Flash.</param>
         /// <returns></returns>
         public static bool Flash(System.Windows.Forms.Form form, uint count)
         {
-            FLASHWINFO fi = Create_FLASHWINFO(form.Handle, FLASHW_ALL, count, 0);
+            FLASHWINFO fi = Create_FLASHWINFO(form.Handle, FLASHW_ALL | FLASHW_TIMERNOFG, count, 0);
             return FlashWindowEx(ref fi);
         }
         private static FLASHWINFO Create_FLASHWINFO(IntPtr handle, uint flags, uint count, uint timeout)

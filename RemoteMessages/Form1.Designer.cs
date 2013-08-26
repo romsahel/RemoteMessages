@@ -57,9 +57,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.progressBar1.ForeColor = System.Drawing.Color.Transparent;
             this.progressBar1.Location = new System.Drawing.Point(0, 0);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(717, 36);

@@ -4,9 +4,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Reflection;
 
 namespace RemoteMessages
@@ -36,7 +34,6 @@ namespace RemoteMessages
         public Form1()
         {
             InitializeComponent();
-
 
             isPreviousF11 = false;
             isPreviousF1 = false;
@@ -144,7 +141,7 @@ namespace RemoteMessages
         {
             if (e.KeyCode == Keys.Escape)
             {
-                if (!documentCompleted || findCurrentContactElement() == null)
+                if (!documentCompleted || getCurrentContactElement() == null)
                     this.Close();
                 else
                     saveDraft();
@@ -224,21 +221,17 @@ namespace RemoteMessages
         ///</summary>
         private void ConversationChanged(bool sending = false)
         {
-            if (!sending)
-                saveDraft();
-            if (isReplacing)
-            {
-                if (delayReplacing == 0)
-                    ConversationChangedTimer(null, null);
-                else
-                {
-                    timerReplacing.Start();
-                }
-            }
+            saveDraft(sending);
+
+            if (delayReplacing == 0)
+                ConversationChangedTimer(null, null);
+            else
+                timerReplacing.Start();
         }
 
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
+            isPreviousMouse = false;
             timerReplacing.Stop();
             if (isReplacing)
                 fromStringToEmoji();
@@ -291,7 +284,7 @@ namespace RemoteMessages
             timerCheckNew.Stop();
             timerUnfocusing.Stop();
 
-            if (previousSelectedContact != null)
+            if (getCurrentContactElement() == null && previousSelectedContact != null)
             {
                 Rectangle curr = previousSelectedContact.OffsetRectangle;
                 int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
@@ -307,17 +300,15 @@ namespace RemoteMessages
 
             if (documentCompleted)
             {
-                previousSelectedContact = findCurrentContactElement();
+                previousSelectedContact = getCurrentContactElement();
                 previousFirst = getContactList().Children[0].InnerHtml;
 
-                if (documentCompleted && findCurrentContactName() != "" && isUnfocusing)
+                if (findCurrentContactName() != "" && isUnfocusing)
                 {
                     if (delayUnfocusing == 0)
                         sendEsc(null, null);
                     else
-                    {
                         timerUnfocusing.Start();
-                    }
                 }
                 timerCheckNew.Start();
             }
@@ -335,6 +326,8 @@ namespace RemoteMessages
                 saveDraft();
             if (!isExiting && isBackgrounding)
             {
+                if (documentCompleted)
+                    previousFirst = getContactList().Children[0].InnerHtml;
                 e.Cancel = true;
                 this.Hide();
             }
@@ -364,8 +357,8 @@ namespace RemoteMessages
                     notify.Text = "Remote Messages\nNew message from " + name + ".\n";
 
                     notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-                    notify.ShowBalloonTip(1000, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
-                    Native.Flash(this);
+                    notify.ShowBalloonTip(500, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
+                    Native.Flash(this, 6);
                     previousFirst = list.Children[0].InnerHtml;
                 }
             }
@@ -425,6 +418,9 @@ namespace RemoteMessages
             webBrowser1.ScrollBarsEnabled = false;
             getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
             progressBar1.Visible = false;
+
+            if (!Focused)
+                Form1_Deactivate(null, null);
         }
         #endregion
 
@@ -476,17 +472,23 @@ namespace RemoteMessages
         /// <summary>
         /// Finds current draft and saves it into drafts var
         /// </summary>
-        private void saveDraft()
+        private void saveDraft(bool justSent = false)
         {
-            HtmlElement body = webBrowser1.Document.Body;
-            // Gets the current draft
-            HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
-            string currentDraft = editable.InnerText;
-
-            // Finds to which contact it belongs to
             string currentContact = findCurrentContactName();
             if (currentContact != "")
             {
+                HtmlElement body = webBrowser1.Document.Body;
+                // Gets the current draft
+                HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
+
+                string currentDraft = "";
+                if (!justSent)
+                {
+                    currentDraft = editable.InnerHtml;
+                    //if (currentDraft != null)
+                    //    currentDraft = currentDraft.Replace("\r\n\r\n", "\r\n");
+                }
+                // Finds to which contact it belongs to
                 if (!drafts.ContainsKey(currentContact))
                     drafts.Add(currentContact, currentDraft);
                 else
@@ -500,7 +502,7 @@ namespace RemoteMessages
         {
             string contact = findCurrentContactName();
             if (drafts.ContainsKey(contact))
-                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerText = drafts[contact];
+                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerHtml = drafts[contact];
         }
         #endregion
 
@@ -533,13 +535,16 @@ namespace RemoteMessages
         /// <summary>
         /// Returns as an HtmlElement the current contact
         /// </summary>
-        private HtmlElement findCurrentContactElement()
+        private HtmlElement getCurrentContactElement()
         {
-            foreach (HtmlElement i in getContactList().Children)
+            if (documentCompleted)
             {
-                if (i.InnerHtml.Contains("selected"))
+                foreach (HtmlElement i in getContactList().Children)
                 {
-                    return i;
+                    if (i.InnerHtml.Contains("selected"))
+                    {
+                        return i;
+                    }
                 }
             }
             return null;
