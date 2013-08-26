@@ -91,6 +91,8 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="small_favicon.ico" />
+    <EmbeddedResource Include="xxsmall_favicon.ico" />
+    <EmbeddedResource Include="xxsmall_favicon_notif.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

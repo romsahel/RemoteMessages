@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace RemoteMessages
 {
@@ -35,6 +36,7 @@ namespace RemoteMessages
         public Form1()
         {
             InitializeComponent();
+
 
             isPreviousF11 = false;
             isPreviousF1 = false;
@@ -89,105 +91,10 @@ namespace RemoteMessages
             }
 
         }
-        private void saveDraftToFile()
-        {
-            List<string> contactList = new List<string>(drafts.Keys);
-            using (StreamWriter writer = new StreamWriter("drafts"))
-            {
-                foreach (string s in contactList)
-                {
-                    if (drafts[s] != "" && drafts[s] != null)
-                        writer.WriteLine("/|\\" + s + "||--||" + drafts[s]);
-                }
-            }
-        }
-        private void loadDraftFromFile()
-        {
-            string previous = "";
-            using (StreamReader reader = new StreamReader("drafts"))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    if (line != "")
-                    {
-                        if (line.StartsWith("/|\\"))
-                        {
-                            string[] parts = line.Substring(3).Split(new string[] { "||--||" }, StringSplitOptions.RemoveEmptyEntries);
-                            drafts.Add(parts[0], parts[1]);
-                            previous = parts[0];
-                        }
-                        else
-                        {
-                            if (previous.Trim() != "")
-                                drafts[previous] += "\n" + line;
-                        }
-                    }
-                }
-            }
-        }
-        private void saveDraft()
-        {
-            HtmlElement body = webBrowser1.Document.Body;
-            // Gets the current draft
-            HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
-            string currentDraft = editable.InnerText;
 
-            // Finds to which contact it belongs to
-            string currentContact = findCurrentContactName();
-            if (currentContact != "")
-            {
-                if (!drafts.ContainsKey(currentContact))
-                    drafts.Add(currentContact, currentDraft);
-                else
-                    drafts[currentContact] = currentDraft;
-            }
-        }
-        private void loadDraft()
-        {
-            string contact = findCurrentContactName();
-            if (drafts.ContainsKey(contact))
-                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerText = drafts[contact];
-        }
-
-        private HtmlElement getContactList()
-        {
-            HtmlElement list = webBrowser1.Document.Body.Children[2];
-            if (list.InnerHtml.Contains("search"))
-                return list.Children[1].Children[0].Children[0];
-            else
-                return list.Children[0].Children[0].Children[0];
-        }
-        private string findCurrentContactName()
-        {
-            foreach (HtmlElement i in getContactList().Children)
-            {
-                if (i.InnerHtml.Contains("selected"))
-                {
-                    return i.InnerText;
-                }
-            }
-            return "";
-        }
-        private HtmlElement findCurrentContactElement()
-        {
-            foreach (HtmlElement i in getContactList().Children)
-            {
-                if (i.InnerHtml.Contains("selected"))
-                {
-                    return i;
-                }
-            }
-            return null;
-        }
-        private IEnumerable<string> GetSubStrings(string input, string start, string end)
-        {
-            Regex r = new Regex(Regex.Escape(start) + "(.*?)" + Regex.Escape(end));
-            MatchCollection matches = r.Matches(input);
-            foreach (Match match in matches)
-                yield return match.Groups[1].Value;
-        }
-
+        /// <summary>
+        /// Displays the options in a new window
+        /// </summary>
         private void displayOptions()
         {
             using (Form2 form2 = new Form2(isBackgrounding, isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
@@ -229,14 +136,19 @@ namespace RemoteMessages
             }
 
         }
+
         ///<summary>
         ///Called when a key is down
         ///</summary>
         private void webBrowser1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                saveDraft();
-
+            {
+                if (!documentCompleted || findCurrentContactElement() == null)
+                    this.Close();
+                else
+                    saveDraft();
+            }
             if (e.KeyCode == Keys.F1 && !isPreviousF1)
             {
                 displayOptions();
@@ -289,83 +201,7 @@ namespace RemoteMessages
                 isPreviousCtrlDown = false;
         }
 
-        public void DoMouseClick(int X, int Y)
-        {
-            Point prevPos = Cursor.Position;
-            //Call the imported function with the cursor's current position
-            Cursor.Position = PointToScreen(new Point(X, Y));
-            fakeClick = true;
-            Native.mouse_event(Native.MOUSEEVENTF_LEFTDOWN | Native.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
-            Cursor.Position = prevPos;
-        }
 
-        private void sendEnter(object sender, EventArgs e)
-        {
-            ConversationChanged(true);
-            SendKeys.Send("~");
-            timerSend.Enabled = false;
-        }
-        private void DisplayPage()
-        {
-            url = "";
-            using (StreamReader reader = new StreamReader("remote.cfg"))
-            {
-                url = reader.ReadLine();
-            }
-            progressBar1.Value = 75;
-            webBrowser1.Navigate(url);
-            webBrowser1.ScrollBarsEnabled = false;
-        }
-        ///<summary>
-        /// Finds IP of the device and displays the RemoteMessages webpage
-        ///</summary>
-        private void FindNewIP()
-        {
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-            Cursor.Current = Cursors.WaitCursor;
-
-            // Start the child process.
-            Process p = new Process();
-            progressBar1.Value += 10;
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.CreateNoWindow = true;
-            progressBar1.Value += 10;
-            p.StartInfo.FileName = "cmd";
-            progressBar1.Value += 10;
-            p.Start();
-            progressBar1.Value += 10;
-            p.StandardInput.WriteLine("ping -t " + deviceName + " -n 1\nexit");
-            progressBar1.Value += 15;
-            string output = p.StandardOutput.ReadToEnd();
-            string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
-            progressBar1.Value += 15;
-            url = "http://" + ip + ":333";
-            webBrowser1.Navigate(url);
-            UseWaitCursor = false;
-            Cursor.Current = Cursors.Default;
-        }
-        ///<summary>
-        ///When the form is loaded and shown.
-        ///</summary>
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            DisplayPage();
-            loadDraftFromFile();
-        }
-        ///<summary>
-        /// When page is fully loaded
-        ///</summary>
-        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            documentCompleted = true;
-            webBrowser1.ScrollBarsEnabled = false;
-            getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-            progressBar1.Visible = false;
-        }
         ///<summary>
         /// This function is called when user clicks the conversation's list.
         ///</summary>
@@ -441,20 +277,34 @@ namespace RemoteMessages
             webBrowser1.Document.Body.Children[1].InnerHtml = removedByStringBuilder;
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        #region Form modification (Focus, Size, Closing)
+        private void Form1_Shown(object sender, EventArgs e)
         {
-            saveDraftToFile();
-
-            if (!isExiting && isBackgrounding)
-            {
-                //notify.ShowBalloonTip(3000, "Remote Messages minimized", "The application has been minimized.", ToolTipIcon.Info);
-                e.Cancel = true;
-                this.Hide();
-            }
+            DisplayPage();
+            loadDraftFromFile();
         }
 
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            notify.Text = "Remote Messages\nClick to Show/Hide";
+            notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon.ico"));
+            timerCheckNew.Stop();
+            timerUnfocusing.Stop();
+
+            if (previousSelectedContact != null)
+            {
+                Rectangle curr = previousSelectedContact.OffsetRectangle;
+                int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
+                int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
+                Y += curr.Y;
+                DoMouseClick(X, Y);
+                ConversationChanged(true);
+            }
+        }
         private void Form1_Deactivate(object sender, EventArgs e)
         {
+            notify.Text = "Remote Messages\nNo new activity";
+
             if (documentCompleted)
             {
                 previousSelectedContact = findCurrentContactElement();
@@ -473,17 +323,30 @@ namespace RemoteMessages
             }
         }
 
-        private void sendEsc(object sender, EventArgs e)
+        private void Form1_Resize(object sender, EventArgs e)
         {
-            if (!webBrowser1.Document.Focused)
-            {
-                timerUnfocusing.Stop();
-                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
-                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
-                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
-                justUnfocused = true;
-            }
+            if (WindowState == FormWindowState.Minimized)
+                this.Close();
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (documentCompleted)
+                saveDraft();
+            if (!isExiting && isBackgrounding)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+            else
+                saveDraftToFile();
+        }
+        #endregion
+
+
+        ///<summary>
+        /// Called on timer end to check for new message
+        ///</summary>
         private void checkNewMsg(object sender, EventArgs e)
         {
             timerCheckNew.Stop();
@@ -491,10 +354,17 @@ namespace RemoteMessages
             if (previousFirst != list.Children[0].InnerHtml)
             {
                 if (justUnfocused)
+                {
+                    previousFirst = list.Children[0].InnerHtml;
                     justUnfocused = false;
+                }
                 else
                 {
-                    notify.ShowBalloonTip(2000, "New message!", "You just received a new message.", ToolTipIcon.Info);
+                    string name = (list.Children[0].InnerText).Split('×')[0];
+                    notify.Text = "Remote Messages\nNew message from " + name + ".\n";
+
+                    notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
+                    notify.ShowBalloonTip(1000, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
                     Native.Flash(this);
                     previousFirst = list.Children[0].InnerHtml;
                 }
@@ -502,50 +372,181 @@ namespace RemoteMessages
             timerCheckNew.Enabled = true;
         }
 
-        private void Form1_Activated(object sender, EventArgs e)
+        #region At launch
+        private void DisplayPage()
         {
-            timerCheckNew.Stop();
-            timerUnfocusing.Stop();
-
-            if (previousSelectedContact != null)
+            url = "";
+            using (StreamReader reader = new StreamReader("remote.cfg"))
             {
-                Rectangle curr = previousSelectedContact.OffsetRectangle;
-                int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
-                int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
-                Y += curr.Y;
-                DoMouseClick(X, Y);
+                url = reader.ReadLine();
+            }
+            progressBar1.Value = 75;
+            webBrowser1.Navigate(url);
+            webBrowser1.ScrollBarsEnabled = false;
+        }
+        ///<summary>
+        /// Finds IP of the device and displays the RemoteMessages webpage
+        ///</summary>
+        private void FindNewIP()
+        {
+            progressBar1.Value = 0;
+            progressBar1.Visible = true;
+            Cursor.Current = Cursors.WaitCursor;
+
+            // Start the child process.
+            Process p = new Process();
+            progressBar1.Value += 10;
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.CreateNoWindow = true;
+            progressBar1.Value += 10;
+            p.StartInfo.FileName = "cmd";
+            progressBar1.Value += 10;
+            p.Start();
+            progressBar1.Value += 10;
+            p.StandardInput.WriteLine("ping -t " + deviceName + " -n 1\nexit");
+            progressBar1.Value += 15;
+            string output = p.StandardOutput.ReadToEnd();
+            string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
+            progressBar1.Value += 15;
+            url = "http://" + ip + ":333";
+            webBrowser1.Navigate(url);
+            UseWaitCursor = false;
+            Cursor.Current = Cursors.Default;
+        }
+        ///<summary>
+        /// When page is fully loaded
+        ///</summary>
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            documentCompleted = true;
+            webBrowser1.ScrollBarsEnabled = false;
+            getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
+            progressBar1.Visible = false;
+        }
+        #endregion
+
+        #region Draft management
+        /// <summary>
+        /// Save content of drafts var to a file
+        /// </summary>
+        private void saveDraftToFile()
+        {
+            saveDraft();
+            List<string> contactList = new List<string>(drafts.Keys);
+            using (StreamWriter writer = new StreamWriter("drafts"))
+            {
+                foreach (string s in contactList)
+                {
+                    if (drafts[s] != "" && drafts[s] != null)
+                        writer.WriteLine("/|\\" + s + "||--||" + drafts[s]);
+                }
             }
         }
-
-        protected override void WndProc(ref Message m)
+        /// <summary>
+        /// Loads from file to drafts var
+        /// </summary>
+        private void loadDraftFromFile()
         {
-            if (m.Msg == Native.WM_SHOWME)
+            string previous = "";
+            using (StreamReader reader = new StreamReader("drafts"))
             {
-                ShowMe();
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (line != "")
+                    {
+                        if (line.StartsWith("/|\\"))
+                        {
+                            string[] parts = line.Substring(3).Split(new string[] { "||--||" }, StringSplitOptions.RemoveEmptyEntries);
+                            drafts.Add(parts[0], parts[1]);
+                            previous = parts[0];
+                        }
+                        else
+                        {
+                            if (previous.Trim() != "")
+                                drafts[previous] += "\n" + line;
+                        }
+                    }
+                }
             }
-            base.WndProc(ref m);
         }
-        private void ShowMe(object sender = null, EventArgs e = null)
+        /// <summary>
+        /// Finds current draft and saves it into drafts var
+        /// </summary>
+        private void saveDraft()
         {
-            this.Show();
-            // get our current "TopMost" value (ours will always be false though)
-            bool top = TopMost;
-            // make our form jump to the top of everything
-            TopMost = true;
-            // set it back to whatever it was
-            TopMost = top;
-        }
-        private void ShowMe(object sender, MouseEventArgs e)
-        {
-            if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
+            HtmlElement body = webBrowser1.Document.Body;
+            // Gets the current draft
+            HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
+            string currentDraft = editable.InnerText;
+
+            // Finds to which contact it belongs to
+            string currentContact = findCurrentContactName();
+            if (currentContact != "")
             {
-                if (!this.Visible)
-                    ShowMe();
+                if (!drafts.ContainsKey(currentContact))
+                    drafts.Add(currentContact, currentDraft);
                 else
-                    this.Close();
+                    drafts[currentContact] = currentDraft;
             }
         }
+        /// <summary>
+        /// Finds current contact and loads the matching draft
+        /// </summary>
+        private void loadDraft()
+        {
+            string contact = findCurrentContactName();
+            if (drafts.ContainsKey(contact))
+                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerText = drafts[contact];
+        }
+        #endregion
 
+        #region Basic Html manipulations methods
+        /// <summary>
+        /// Returns the HtmlElement corresponding to the Contact List (left sidebar)
+        /// </summary>
+        private HtmlElement getContactList()
+        {
+            HtmlElement list = webBrowser1.Document.Body.Children[2];
+            if (list.InnerHtml.Contains("search"))
+                return list.Children[1].Children[0].Children[0];
+            else
+                return list.Children[0].Children[0].Children[0];
+        }
+        /// <summary>
+        /// Returns as a string the current contact name (followed by a 'x')
+        /// </summary>
+        private string findCurrentContactName()
+        {
+            foreach (HtmlElement i in getContactList().Children)
+            {
+                if (i.InnerHtml.Contains("selected"))
+                {
+                    return i.InnerText;
+                }
+            }
+            return "";
+        }
+        /// <summary>
+        /// Returns as an HtmlElement the current contact
+        /// </summary>
+        private HtmlElement findCurrentContactElement()
+        {
+            foreach (HtmlElement i in getContactList().Children)
+            {
+                if (i.InnerHtml.Contains("selected"))
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region Notify Icon
         private void contextShowHide_Click(object sender, EventArgs e)
         {
             ShowMe(sender, null);
@@ -561,5 +562,84 @@ namespace RemoteMessages
         {
             displayOptions();
         }
+        #endregion
+
+        #region Simulated inputs
+        /// <summary>
+        /// Simulates a mouse click at X;Y
+        /// </summary>
+        public void DoMouseClick(int X, int Y)
+        {
+            Point prevPos = Cursor.Position;
+            //Call the imported function with the cursor's current position
+            Cursor.Position = PointToScreen(new Point(X, Y));
+            fakeClick = true;
+            Native.mouse_event(Native.MOUSEEVENTF_LEFTDOWN | Native.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
+            Cursor.Position = prevPos;
+        }
+        /// <summary>
+        /// Simulates a keypress of Enter
+        /// </summary>
+        private void sendEnter(object sender, EventArgs e)
+        {
+            ConversationChanged(true);
+            SendKeys.Send("~");
+            timerSend.Enabled = false;
+        }
+        /// <summary>
+        /// Simulates a keypress of Escape
+        /// </summary>
+        private void sendEsc(object sender, EventArgs e)
+        {
+            if (!webBrowser1.Document.Focused)
+            {
+                timerUnfocusing.Stop();
+                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
+                justUnfocused = true;
+            }
+        }
+        #endregion
+
+        #region Methods allowing the one instance only
+        ///<summary>
+        /// This method is called when another instance of this app is launched
+        ///</summary>
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Native.WM_SHOWME)
+            {
+                ShowMe();
+            }
+            base.WndProc(ref m);
+        }
+        ///<summary>
+        /// This method is called when another instance of this app is launched
+        ///</summary>
+        private void ShowMe(object sender = null, EventArgs e = null)
+        {
+            this.Show();
+            if (WindowState == FormWindowState.Minimized)
+                WindowState = FormWindowState.Normal;
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
+        }
+        ///<summary>
+        /// This method is called when another instance of this app is launched
+        ///</summary>
+        private void ShowMe(object sender, MouseEventArgs e)
+        {
+            if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                if (!this.Visible)
+                    ShowMe();
+                else
+                    this.Close();
+            }
+        }
+        #endregion
     }
 }

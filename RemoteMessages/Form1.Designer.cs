@@ -36,8 +36,8 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextShowHide = new System.Windows.Forms.ToolStripMenuItem();
             this.contextOptions = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.contextExit = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +70,7 @@
             // notify
             // 
             this.notify.Icon = ((System.Drawing.Icon)(resources.GetObject("notify.Icon")));
-            this.notify.Text = "notifyIcon1";
+            this.notify.Text = "Remote Messages\r\nClick to Show/Hide";
             this.notify.Visible = true;
             // 
             // contextMenu
@@ -81,33 +81,33 @@
             this.toolStripSeparator1,
             this.contextExit});
             this.contextMenu.Name = "contextMenuStrip1";
-            this.contextMenu.Size = new System.Drawing.Size(153, 98);
+            this.contextMenu.Size = new System.Drawing.Size(136, 76);
             // 
             // contextShowHide
             // 
             this.contextShowHide.Name = "contextShowHide";
-            this.contextShowHide.Size = new System.Drawing.Size(152, 22);
+            this.contextShowHide.Size = new System.Drawing.Size(135, 22);
             this.contextShowHide.Text = "Show/Hide";
             this.contextShowHide.Click += new System.EventHandler(this.contextShowHide_Click);
             // 
             // contextOptions
             // 
             this.contextOptions.Name = "contextOptions";
-            this.contextOptions.Size = new System.Drawing.Size(152, 22);
+            this.contextOptions.Size = new System.Drawing.Size(135, 22);
             this.contextOptions.Text = "Preferences";
             this.contextOptions.Click += new System.EventHandler(this.contextOptions_Click);
-            // 
-            // contextExit
-            // 
-            this.contextExit.Name = "contextExit";
-            this.contextExit.Size = new System.Drawing.Size(152, 22);
-            this.contextExit.Text = "Exit";
-            this.contextExit.Click += new System.EventHandler(this.contextExit_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(132, 6);
+            // 
+            // contextExit
+            // 
+            this.contextExit.Name = "contextExit";
+            this.contextExit.Size = new System.Drawing.Size(135, 22);
+            this.contextExit.Text = "Exit";
+            this.contextExit.Click += new System.EventHandler(this.contextExit_Click);
             // 
             // Form1
             // 
@@ -124,6 +124,7 @@
             this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
