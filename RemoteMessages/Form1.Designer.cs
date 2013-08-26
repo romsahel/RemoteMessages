@@ -49,7 +49,7 @@
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.ScrollBarsEnabled = false;
-            this.webBrowser1.Size = new System.Drawing.Size(717, 752);
+            this.webBrowser1.Size = new System.Drawing.Size(860, 896);
             this.webBrowser1.TabIndex = 0;
             this.webBrowser1.Url = new System.Uri("https://www.google.com/", System.UriKind.Absolute);
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
@@ -60,7 +60,7 @@
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Top;
             this.progressBar1.Location = new System.Drawing.Point(0, 0);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(717, 36);
+            this.progressBar1.Size = new System.Drawing.Size(860, 36);
             this.progressBar1.Step = 100;
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 1;
@@ -112,7 +112,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(717, 752);
+            this.ClientSize = new System.Drawing.Size(860, 896);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.webBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

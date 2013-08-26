@@ -23,8 +23,11 @@ namespace RemoteMessages
         private Dictionary<string, string> drafts;
         private bool isPreviousF12;
         private string url;
-        private bool isReplacing, isAutoUpdate, isUnfocusing, isBackgrounding;
+        private bool isReplacing, isAutoUpdate, isUnfocusing;
+        private bool closeToTray, minimizeToTray, escapeToTray;
+        private bool showBalloon, showFlash;
         private int delayReplacing, delayAutoUpdate, delayUnfocusing;
+        private int delayBalloon, flashCount;
         private string deviceName;
         private bool documentCompleted;
         private bool justUnfocused;
@@ -63,14 +66,10 @@ namespace RemoteMessages
             timerCheckNew.Interval = 2000;
             timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
-
-            if (isBackgrounding)
-            {
-                notify.Visible = true;
-                notify.MouseClick += new MouseEventHandler(ShowMe);
-                notify.BalloonTipClicked += new EventHandler(ShowMe);
-                notify.ContextMenuStrip = contextMenu;
-            }
+            notify.Visible = true;
+            notify.MouseClick += new MouseEventHandler(ShowMe);
+            notify.BalloonTipClicked += new EventHandler(ShowMe);
+            notify.ContextMenuStrip = contextMenu;
 
         }
 
@@ -79,12 +78,24 @@ namespace RemoteMessages
         /// </summary>
         private void displayOptions()
         {
-            using (Form2 form2 = new Form2(isBackgrounding, isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
+            using (Form2 form2 = new Form2(new bool[] { closeToTray, minimizeToTray, escapeToTray },
+                new bool[] { showBalloon, showFlash },
+                delayBalloon, flashCount,
+                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
             {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
                 {
-                    isBackgrounding = form2.getBackgrounderActivated();
+                    bool[] bBackgrounds = form2.getBackgrounderOptions();
+                    bool[] bNotifs = form2.getNotifOptions();
+
+                    closeToTray = bBackgrounds[0];
+                    minimizeToTray = bBackgrounds[1];
+                    escapeToTray = bBackgrounds[2];
+
+                    showBalloon = bNotifs[0];
+                    showFlash = bNotifs[1];
+
                     isAutoUpdate = form2.getAutoIPActivated();
                     isReplacing = form2.getReplacementActivated();
                     isUnfocusing = form2.getUnfocusActivated();
@@ -112,7 +123,15 @@ namespace RemoteMessages
                 {
                     url = reader.ReadLine();
 
-                    isBackgrounding = Boolean.Parse(reader.ReadLine());
+                    closeToTray = Boolean.Parse(reader.ReadLine());
+                    minimizeToTray = Boolean.Parse(reader.ReadLine());
+                    escapeToTray = Boolean.Parse(reader.ReadLine());
+
+                    showBalloon = Boolean.Parse(reader.ReadLine());
+                    delayBalloon = Int32.Parse(reader.ReadLine());
+                    showFlash = Boolean.Parse(reader.ReadLine());
+                    flashCount = Int32.Parse(reader.ReadLine());
+
                     isAutoUpdate = Boolean.Parse(reader.ReadLine());
                     isReplacing = Boolean.Parse(reader.ReadLine());
                     isUnfocusing = Boolean.Parse(reader.ReadLine());
@@ -130,7 +149,15 @@ namespace RemoteMessages
                 deviceName = "RomS-iPhone";
                 FindNewIP();
 
-                isBackgrounding = true;
+                closeToTray = true;
+                minimizeToTray = true;
+                escapeToTray = true;
+
+                showBalloon = true;
+                delayBalloon = 500;
+                showFlash = true;
+                flashCount = 6;
+
                 isAutoUpdate = true;
                 isReplacing = true;
                 isUnfocusing = true;
@@ -148,7 +175,15 @@ namespace RemoteMessages
             {
                 writer.WriteLine(url);
 
-                writer.WriteLine(isBackgrounding);
+                writer.WriteLine(closeToTray);
+                writer.WriteLine(minimizeToTray);
+                writer.WriteLine(escapeToTray);
+
+                writer.WriteLine(showBalloon);
+                writer.WriteLine(delayBalloon);
+                writer.WriteLine(showFlash);
+                writer.WriteLine(flashCount);
+
                 writer.WriteLine(isAutoUpdate);
                 writer.WriteLine(isReplacing);
                 writer.WriteLine(isUnfocusing);
@@ -169,7 +204,7 @@ namespace RemoteMessages
         {
             if (e.KeyCode == Keys.Escape)
             {
-                if (!documentCompleted || getCurrentContactElement() == null)
+                if (escapeToTray && (!documentCompleted || getCurrentContactElement() == null))
                     this.Close();
                 else
                     saveDraft();
@@ -219,6 +254,15 @@ namespace RemoteMessages
                 webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
 
                 timerSend.Start();
+
+                isPreviousCtrlDown = true;
+            }
+            else
+                isPreviousCtrlDown = false;
+
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E && !isPreviousCtrlDown)
+            {
+                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
 
                 isPreviousCtrlDown = true;
             }
@@ -344,7 +388,7 @@ namespace RemoteMessages
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized && minimizeToTray)
                 this.Close();
         }
 
@@ -352,7 +396,7 @@ namespace RemoteMessages
         {
             if (documentCompleted)
                 saveDraft();
-            if (!isExiting && isBackgrounding)
+            if (!isExiting && closeToTray)
             {
                 if (documentCompleted)
                     previousFirst = getContactList().Children[0].InnerHtml;
@@ -384,8 +428,10 @@ namespace RemoteMessages
                     notify.Text = "Remote Messages\nNew message from " + name + ".\n";
 
                     notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-                    notify.ShowBalloonTip(500, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
-                    Native.Flash(this, 6);
+                    if (showBalloon)
+                        notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
+                    if (showFlash)
+                        Native.Flash(this, (uint)flashCount);
                     previousFirst = list.Children[0].InnerHtml;
                 }
             }

@@ -87,6 +87,8 @@ namespace RemoteMessages
         /// <returns></returns>
         public static bool Flash(System.Windows.Forms.Form form, uint count)
         {
+            if (count == 0)
+                count = uint.MaxValue;
             FLASHWINFO fi = Create_FLASHWINFO(form.Handle, FLASHW_ALL | FLASHW_TIMERNOFG, count, 0);
             return FlashWindowEx(ref fi);
         }

@@ -14,11 +14,23 @@ namespace RemoteMessages
         private const int defaultAutoIP = 3;
         private const int defaultReplacement = 500;
         private const int defaultUnfocus = 3000;
-        public Form2(bool bB, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sA)
+        private const int defaultBalloon = 500;
+        private const int defaultFlash = 6;
+
+        public Form2(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sA)
         {
             InitializeComponent();
             cancel.Select();
-            activateBackgrounder.Checked = bB;
+
+            closeToTray.Checked = bBackgrounds[0];
+            minimizeToTray.Checked = bBackgrounds[1];
+            escapeToTray.Checked = bBackgrounds[2];
+
+            showBalloon.Checked = bNotifs[0];
+            delayBalloon.Text = iB.ToString();
+            showFlash.Checked = bNotifs[1];
+            flashCount.Text = iF.ToString();
+
             activateAutoIP.Checked = bA;
             activateReplacement.Checked = bR;
             activateUnfocus.Checked = bU;
@@ -38,6 +50,29 @@ namespace RemoteMessages
         {
             int x = 0;
             bool error = false;
+
+            if (delayBalloon.Enabled && !Int32.TryParse(delayBalloon.Text, out x))
+            {
+                delayBalloon.Text = defaultBalloon.ToString();
+                error = true;
+            }
+            else if (x < 0)
+            {
+                delayBalloon.Text = defaultBalloon.ToString();
+                error = true;
+            }
+
+            if (flashCount.Enabled && !Int32.TryParse(flashCount.Text, out x))
+            {
+                flashCount.Text = defaultFlash.ToString();
+                error = true;
+            }
+            else if (x < 0)
+            {
+                flashCount.Text = defaultFlash.ToString();
+                error = true;
+            }
+
             if (delayAutoIP.Enabled && !Int32.TryParse(delayAutoIP.Text, out x))
             {
                 delayAutoIP.Text = defaultAutoIP.ToString();
@@ -120,7 +155,9 @@ namespace RemoteMessages
         }
 
 
-        public bool getBackgrounderActivated() { return activateBackgrounder.Checked; }
+        public bool[] getBackgrounderOptions() { return new bool[] { closeToTray.Checked, minimizeToTray.Checked, escapeToTray.Checked }; }
+        public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
+
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
@@ -139,9 +176,26 @@ namespace RemoteMessages
 
         private void tips_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Press F1 to display this window.\nPress F11 to switch to fullscreen mode.\nPress F12 to manually update your IP.\nYou can press Ctrl+Enter instead of click the send button.", "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string tips = "Press F1 to display this window.\n"
+            + "Press F11 to switch to fullscreen mode.\n"
+            + "Press F12 to manually update your IP.\n"
+            + "You can press Ctrl+Enter instead of click the send button.\n"
+            + "Press Alt+1-9 to open the Nth conversation.\n"
+            + "Press Ctrl+E to focus the sending area (editable text).\n"
+            ;
+
+            MessageBox.Show(tips, "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void showBalloon_CheckedChanged(object sender, EventArgs e)
+        {
+            delayBalloon.Enabled = showBalloon.Checked;
+        }
+
+        private void showFlash_CheckedChanged(object sender, EventArgs e)
+        {
+            flashCount.Enabled = showFlash.Checked;
+        }
     }
 }
 ;
