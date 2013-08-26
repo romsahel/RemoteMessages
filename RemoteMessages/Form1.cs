@@ -44,23 +44,8 @@ namespace RemoteMessages
             justUnfocused = false;
             drafts = new Dictionary<string, string>();
             documentCompleted = false;
-
-            using (StreamReader reader = new StreamReader("remote.cfg"))
-            {
-                url = reader.ReadLine();
-
-                isBackgrounding = Boolean.Parse(reader.ReadLine());
-                isAutoUpdate = Boolean.Parse(reader.ReadLine());
-                isReplacing = Boolean.Parse(reader.ReadLine());
-                isUnfocusing = Boolean.Parse(reader.ReadLine());
-
-                deviceName = reader.ReadLine();
-                delayAutoUpdate = Int32.Parse(reader.ReadLine());
-
-                delayReplacing = Int32.Parse(reader.ReadLine());
-
-                delayUnfocusing = Int32.Parse(reader.ReadLine());
-            }
+            using (StreamWriter w = File.AppendText("drafts")) { }
+            loadConfig();
 
             timerUnfocusing = new Timer();
             timerUnfocusing.Interval = delayUnfocusing;
@@ -108,22 +93,7 @@ namespace RemoteMessages
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
 
-                    using (StreamWriter writer = new StreamWriter("remote.cfg"))
-                    {
-                        writer.WriteLine(url);
-
-                        writer.WriteLine(isBackgrounding);
-                        writer.WriteLine(isAutoUpdate);
-                        writer.WriteLine(isReplacing);
-                        writer.WriteLine(isUnfocusing);
-
-                        writer.WriteLine(deviceName);
-                        writer.WriteLine(delayAutoUpdate);
-
-                        writer.WriteLine(delayReplacing);
-
-                        writer.WriteLine(delayUnfocusing);
-                    }
+                    saveConfig();
                 }
                 else if (res == System.Windows.Forms.DialogResult.Abort)
                 {
@@ -132,6 +102,64 @@ namespace RemoteMessages
                 }
             }
 
+        }
+
+        private void loadConfig()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader("remote.cfg"))
+                {
+                    url = reader.ReadLine();
+
+                    isBackgrounding = Boolean.Parse(reader.ReadLine());
+                    isAutoUpdate = Boolean.Parse(reader.ReadLine());
+                    isReplacing = Boolean.Parse(reader.ReadLine());
+                    isUnfocusing = Boolean.Parse(reader.ReadLine());
+
+                    deviceName = reader.ReadLine();
+                    delayAutoUpdate = Int32.Parse(reader.ReadLine());
+
+                    delayReplacing = Int32.Parse(reader.ReadLine());
+
+                    delayUnfocusing = Int32.Parse(reader.ReadLine());
+                }
+            }
+            catch
+            {
+                deviceName = "RomS-iPhone";
+                FindNewIP();
+
+                isBackgrounding = true;
+                isAutoUpdate = true;
+                isReplacing = true;
+                isUnfocusing = true;
+
+                delayAutoUpdate = 3;
+
+                delayReplacing = 500;
+
+                delayUnfocusing = 5000;
+            }
+        }
+        private void saveConfig()
+        {
+            using (StreamWriter writer = new StreamWriter("remote.cfg"))
+            {
+                writer.WriteLine(url);
+
+                writer.WriteLine(isBackgrounding);
+                writer.WriteLine(isAutoUpdate);
+                writer.WriteLine(isReplacing);
+                writer.WriteLine(isUnfocusing);
+
+                writer.WriteLine(deviceName);
+                writer.WriteLine(delayAutoUpdate);
+
+                writer.WriteLine(delayReplacing);
+
+                writer.WriteLine(delayUnfocusing);
+            }
         }
 
         ///<summary>
@@ -198,7 +226,7 @@ namespace RemoteMessages
                 isPreviousCtrlDown = false;
         }
 
-
+        #region Conversation change (saving/loading draft, emoji)
         ///<summary>
         /// This function is called when user clicks the conversation's list.
         ///</summary>
@@ -215,7 +243,6 @@ namespace RemoteMessages
                 isPreviousMouse = false;
             }
         }
-
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
         ///</summary>
@@ -269,6 +296,7 @@ namespace RemoteMessages
 
             webBrowser1.Document.Body.Children[1].InnerHtml = removedByStringBuilder;
         }
+        #endregion
 
         #region Form modification (Focus, Size, Closing)
         private void Form1_Shown(object sender, EventArgs e)
@@ -336,7 +364,6 @@ namespace RemoteMessages
         }
         #endregion
 
-
         ///<summary>
         /// Called on timer end to check for new message
         ///</summary>
@@ -368,11 +395,6 @@ namespace RemoteMessages
         #region At launch
         private void DisplayPage()
         {
-            url = "";
-            using (StreamReader reader = new StreamReader("remote.cfg"))
-            {
-                url = reader.ReadLine();
-            }
             progressBar1.Value = 75;
             webBrowser1.Navigate(url);
             webBrowser1.ScrollBarsEnabled = false;
