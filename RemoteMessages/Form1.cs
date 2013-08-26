@@ -52,22 +52,6 @@ namespace RemoteMessages
                 using (StreamWriter w = File.AppendText("drafts")) { }
                 loadConfig();
 
-                timerUnfocusing = new Timer();
-                timerUnfocusing.Interval = delayUnfocusing;
-                timerUnfocusing.Tick += new EventHandler(sendEsc);
-
-                timerSend = new Timer();
-                timerSend.Interval = 600;
-                timerSend.Tick += new EventHandler(sendEnter);
-
-                timerReplacing = new Timer();
-                timerReplacing.Interval = delayReplacing;
-                timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
-
-                timerCheckNew = new Timer();
-                timerCheckNew.Interval = 2000;
-                timerCheckNew.Tick += new EventHandler(checkNewMsg);
-
                 notify.Visible = true;
                 notify.MouseClick += new MouseEventHandler(ShowMe);
                 notify.BalloonTipClicked += new EventHandler(ShowMe);
@@ -492,6 +476,22 @@ namespace RemoteMessages
             webBrowser1.ScrollBarsEnabled = false;
             getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
             progressBar1.Visible = false;
+
+            timerUnfocusing = new Timer();
+            timerUnfocusing.Interval = delayUnfocusing;
+            timerUnfocusing.Tick += new EventHandler(sendEsc);
+
+            timerSend = new Timer();
+            timerSend.Interval = 600;
+            timerSend.Tick += new EventHandler(sendEnter);
+
+            timerReplacing = new Timer();
+            timerReplacing.Interval = delayReplacing;
+            timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
+
+            timerCheckNew = new Timer();
+            timerCheckNew.Interval = 2000;
+            timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
             if (!Focused)
                 Form1_Deactivate(null, null);
