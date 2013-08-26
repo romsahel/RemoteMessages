@@ -21,7 +21,7 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+time, mark, audio, video, li span {
   margin: 0;
   padding: 0;
   border: 0;
@@ -61,7 +61,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, li span {
   margin: 10px 0;
   font-weight: 700;
   color:#222222;
@@ -80,7 +80,7 @@ h2 {
   background: url('../images/bg_hr.png') repeat-x bottom;
 }
 
-h3 {
+h3, li span {
   font-size: 24px;
 }
 
@@ -414,7 +414,7 @@ Small Device Styles
     font-size: 24px;
   }
 
-  h3 {
+  h3, li span {
     font-size: 21px;
   }
 
