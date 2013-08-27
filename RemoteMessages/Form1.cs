@@ -182,8 +182,9 @@ namespace RemoteMessages
                 delayReplacing = 500;
 
                 delayUnfocusing = 5000;
+                MessageBox.Show("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", "No configuration has been found!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                raiseException(null, null);
+                displayOptions();
             }
         }
         private void saveConfig()
@@ -478,7 +479,7 @@ namespace RemoteMessages
 
                 progressBar1.Visible = false;
 
-                DialogResult res = MessageBox.Show("Your device cannot be found.\nIf this is the first time you start the app, this is normal. Click OK to chose your preferences and enter your device's name or IP address.\nOtherwise, please check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options, Cancel to quit.",
+                DialogResult res = MessageBox.Show("Your device cannot be found.\nOtherwise, please check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options, Cancel to quit.",
                     "Error!",
         MessageBoxButtons.OKCancel,
         MessageBoxIcon.Error,
