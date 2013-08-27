@@ -61,6 +61,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.delayBalloon = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.port = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
@@ -75,7 +77,7 @@
             this.activateReplacement.Checked = true;
             this.activateReplacement.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateReplacement.Location = new System.Drawing.Point(39, 352);
+            this.activateReplacement.Location = new System.Drawing.Point(39, 381);
             this.activateReplacement.Name = "activateReplacement";
             this.activateReplacement.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateReplacement.Size = new System.Drawing.Size(225, 24);
@@ -86,7 +88,7 @@
             // 
             // delayReplacement
             // 
-            this.delayReplacement.Location = new System.Drawing.Point(139, 385);
+            this.delayReplacement.Location = new System.Drawing.Point(139, 414);
             this.delayReplacement.Name = "delayReplacement";
             this.delayReplacement.Size = new System.Drawing.Size(100, 20);
             this.delayReplacement.TabIndex = 2;
@@ -94,7 +96,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(60, 388);
+            this.label1.Location = new System.Drawing.Point(60, 417);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 3;
@@ -124,7 +126,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(60, 471);
+            this.label4.Location = new System.Drawing.Point(60, 503);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 10;
@@ -132,7 +134,7 @@
             // 
             // delayUnfocus
             // 
-            this.delayUnfocus.Location = new System.Drawing.Point(139, 468);
+            this.delayUnfocus.Location = new System.Drawing.Point(139, 500);
             this.delayUnfocus.Name = "delayUnfocus";
             this.delayUnfocus.Size = new System.Drawing.Size(100, 20);
             this.delayUnfocus.TabIndex = 9;
@@ -143,7 +145,7 @@
             this.activateUnfocus.Checked = true;
             this.activateUnfocus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateUnfocus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateUnfocus.Location = new System.Drawing.Point(39, 438);
+            this.activateUnfocus.Location = new System.Drawing.Point(39, 470);
             this.activateUnfocus.Name = "activateUnfocus";
             this.activateUnfocus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateUnfocus.Size = new System.Drawing.Size(183, 24);
@@ -155,7 +157,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(140, 534);
+            this.ok.Location = new System.Drawing.Point(140, 571);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -169,7 +171,7 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(245, 534);
+            this.cancel.Location = new System.Drawing.Point(245, 571);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -183,16 +185,16 @@
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.15F);
             this.label5.Location = new System.Drawing.Point(221, 2);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(254, 80);
+            this.label5.Size = new System.Drawing.Size(254, 112);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Automatically finds the IP adress of your device based on its name.  The search w" +
-                "ill be performed every X day (according to delay). Use F12 to update it manually" +
-                ".";
+            this.label5.Text = resources.GetString("label5.Text");
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(51, 313);
+            this.label6.Enabled = false;
+            this.label6.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label6.Location = new System.Drawing.Point(28, 89);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(82, 13);
             this.label6.TabIndex = 16;
@@ -200,7 +202,8 @@
             // 
             // delayAutoIP
             // 
-            this.delayAutoIP.Location = new System.Drawing.Point(139, 310);
+            this.delayAutoIP.Enabled = false;
+            this.delayAutoIP.Location = new System.Drawing.Point(116, 86);
             this.delayAutoIP.Name = "delayAutoIP";
             this.delayAutoIP.Size = new System.Drawing.Size(100, 20);
             this.delayAutoIP.TabIndex = 15;
@@ -238,7 +241,7 @@
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(380, 540);
+            this.tips.Location = new System.Drawing.Point(380, 577);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -399,17 +402,37 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.label12);
             this.panel3.Controls.Add(this.label5);
+            this.panel3.Controls.Add(this.port);
+            this.panel3.Controls.Add(this.delayAutoIP);
+            this.panel3.Controls.Add(this.label6);
             this.panel3.Location = new System.Drawing.Point(23, 253);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(480, 87);
+            this.panel3.Size = new System.Drawing.Size(480, 122);
             this.panel3.TabIndex = 41;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(51, 53);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(56, 13);
+            this.label12.TabIndex = 45;
+            this.label12.Text = "RM\'s Port:";
+            // 
+            // port
+            // 
+            this.port.Location = new System.Drawing.Point(115, 53);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(100, 20);
+            this.port.TabIndex = 44;
             // 
             // panel4
             // 
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Controls.Add(this.label3);
-            this.panel4.Location = new System.Drawing.Point(23, 364);
+            this.panel4.Location = new System.Drawing.Point(23, 393);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(480, 62);
             this.panel4.TabIndex = 42;
@@ -418,7 +441,7 @@
             // 
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.label2);
-            this.panel5.Location = new System.Drawing.Point(23, 451);
+            this.panel5.Location = new System.Drawing.Point(23, 483);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(480, 60);
             this.panel5.TabIndex = 43;
@@ -427,7 +450,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 575);
+            this.ClientSize = new System.Drawing.Size(515, 616);
             this.ControlBox = false;
             this.Controls.Add(this.activateAutoIP);
             this.Controls.Add(this.label7);
@@ -441,8 +464,6 @@
             this.Controls.Add(this.tips);
             this.Controls.Add(this.deviceNameLabel);
             this.Controls.Add(this.deviceName);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.delayAutoIP);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.label4);
@@ -465,6 +486,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -508,5 +530,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox delayBalloon;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox port;
     }
 }

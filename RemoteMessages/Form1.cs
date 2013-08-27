@@ -19,7 +19,7 @@ namespace RemoteMessages
         private bool isPreviousAltDown;
         private bool isPreviousCtrlDown;
         private bool isPreviousMouse;
-        private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew;
+        private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew, timerTimeOut;
         private Dictionary<string, string> drafts;
         private bool isPreviousF12;
         private string url;
@@ -33,6 +33,8 @@ namespace RemoteMessages
         private bool justUnfocused;
         private bool isExiting;
         private bool fakeClick;
+        private bool exceptionRaised;
+        private string port = "333";
 
         public Form1()
         {
@@ -40,6 +42,7 @@ namespace RemoteMessages
             {
                 InitializeComponent();
 
+                exceptionRaised = false;
                 isPreviousF11 = false;
                 isPreviousF1 = false;
                 isPreviousAltDown = false;
@@ -61,6 +64,7 @@ namespace RemoteMessages
                 timerSend = new Timer();
                 timerReplacing = new Timer();
                 timerCheckNew = new Timer();
+                timerTimeOut = new Timer();
             }
             catch (Exception e)
             {
@@ -76,7 +80,7 @@ namespace RemoteMessages
             using (Form2 form2 = new Form2(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
-                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName))
+                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
             {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
@@ -90,6 +94,9 @@ namespace RemoteMessages
 
                     showBalloon = bNotifs[0];
                     showFlash = bNotifs[1];
+                    bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated()) 
+                        || (isAutoUpdate && deviceName != form2.getDeviceName()) 
+                        || (!isAutoUpdate && url != form2.getDeviceName());
 
                     isAutoUpdate = form2.getAutoIPActivated();
                     isReplacing = form2.getReplacementActivated();
@@ -99,7 +106,21 @@ namespace RemoteMessages
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
 
+                    port = form2.getPort();
+                    if (isAutoUpdate)
+                        deviceName = form2.getDeviceName();
+                    else
+                        url = "http://" + form2.getDeviceName() + ":" + port;
                     saveConfig();
+
+                    if (mustRefresh)
+                    {
+                        progressBar1.Visible = true;
+                        if (isAutoUpdate)
+                            FindNewIP();
+                        else
+                            DisplayPage();
+                    }
                 }
                 else if (res == System.Windows.Forms.DialogResult.Abort)
                 {
@@ -117,6 +138,7 @@ namespace RemoteMessages
                 using (StreamReader reader = new StreamReader("remote.cfg"))
                 {
                     url = reader.ReadLine();
+                    port = reader.ReadLine();
 
                     closeToTray = Boolean.Parse(reader.ReadLine());
                     minimizeToTray = Boolean.Parse(reader.ReadLine());
@@ -169,6 +191,7 @@ namespace RemoteMessages
             using (StreamWriter writer = new StreamWriter("remote.cfg"))
             {
                 writer.WriteLine(url);
+                writer.WriteLine(port);
 
                 writer.WriteLine(closeToTray);
                 writer.WriteLine(minimizeToTray);
@@ -199,7 +222,7 @@ namespace RemoteMessages
         {
             if (e.KeyCode == Keys.Escape)
             {
-                if (escapeToTray && (!documentCompleted || getCurrentContactElement() == null))
+                if (escapeToTray && ((!documentCompleted && !exceptionRaised)|| getCurrentContactElement() == null))
                     this.Close();
                 else
                     saveDraft();
@@ -340,7 +363,14 @@ namespace RemoteMessages
         #region Form modification (Focus, Size, Closing)
         private void Form1_Shown(object sender, EventArgs e)
         {
-            DisplayPage();
+            timerTimeOut.Interval = 30000;
+            timerTimeOut.Tick += new EventHandler(raiseException);
+
+            if (isAutoUpdate)
+                FindNewIP();
+            else
+                DisplayPage();
+
             loadDraftFromFile();
         }
 
@@ -365,7 +395,7 @@ namespace RemoteMessages
         {
             notify.Text = "Remote Messages\nNo new activity";
 
-            if (documentCompleted)
+            if (documentCompleted && !exceptionRaised)
             {
                 previousSelectedContact = getCurrentContactElement();
                 previousFirst = getContactList().Children[0].InnerHtml;
@@ -389,11 +419,11 @@ namespace RemoteMessages
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (documentCompleted)
+            if (documentCompleted && !exceptionRaised)
                 saveDraft();
             if (!isExiting && closeToTray)
             {
-                if (documentCompleted)
+                if (documentCompleted && !exceptionRaised)
                     previousFirst = getContactList().Children[0].InnerHtml;
                 e.Cancel = true;
                 this.Hide();
@@ -409,31 +439,64 @@ namespace RemoteMessages
         private void checkNewMsg(object sender, EventArgs e)
         {
             timerCheckNew.Stop();
-            HtmlElement list = getContactList();
-            if (previousFirst != list.Children[0].InnerHtml)
+            if (!webBrowser1.Focused)
             {
-                previousFirst = list.Children[0].InnerHtml;
-                if (justUnfocused)
-                    justUnfocused = false;
-                else
+                HtmlElement list = getContactList();
+                if (previousFirst != list.Children[0].InnerHtml)
                 {
-                    string name = (list.Children[0].InnerText).Split('×')[0];
-                    notify.Text = "Remote Messages\nNew message from " + name + ".\n";
+                    previousFirst = list.Children[0].InnerHtml;
+                    if (justUnfocused)
+                        justUnfocused = false;
+                    else
+                    {
+                        string name = (list.Children[0].InnerText).Split('×')[0];
+                        notify.Text = "Remote Messages\nNew message from " + name + ".\n";
 
-                    notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-                    if (showBalloon)
-                        notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
-                 
-                    if (showFlash)
-                        Native.Flash(this, (uint)flashCount);
+                        notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
+
+                        if (showBalloon)
+                            notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
+
+                        if (showFlash)
+                            Native.Flash(this, (uint)flashCount);
+                    }
                 }
+                timerCheckNew.Enabled = true;
             }
-            timerCheckNew.Enabled = true;
         }
 
         #region At launch
+        private void raiseException(object sender, EventArgs e)
+        {
+            if (!exceptionRaised)
+            {
+                timerTimeOut.Stop();
+                webBrowser1.Stop();
+
+                progressBar1.Visible = false;
+
+                DialogResult res = MessageBox.Show("Your device cannot be found.\nPlease check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options.",
+                    "Error!",
+        MessageBoxButtons.OKCancel,
+        MessageBoxIcon.Error,
+        MessageBoxDefaultButton.Button2);
+                if (res == System.Windows.Forms.DialogResult.OK)
+                    displayOptions();
+                else
+                {
+                    isExiting = true;
+                    this.Close();
+                }
+
+                exceptionRaised = true;
+            }
+        }
         private void DisplayPage()
         {
+            exceptionRaised = false;
+            timerTimeOut.Stop();
+            timerTimeOut.Start();
+
             progressBar1.Value = 75;
             webBrowser1.Navigate(url);
             webBrowser1.ScrollBarsEnabled = false;
@@ -443,6 +506,10 @@ namespace RemoteMessages
         ///</summary>
         private void FindNewIP()
         {
+            exceptionRaised = false;
+            timerTimeOut.Stop();
+            timerTimeOut.Start();
+
             progressBar1.Value = 0;
             progressBar1.Visible = true;
             Cursor.Current = Cursors.WaitCursor;
@@ -463,37 +530,55 @@ namespace RemoteMessages
             p.StandardInput.WriteLine("ping -t " + deviceName + " -n 1\nexit");
             progressBar1.Value += 15;
             string output = p.StandardOutput.ReadToEnd();
-            string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
-            progressBar1.Value += 15;
-            url = "http://" + ip + ":333";
-            webBrowser1.Navigate(url);
-            UseWaitCursor = false;
-            Cursor.Current = Cursors.Default;
+            try
+            {
+                string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
+                progressBar1.Value += 15;
+                url = "http://" + ip + ":" + port;
+                webBrowser1.Navigate(url);
+                UseWaitCursor = false;
+                Cursor.Current = Cursors.Default;
+            }
+            catch
+            {
+                raiseException(null, null);
+            }
         }
         ///<summary>
         /// When page is fully loaded
         ///</summary>
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            documentCompleted = true;
-            webBrowser1.ScrollBarsEnabled = false;
-            getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-            progressBar1.Visible = false;
+            if (!webBrowser1.Document.Domain.Contains("exception"))
+            {
+                timerTimeOut.Stop();
 
-            timerUnfocusing.Interval = delayUnfocusing;
-            timerUnfocusing.Tick += new EventHandler(sendEsc);
+                documentCompleted = true;
+                webBrowser1.ScrollBarsEnabled = false;
+                getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
+                progressBar1.Visible = false;
 
-            timerSend.Interval = 600;
-            timerSend.Tick += new EventHandler(sendEnter);
+                timerUnfocusing.Interval = delayUnfocusing;
+                timerUnfocusing.Tick += new EventHandler(sendEsc);
 
-            timerReplacing.Interval = delayReplacing;
-            timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
+                timerSend.Interval = 600;
+                timerSend.Tick += new EventHandler(sendEnter);
 
-            timerCheckNew.Interval = 2000;
-            timerCheckNew.Tick += new EventHandler(checkNewMsg);
+                timerReplacing.Interval = delayReplacing;
+                timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
-            if (!Focused)
-                Form1_Deactivate(null, null);
+                timerCheckNew.Interval = 2000;
+                timerCheckNew.Tick += new EventHandler(checkNewMsg);
+
+                if (!Focused && !webBrowser1.Focused)
+                    Form1_Deactivate(null, null);
+
+                url = webBrowser1.Url.ToString();
+            }
+            else
+            {
+                raiseException(null, null);
+            }
         }
         #endregion
 
@@ -503,7 +588,8 @@ namespace RemoteMessages
         /// </summary>
         private void saveDraftToFile()
         {
-            saveDraft();
+            if (documentCompleted && !exceptionRaised)
+                saveDraft();
             List<string> contactList = new List<string>(drafts.Keys);
             using (StreamWriter writer = new StreamWriter("drafts"))
             {

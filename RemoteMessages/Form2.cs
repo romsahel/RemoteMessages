@@ -16,8 +16,9 @@ namespace RemoteMessages
         private const int defaultUnfocus = 3000;
         private const int defaultBalloon = 500;
         private const int defaultFlash = 6;
+        private string name, url;
 
-        public Form2(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sA)
+        public Form2(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl)
         {
             InitializeComponent();
             cancel.Select();
@@ -35,15 +36,21 @@ namespace RemoteMessages
             activateReplacement.Checked = bR;
             activateUnfocus.Checked = bU;
 
-            delayAutoIP.Enabled = bA;
+            //delayAutoIP.Enabled = bA;
             delayReplacement.Enabled = bR;
             delayUnfocus.Enabled = bU;
 
             delayAutoIP.Text = iA.ToString();
             delayReplacement.Text = iR.ToString();
             delayUnfocus.Text = iU.ToString();
+            name = sName;
+            url = (sUrl.Substring(7)).Split(':')[0];
+            port.Text = sUrl.Split(':')[2];
 
-            deviceName.Text = sA;
+            if (activateAutoIP.Checked)
+                deviceName.Text = name;
+            else
+                deviceName.Text = url;
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -138,10 +145,15 @@ namespace RemoteMessages
         {
             delayAutoIP.Enabled = activateAutoIP.Checked;
             if (activateAutoIP.Checked)
+            {
                 deviceNameLabel.Text = "Device's Name: ";
+                deviceName.Text = name;
+            }
             else
+            {
                 deviceNameLabel.Text = "Device's   IP: ";
-
+                deviceName.Text = url;
+            }
         }
 
         private void activateReplacement_CheckedChanged(object sender, EventArgs e)
@@ -167,6 +179,7 @@ namespace RemoteMessages
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
 
         public string getDeviceName() { return deviceName.Text; }
+        public string getPort() { return port.Text; }
 
         private void button1_Click(object sender, EventArgs e)
         {
