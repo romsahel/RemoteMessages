@@ -22,7 +22,7 @@ namespace RemoteMessages
         private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew, timerTimeOut;
         private Dictionary<string, string> drafts;
         private bool isPreviousF12;
-        private string url;
+        private string url, port;
         private bool isReplacing, isAutoUpdate, isUnfocusing;
         private bool closeToTray, minimizeToTray, escapeToTray;
         private bool showBalloon, showFlash;
@@ -34,7 +34,6 @@ namespace RemoteMessages
         private bool isExiting;
         private bool fakeClick;
         private bool exceptionRaised;
-        private string port = "333";
 
         public Form1()
         {
@@ -52,8 +51,6 @@ namespace RemoteMessages
                 justUnfocused = false;
                 drafts = new Dictionary<string, string>();
                 documentCompleted = false;
-                using (StreamWriter w = File.AppendText("drafts")) { }
-                loadConfig();
 
                 notify.Visible = true;
                 notify.MouseClick += new MouseEventHandler(ShowMe);
@@ -94,8 +91,8 @@ namespace RemoteMessages
 
                     showBalloon = bNotifs[0];
                     showFlash = bNotifs[1];
-                    bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated()) 
-                        || (isAutoUpdate && deviceName != form2.getDeviceName()) 
+                    bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated())
+                        || (isAutoUpdate && deviceName != form2.getDeviceName())
                         || (!isAutoUpdate && url != form2.getDeviceName());
 
                     isAutoUpdate = form2.getAutoIPActivated();
@@ -163,8 +160,9 @@ namespace RemoteMessages
             }
             catch
             {
-                deviceName = "RomS-iPhone";
-                FindNewIP();
+                url = "http://192.168.1.1:333";
+                deviceName = "yourDevicesName";
+                port = "333";
 
                 closeToTray = true;
                 minimizeToTray = true;
@@ -184,6 +182,8 @@ namespace RemoteMessages
                 delayReplacing = 500;
 
                 delayUnfocusing = 5000;
+
+                raiseException(null, null);
             }
         }
         private void saveConfig()
@@ -222,7 +222,7 @@ namespace RemoteMessages
         {
             if (e.KeyCode == Keys.Escape)
             {
-                if (escapeToTray && ((!documentCompleted && !exceptionRaised)|| getCurrentContactElement() == null))
+                if (escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
                     this.Close();
                 else
                     saveDraft();
@@ -366,6 +366,9 @@ namespace RemoteMessages
             timerTimeOut.Interval = 30000;
             timerTimeOut.Tick += new EventHandler(raiseException);
 
+            using (StreamWriter w = File.AppendText("drafts")) { }
+            loadConfig();
+
             if (isAutoUpdate)
                 FindNewIP();
             else
@@ -475,7 +478,7 @@ namespace RemoteMessages
 
                 progressBar1.Visible = false;
 
-                DialogResult res = MessageBox.Show("Your device cannot be found.\nPlease check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options.",
+                DialogResult res = MessageBox.Show("Your device cannot be found.\nIf this is the first time you start the app, this is normal. Click OK to chose your preferences and enter your device's name or IP address.\nOtherwise, please check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options, Cancel to quit.",
                     "Error!",
         MessageBoxButtons.OKCancel,
         MessageBoxIcon.Error,
