@@ -56,6 +56,11 @@ namespace RemoteMessages
                 notify.MouseClick += new MouseEventHandler(ShowMe);
                 notify.BalloonTipClicked += new EventHandler(ShowMe);
                 notify.ContextMenuStrip = contextMenu;
+
+                timerUnfocusing = new Timer();
+                timerSend = new Timer();
+                timerReplacing = new Timer();
+                timerCheckNew = new Timer();
             }
             catch (Exception e)
             {
@@ -477,19 +482,15 @@ namespace RemoteMessages
             getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
             progressBar1.Visible = false;
 
-            timerUnfocusing = new Timer();
             timerUnfocusing.Interval = delayUnfocusing;
             timerUnfocusing.Tick += new EventHandler(sendEsc);
 
-            timerSend = new Timer();
             timerSend.Interval = 600;
             timerSend.Tick += new EventHandler(sendEnter);
 
-            timerReplacing = new Timer();
             timerReplacing.Interval = delayReplacing;
             timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
-            timerCheckNew = new Timer();
             timerCheckNew.Interval = 2000;
             timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
