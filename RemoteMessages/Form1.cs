@@ -412,11 +412,9 @@ namespace RemoteMessages
             HtmlElement list = getContactList();
             if (previousFirst != list.Children[0].InnerHtml)
             {
+                previousFirst = list.Children[0].InnerHtml;
                 if (justUnfocused)
-                {
-                    previousFirst = list.Children[0].InnerHtml;
                     justUnfocused = false;
-                }
                 else
                 {
                     string name = (list.Children[0].InnerText).Split('×')[0];
@@ -425,9 +423,9 @@ namespace RemoteMessages
                     notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
                     if (showBalloon)
                         notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
+                 
                     if (showFlash)
                         Native.Flash(this, (uint)flashCount);
-                    previousFirst = list.Children[0].InnerHtml;
                 }
             }
             timerCheckNew.Enabled = true;
