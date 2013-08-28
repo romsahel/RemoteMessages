@@ -531,6 +531,8 @@ namespace RemoteMessages
                         webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), url.Substring(7)));
                         loggedIn = false;
                     }
+                    else
+                        exceptionRaised = true;
                 }
             }
             else
