@@ -401,7 +401,7 @@ namespace RemoteMessages
             timerCheckNew.Stop();
             timerUnfocusing.Stop();
 
-            if (getCurrentContactElement() == null && previousSelectedContact != null)
+            if (previousSelectedContact != null && getCurrentContactElement() == null)
             {
                 Rectangle curr = previousSelectedContact.OffsetRectangle;
                 int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
@@ -596,6 +596,7 @@ namespace RemoteMessages
                     webBrowser1.Navigate(url);
                     loggedIn = true;
                     exceptionRaised = false;
+                    progressBar1.Visible = false;
                 }
                 timerTimeOut.Stop();
                 if (!documentCompleted)
