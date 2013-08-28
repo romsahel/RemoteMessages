@@ -44,7 +44,7 @@ namespace RemoteMessages
 
         private globalKeyboardHook gkh;
 
-        private const string VERSION = "3.1.7";
+        private const string VERSION = "3.1.71";
         private bool pressedCtrl = false;
 
         private bool isGhostMode;
