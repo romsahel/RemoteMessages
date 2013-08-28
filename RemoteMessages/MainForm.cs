@@ -577,17 +577,22 @@ namespace RemoteMessages
             timerCheckNew.Stop();
             if (!webBrowser1.Focused && notify.Visible)
             {
+                HtmlElement list = getContactList();
                 if (getCurrentContactElement() != null)
                 {
                     if (webBrowser1.Document.Body.Children[1].InnerHtml != previousConversation)
                     {
-                        previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml; 
-
+                        previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
+                        if (justUnfocused)
+                            justUnfocused = false;
+                        else
+                        {
+                            NotifyMe(list);
+                        }
                     }
                 }
                 else
                 {
-                    HtmlElement list = getContactList();
                     if (previousFirst != list.Children[0].InnerHtml)
                     {
                         previousFirst = list.Children[0].InnerHtml;
@@ -595,21 +600,26 @@ namespace RemoteMessages
                             justUnfocused = false;
                         else
                         {
-                            string name = (list.Children[0].InnerText).Split('×')[0];
-                            notify.Text = "Remote Messages\nNew message from " + name + ".\n";
-
-                            notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-
-                            if (showBalloon)
-                                notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
-
-                            if (showFlash)
-                                Native.Flash(this, (uint)flashCount);
+                            NotifyMe(list);
                         }
                     }
-                    timerCheckNew.Enabled = true;
                 }
+                timerCheckNew.Enabled = true;
             }
+        }
+
+        private void NotifyMe(HtmlElement list)
+        {
+            string name = (list.Children[0].InnerText).Split('×')[0];
+            notify.Text = "Remote Messages\nNew message from " + name + ".\n";
+
+            notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
+
+            if (showBalloon)
+                notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
+
+            if (showFlash)
+                Native.Flash(this, (uint)flashCount);
         }
 
         #region At launch
