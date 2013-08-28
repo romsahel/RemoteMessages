@@ -39,7 +39,7 @@ namespace RemoteMessages
             //delayAutoIP.Enabled = bA;
             delayReplacement.Enabled = bR;
             delayUnfocus.Enabled = bU;
-            
+
             delayAutoIP.Text = iA.ToString();
             delayReplacement.Text = iR.ToString();
             delayUnfocus.Text = iU.ToString();
@@ -176,7 +176,7 @@ namespace RemoteMessages
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
-        
+
         public int getAutoIPDelay() { return Int32.Parse(delayAutoIP.Text); }
         public int getReplacementDelay() { return Int32.Parse(delayReplacement.Text); }
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
@@ -196,12 +196,13 @@ namespace RemoteMessages
         private void tips_Click(object sender, EventArgs e)
         {
             string tips = "Press F1 to display this window.\n"
-            + "Press F11 to switch to fullscreen mode.\n"
-            + "Press F12 to manually update your IP.\n"
-            + "You can press Ctrl+Enter instead of click the send button.\n"
-            + "Press Alt+1-9 to open the Nth conversation.\n"
-            + "Press Ctrl+E to focus the sending area (editable text).\n"
-            ;
+                + "Press F2 to check for updates.\n"
+                + "Press F11 to switch to fullscreen mode.\n"
+                + "Press F12 to manually update your IP.\n"
+                + "You can press Ctrl+Enter instead of click the send button.\n"
+                + "Press Alt+1-9 to open the Nth conversation.\n"
+                + "Press Ctrl+E to focus the sending area (editable text).\n"
+                ;
 
             MessageBox.Show(tips, "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

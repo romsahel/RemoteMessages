@@ -42,37 +42,17 @@ namespace RemoteMessages
 
         private globalKeyboardHook gkh;
 
-        private const string VERSION = "3.1.0";
+        private const string VERSION = "3.1.6";
         private bool pressedCtrl = false;
 
         private bool isGhostMode;
         private string password;
+        private bool isPreviousF2;
 
 
         public MainForm()
         {
-            // Create web client.
-            WebClient client = new WebClient();
-            client.Proxy = null;
-            // Download string.
-            string value = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION")).Trim();
-            if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
-            { 
-                DialogResult result = MessageBox.Show("An update is available, would you like to download it?\n(current version is: " + VERSION + " ; new version is: " + value + ")",
-                             "An update is available!",
-                             MessageBoxButtons.YesNo,
-                             MessageBoxIcon.Warning,
-                             MessageBoxDefaultButton.Button2);
-
-                if (result == System.Windows.Forms.DialogResult.Yes)
-                {
-                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/setup_RemoteMessages.exe", "setup_update.exe");
-                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/update.bat", "update.bat");
-
-                    System.Diagnostics.Process.Start("update.bat", "/B");
-                    Environment.Exit(1);
-                }
-            }
+            checkUpdate();
             try
             {
                 InitializeComponent();
@@ -113,6 +93,32 @@ namespace RemoteMessages
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void checkUpdate()
+        {
+            // Create web client.
+            WebClient client = new WebClient();
+            client.Proxy = null;
+            // Download string.
+            string value = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION")).Trim();
+            if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
+            {
+                DialogResult result = MessageBox.Show("An update is available, would you like to download it?\n(current version is: " + VERSION + " ; new version is: " + value + ")",
+                             "An update is available!",
+                             MessageBoxButtons.YesNo,
+                             MessageBoxIcon.Warning,
+                             MessageBoxDefaultButton.Button2);
+
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/setup_RemoteMessages.exe", "setup_update.exe");
+                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/update.bat", "update.bat");
+
+                    System.Diagnostics.Process.Start("update.bat", "/B");
+                    Environment.Exit(1);
+                }
             }
         }
 
@@ -293,10 +299,18 @@ namespace RemoteMessages
             if (e.KeyCode == Keys.F1 && !isPreviousF1)
             {
                 displayOptions();
-                isPreviousF1 = e.KeyCode == Keys.F1;
+                isPreviousF1 = true;
             }
             else
                 isPreviousF1 = false;
+
+            if (e.KeyCode == Keys.F2 && !isPreviousF2)
+            {
+                checkUpdate();
+                isPreviousF2 = true;
+            }
+            else
+                isPreviousF2 = false;
 
             if (e.KeyCode == Keys.F11 && !isPreviousF11)
             {
