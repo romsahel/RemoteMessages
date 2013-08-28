@@ -6,11 +6,12 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Net;
 
 namespace RemoteMessages
 {
 
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private string previousFirst;
         private HtmlElement previousSelectedContact;
@@ -34,8 +35,9 @@ namespace RemoteMessages
         private bool isExiting;
         private bool fakeClick;
         private bool exceptionRaised;
+        private bool loggedIn, isAuthentication;
 
-        public Form1()
+        public MainForm()
         {
             try
             {
@@ -51,6 +53,9 @@ namespace RemoteMessages
                 justUnfocused = false;
                 drafts = new Dictionary<string, string>();
                 documentCompleted = false;
+
+                loggedIn = false;
+                isAuthentication = false;
 
                 notify.Visible = true;
                 notify.MouseClick += new MouseEventHandler(ShowMe);
@@ -74,10 +79,10 @@ namespace RemoteMessages
         /// </summary>
         private void displayOptions()
         {
-            using (Form2 form2 = new Form2(new bool[] { closeToTray, minimizeToTray, escapeToTray },
+            using (PreferencesForm form2 = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
-                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
+                isAutoUpdate, isReplacing, isUnfocusing, isAuthentication, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
             {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
@@ -93,7 +98,8 @@ namespace RemoteMessages
                     showFlash = bNotifs[1];
                     bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated())
                         || (isAutoUpdate && deviceName != form2.getDeviceName())
-                        || (!isAutoUpdate && url != form2.getDeviceName());
+                        || (!isAutoUpdate && url != form2.getDeviceName())
+                        || isAuthentication != form2.getAuthenticationActivated();
 
                     isAutoUpdate = form2.getAutoIPActivated();
                     isReplacing = form2.getReplacementActivated();
@@ -102,6 +108,8 @@ namespace RemoteMessages
                     delayAutoUpdate = form2.getAutoIPDelay();
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
+
+                    isAuthentication = form2.getAuthenticationActivated();
 
                     port = form2.getPort();
                     if (isAutoUpdate)
@@ -156,6 +164,8 @@ namespace RemoteMessages
                     delayReplacing = Int32.Parse(reader.ReadLine());
 
                     delayUnfocusing = Int32.Parse(reader.ReadLine());
+
+                    isAuthentication = Boolean.Parse(reader.ReadLine());
                 }
             }
             catch
@@ -182,6 +192,8 @@ namespace RemoteMessages
                 delayReplacing = 500;
 
                 delayUnfocusing = 5000;
+
+                isAuthentication = false;
 
                 raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
             }
@@ -212,6 +224,8 @@ namespace RemoteMessages
                 writer.WriteLine(delayReplacing);
 
                 writer.WriteLine(delayUnfocusing);
+
+                writer.WriteLine(isAuthentication);
             }
         }
 
@@ -503,7 +517,25 @@ namespace RemoteMessages
             timerTimeOut.Start();
 
             progressBar1.Value = 75;
-            webBrowser1.Navigate(url);
+
+            if (isAuthentication)
+            {
+                using (LoginForm login = new LoginForm())
+                {
+                    DialogResult res = login.ShowDialog();
+                    if (res == System.Windows.Forms.DialogResult.OK)
+                    {
+                        webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), url.Substring(7)));
+                        loggedIn = false;
+                    }
+                }
+            }
+            else
+            {
+                webBrowser1.Navigate(url);
+                loggedIn = true;
+            }
+
             webBrowser1.ScrollBarsEnabled = false;
         }
         ///<summary>
@@ -540,9 +572,9 @@ namespace RemoteMessages
                 string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
                 progressBar1.Value += 15;
                 url = "http://" + ip + ":" + port;
-                webBrowser1.Navigate(url);
                 UseWaitCursor = false;
                 Cursor.Current = Cursors.Default;
+                DisplayPage();
             }
             catch
             {
@@ -556,6 +588,11 @@ namespace RemoteMessages
         {
             if (!webBrowser1.Document.Domain.Contains("exception"))
             {
+                if (!loggedIn)
+                {
+                    webBrowser1.Navigate(url);
+                    loggedIn = true;
+                }
                 timerTimeOut.Stop();
 
                 documentCompleted = true;

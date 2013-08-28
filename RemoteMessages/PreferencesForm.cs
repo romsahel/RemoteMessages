@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RemoteMessages
 {
-    public partial class Form2 : Form
+    public partial class PreferencesForm : Form
     {
         private const int defaultAutoIP = 3;
         private const int defaultReplacement = 500;
@@ -18,7 +18,7 @@ namespace RemoteMessages
         private const int defaultFlash = 6;
         private string name, url;
 
-        public Form2(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, bool bAuthen, int iA, int iR, int iU, string sName, string sUrl)
         {
             InitializeComponent();
             cancel.Select();
@@ -39,6 +39,8 @@ namespace RemoteMessages
             //delayAutoIP.Enabled = bA;
             delayReplacement.Enabled = bR;
             delayUnfocus.Enabled = bU;
+
+            activateAuthentication.Checked = bAuthen;
 
             delayAutoIP.Text = iA.ToString();
             delayReplacement.Text = iR.ToString();
@@ -173,6 +175,8 @@ namespace RemoteMessages
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
+
+        public bool getAuthenticationActivated() { return activateAuthentication.Checked; }
 
         public int getAutoIPDelay() { return Int32.Parse(delayAutoIP.Text); }
         public int getReplacementDelay() { return Int32.Parse(delayReplacement.Text); }
