@@ -515,6 +515,7 @@ namespace RemoteMessages
         }
         private void DisplayPage()
         {
+            documentCompleted = false;
             exceptionRaised = false;
             timerTimeOut.Stop();
             timerTimeOut.Start();
@@ -548,7 +549,7 @@ namespace RemoteMessages
         ///</summary>
         private void FindNewIP()
         {
-            exceptionRaised = false;
+            documentCompleted = false;
             timerTimeOut.Stop();
             timerTimeOut.Start();
 
