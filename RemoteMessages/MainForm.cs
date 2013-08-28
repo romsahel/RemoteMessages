@@ -117,10 +117,9 @@ namespace RemoteMessages
 
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
-                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/setup_RemoteMessages.exe", "setup_update.exe");
-                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/update.bat", "update.bat");
+                    client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/setup_RemoteMessages.exe", appFolder + "setup_update.exe");
 
-                    System.Diagnostics.Process.Start("update.bat", "/B");
+                    System.Diagnostics.Process.Start(appFolder + "update.bat", "/B");
                     Environment.Exit(1);
                 }
             }
