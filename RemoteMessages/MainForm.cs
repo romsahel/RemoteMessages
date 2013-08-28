@@ -796,7 +796,7 @@ namespace RemoteMessages
             if (documentCompleted && !exceptionRaised)
                 saveDraft();
             List<string> contactList = new List<string>(drafts.Keys);
-            using (StreamWriter writer = new StreamWriter("drafts"))
+            using (StreamWriter writer = new StreamWriter(appFolder + "drafts"))
             {
                 foreach (string s in contactList)
                 {
@@ -811,7 +811,7 @@ namespace RemoteMessages
         private void loadDraftFromFile()
         {
             string previous = "";
-            using (StreamReader reader = new StreamReader("drafts"))
+            using (StreamReader reader = new StreamReader(appFolder + "drafts"))
             {
                 while (!reader.EndOfStream)
                 {
