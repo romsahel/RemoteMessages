@@ -35,10 +35,28 @@ namespace RemoteMessages
         private bool isExiting;
         private bool fakeClick;
         private bool exceptionRaised;
-        private bool loggedIn, isAuthentication;
+        private bool loggedIn;
+
+        private const string VERSION = "2.9.0";
+
 
         public MainForm()
         {
+            //// Create web client.
+            //WebClient client = new WebClient();
+            //client.Proxy = null;
+            //// Download string.
+            //string value = client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION");
+            //if (Int32.Parse(value) > Int32.Parse(VERSION.Replace(".","")))
+            //{
+            //    DialogResult result = MessageBox.Show("An update is available, would you like to download it?",
+            //                 "Une mise à jour est disponible !",
+            //                 MessageBoxButtons.YesNo,
+            //                 MessageBoxIcon.Warning,
+            //                 MessageBoxDefaultButton.Button2);
+
+
+            //}
             try
             {
                 InitializeComponent();
@@ -55,7 +73,6 @@ namespace RemoteMessages
                 documentCompleted = false;
 
                 loggedIn = false;
-                isAuthentication = false;
 
                 notify.Visible = true;
                 notify.MouseClick += new MouseEventHandler(ShowMe);
@@ -82,9 +99,8 @@ namespace RemoteMessages
             using (PreferencesForm form2 = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
-                isAutoUpdate, isReplacing, isUnfocusing, isAuthentication, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
-            {
-                DialogResult res = form2.ShowDialog();
+                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
+            {                DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
                 {
                     bool[] bBackgrounds = form2.getBackgrounderOptions();
@@ -98,8 +114,7 @@ namespace RemoteMessages
                     showFlash = bNotifs[1];
                     bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated())
                         || (isAutoUpdate && deviceName != form2.getDeviceName())
-                        || (!isAutoUpdate && url != form2.getDeviceName())
-                        || isAuthentication != form2.getAuthenticationActivated();
+                        || (!isAutoUpdate && url != form2.getDeviceName());
 
                     isAutoUpdate = form2.getAutoIPActivated();
                     isReplacing = form2.getReplacementActivated();
@@ -108,9 +123,7 @@ namespace RemoteMessages
                     delayAutoUpdate = form2.getAutoIPDelay();
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
-
-                    isAuthentication = form2.getAuthenticationActivated();
-
+                    
                     port = form2.getPort();
                     if (isAutoUpdate)
                         deviceName = form2.getDeviceName();
@@ -164,8 +177,6 @@ namespace RemoteMessages
                     delayReplacing = Int32.Parse(reader.ReadLine());
 
                     delayUnfocusing = Int32.Parse(reader.ReadLine());
-
-                    isAuthentication = Boolean.Parse(reader.ReadLine());
                 }
                 return true;
             }
@@ -193,8 +204,6 @@ namespace RemoteMessages
                 delayReplacing = 500;
 
                 delayUnfocusing = 5000;
-
-                isAuthentication = false;
 
                 raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
                 return false;
@@ -226,8 +235,6 @@ namespace RemoteMessages
                 writer.WriteLine(delayReplacing);
 
                 writer.WriteLine(delayUnfocusing);
-
-                writer.WriteLine(isAuthentication);
             }
         }
 
@@ -379,7 +386,7 @@ namespace RemoteMessages
         #region Form modification (Focus, Size, Closing)
         private void Form1_Shown(object sender, EventArgs e)
         {
-            timerTimeOut.Interval = 30000;
+            timerTimeOut.Interval = 25000;
             timerTimeOut.Tick += new EventHandler(raiseException);
 
             using (StreamWriter w = File.AppendText("drafts")) { }
@@ -515,32 +522,52 @@ namespace RemoteMessages
         }
         private void DisplayPage()
         {
+            label1.Visible = false;
             documentCompleted = false;
             exceptionRaised = false;
             timerTimeOut.Stop();
-            timerTimeOut.Start();
 
             progressBar1.Value = 75;
 
-            if (isAuthentication)
+
+
+            HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(url);
+            wrq.Proxy = null;
+            HttpWebResponse wrs = null;
+
+            try
             {
-                using (LoginForm login = new LoginForm())
+                wrs = (HttpWebResponse)wrq.GetResponse();
+
+                if (wrs.StatusCode == HttpStatusCode.OK)
                 {
-                    DialogResult res = login.ShowDialog();
-                    if (res == System.Windows.Forms.DialogResult.OK)
-                    {
-                        webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), url.Substring(7)));
-                        loggedIn = false;
-                    }
-                    else
-                        exceptionRaised = true;
+                    webBrowser1.Navigate(url);
+                    loggedIn = true;
                 }
             }
-            else
+            catch (System.Net.WebException protocolError)
             {
-                webBrowser1.Navigate(url);
-                loggedIn = true;
+                if (((HttpWebResponse)protocolError.Response).StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    using (LoginForm login = new LoginForm())
+                    {
+                        DialogResult res = login.ShowDialog();
+                        if (res == System.Windows.Forms.DialogResult.OK)
+                        {
+                            webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), url.Substring(7)));
+                            loggedIn = false;
+                        }
+                        else
+                        {
+                            label1.Visible = true;
+                            progressBar1.Visible = false;
+                            exceptionRaised = true;
+                        }
+                    }
+                }
             }
+
+            timerTimeOut.Start();
 
             webBrowser1.ScrollBarsEnabled = false;
         }
@@ -549,10 +576,6 @@ namespace RemoteMessages
         ///</summary>
         private void FindNewIP()
         {
-            documentCompleted = false;
-            timerTimeOut.Stop();
-            timerTimeOut.Start();
-
             progressBar1.Value = 0;
             progressBar1.Visible = true;
             Cursor.Current = Cursors.WaitCursor;
@@ -724,11 +747,18 @@ namespace RemoteMessages
         /// </summary>
         private HtmlElement getContactList()
         {
-            HtmlElement list = webBrowser1.Document.Body.Children[2];
-            if (list.InnerHtml.Contains("search"))
-                return list.Children[1].Children[0].Children[0];
-            else
-                return list.Children[0].Children[0].Children[0];
+            try
+            {
+                HtmlElement list = webBrowser1.Document.Body.Children[2];
+                if (list.InnerHtml.Contains("search"))
+                    return list.Children[1].Children[0].Children[0];
+                else
+                    return list.Children[0].Children[0].Children[0];
+            }
+            catch
+            {
+                return null;
+            }
         }
         /// <summary>
         /// Returns as a string the current contact name (followed by a 'x')

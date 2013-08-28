@@ -65,14 +65,10 @@
             this.port = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.activateAuthentication = new System.Windows.Forms.CheckBox();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.label14 = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // activateReplacement
@@ -161,7 +157,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(140, 613);
+            this.ok.Location = new System.Drawing.Point(140, 571);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -171,11 +167,8 @@
             // 
             // cancel
             // 
-            this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(245, 613);
+            this.cancel.Location = new System.Drawing.Point(245, 571);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -245,7 +238,7 @@
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(370, 623);
+            this.tips.Location = new System.Drawing.Point(370, 581);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -450,47 +443,12 @@
             this.panel5.Size = new System.Drawing.Size(480, 60);
             this.panel5.TabIndex = 43;
             // 
-            // activateAuthentication
-            // 
-            this.activateAuthentication.AutoSize = true;
-            this.activateAuthentication.Checked = true;
-            this.activateAuthentication.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.activateAuthentication.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateAuthentication.Location = new System.Drawing.Point(39, 555);
-            this.activateAuthentication.Name = "activateAuthentication";
-            this.activateAuthentication.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.activateAuthentication.Size = new System.Drawing.Size(190, 24);
-            this.activateAuthentication.TabIndex = 44;
-            this.activateAuthentication.Text = "Activate authentication";
-            this.activateAuthentication.UseVisualStyleBackColor = true;
-            // 
-            // panel6
-            // 
-            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel6.Controls.Add(this.label14);
-            this.panel6.Location = new System.Drawing.Point(23, 568);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(480, 33);
-            this.panel6.TabIndex = 47;
-            // 
-            // label14
-            // 
-            this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(221, 2);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(254, 26);
-            this.label14.TabIndex = 11;
-            this.label14.Text = "Activate if you use Authentication.";
-            // 
-            // Form2
+            // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 658);
+            this.ClientSize = new System.Drawing.Size(515, 613);
             this.ControlBox = false;
-            this.Controls.Add(this.activateAuthentication);
-            this.Controls.Add(this.panel6);
             this.Controls.Add(this.activateAutoIP);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.showBalloon);
@@ -518,7 +476,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.Name = "Form2";
+            this.Name = "PreferencesForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Preferences";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form2_KeyDown);
@@ -528,7 +486,6 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -572,8 +529,5 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox port;
-        private System.Windows.Forms.CheckBox activateAuthentication;
-        private System.Windows.Forms.Panel panel6;
-        private System.Windows.Forms.Label label14;
     }
 }
