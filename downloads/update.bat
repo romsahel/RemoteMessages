@@ -1,2 +1,4 @@
+@echo off
 setup_update.exe /s
-RemoteMessages.exe
+start /B RemoteMessages.exe
+exit
