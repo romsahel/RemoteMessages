@@ -136,7 +136,7 @@ namespace RemoteMessages
 
         }
 
-        private void loadConfig()
+        private bool loadConfig()
         {
             try
             {
@@ -167,6 +167,7 @@ namespace RemoteMessages
 
                     isAuthentication = Boolean.Parse(reader.ReadLine());
                 }
+                return true;
             }
             catch
             {
@@ -196,6 +197,7 @@ namespace RemoteMessages
                 isAuthentication = false;
 
                 raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
+                return false;
             }
         }
         private void saveConfig()
@@ -381,13 +383,14 @@ namespace RemoteMessages
             timerTimeOut.Tick += new EventHandler(raiseException);
 
             using (StreamWriter w = File.AppendText("drafts")) { }
-            loadConfig();
-
-            if (isAutoUpdate)
-                FindNewIP();
-            else
-                DisplayPage();
-
+            bool successful = loadConfig();
+            if (successful)
+            {
+                if (isAutoUpdate)
+                    FindNewIP();
+                else
+                    DisplayPage();
+            }
             loadDraftFromFile();
         }
 
