@@ -453,7 +453,7 @@ namespace RemoteMessages
         }
         #endregion
 
-        ///<summary>
+            ///<summary>
         /// Called on timer end to check for new message
         ///</summary>
         private void checkNewMsg(object sender, EventArgs e)
@@ -595,30 +595,34 @@ namespace RemoteMessages
                 {
                     webBrowser1.Navigate(url);
                     loggedIn = true;
+                    exceptionRaised = false;
                 }
                 timerTimeOut.Stop();
+                if (!documentCompleted)
+                {
+                    documentCompleted = true;
+                    webBrowser1.ScrollBarsEnabled = false;
 
-                documentCompleted = true;
-                webBrowser1.ScrollBarsEnabled = false;
-                getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-                progressBar1.Visible = false;
+                    getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
+                    progressBar1.Visible = false;
 
-                timerUnfocusing.Interval = delayUnfocusing;
-                timerUnfocusing.Tick += new EventHandler(sendEsc);
+                    timerUnfocusing.Interval = delayUnfocusing;
+                    timerUnfocusing.Tick += new EventHandler(sendEsc);
 
-                timerSend.Interval = 600;
-                timerSend.Tick += new EventHandler(sendEnter);
+                    timerSend.Interval = 600;
+                    timerSend.Tick += new EventHandler(sendEnter);
 
-                timerReplacing.Interval = delayReplacing;
-                timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
+                    timerReplacing.Interval = delayReplacing;
+                    timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
-                timerCheckNew.Interval = 2000;
-                timerCheckNew.Tick += new EventHandler(checkNewMsg);
+                    timerCheckNew.Interval = 2000;
+                    timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
-                if (!Focused && !webBrowser1.Focused)
-                    Form1_Deactivate(null, null);
+                    if (!Focused && !webBrowser1.Focused)
+                        Form1_Deactivate(null, null);
 
-                url = webBrowser1.Url.ToString();
+                    url = webBrowser1.Url.ToString();
+                }
             }
             else
             {
