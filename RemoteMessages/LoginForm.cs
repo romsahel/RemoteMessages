@@ -11,9 +11,24 @@ namespace RemoteMessages
 {
     public partial class LoginForm : Form
     {
-        public LoginForm()
+        public LoginForm(bool fromGhostMode = false)
         {
             InitializeComponent();
+
+            if (fromGhostMode)
+            {
+                this.username.Visible = false;
+                this.password.Visible = false;
+                this.labelUser.Visible = false;
+                this.labelPass.Visible = false;
+
+                this.labelMessage.Text = "The application requires an authentication.";
+            }
+            else
+            {
+                this.ghostmodePassword.Visible = false;
+                this.ghostmodeLabel.Visible = false;
+            }
         }
 
 
@@ -73,5 +88,14 @@ namespace RemoteMessages
 
         public string getUsername() { return username.Text; }
         public string getPassword() { return password.Text; }
+        public string getGhostModePassword() { return ghostmodePassword.Text; }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            if (ghostmodePassword.Visible)
+                this.ghostmodePassword.Focus();
+            else
+                this.password.Focus();
+        }
     }
 }

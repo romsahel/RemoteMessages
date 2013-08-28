@@ -130,6 +130,7 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.webBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "MainForm";
             this.Text = "Remote Messages";
             this.Activated += new System.EventHandler(this.Form1_Activated);

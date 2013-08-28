@@ -47,8 +47,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebKitBrowser">
+      <HintPath>..\..\..\..\WebKit.NET-0.5-bin-cairo\bin\WebKitBrowser.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="globalKeyboardHook.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

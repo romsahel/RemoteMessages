@@ -28,26 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.username = new System.Windows.Forms.TextBox();
-            this.password = new System.Windows.Forms.TextBox();
+            this.labelMessage = new System.Windows.Forms.Label();
             this.OKbutton = new System.Windows.Forms.Button();
             this.Cancelbutton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.username = new System.Windows.Forms.TextBox();
+            this.password = new System.Windows.Forms.TextBox();
+            this.labelUser = new System.Windows.Forms.Label();
+            this.labelPass = new System.Windows.Forms.Label();
+            this.ghostmodePassword = new System.Windows.Forms.TextBox();
+            this.ghostmodeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
+            // labelMessage
             // 
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(308, 44);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "The application requires an authentication. Please enter a username and a passwor" +
+            this.labelMessage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.labelMessage.Location = new System.Drawing.Point(13, 13);
+            this.labelMessage.Name = "labelMessage";
+            this.labelMessage.Size = new System.Drawing.Size(308, 44);
+            this.labelMessage.TabIndex = 0;
+            this.labelMessage.Text = "The application requires an authentication. Please enter a username and a passwor" +
                 "d.";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // OKbutton
+            // 
+            this.OKbutton.Location = new System.Drawing.Point(92, 158);
+            this.OKbutton.Name = "OKbutton";
+            this.OKbutton.Size = new System.Drawing.Size(75, 23);
+            this.OKbutton.TabIndex = 3;
+            this.OKbutton.Text = "OK";
+            this.OKbutton.UseVisualStyleBackColor = true;
+            this.OKbutton.Click += new System.EventHandler(this.OKbutton_Click);
+            // 
+            // Cancelbutton
+            // 
+            this.Cancelbutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.Cancelbutton.Location = new System.Drawing.Point(186, 158);
+            this.Cancelbutton.Name = "Cancelbutton";
+            this.Cancelbutton.Size = new System.Drawing.Size(75, 23);
+            this.Cancelbutton.TabIndex = 4;
+            this.Cancelbutton.Text = "Cancel";
+            this.Cancelbutton.UseVisualStyleBackColor = true;
+            this.Cancelbutton.Click += new System.EventHandler(this.Cancelbutton_Click);
             // 
             // username
             // 
@@ -73,46 +96,44 @@
             this.password.Enter += new System.EventHandler(this.password_Enter);
             this.password.Leave += new System.EventHandler(this.password_Leave);
             // 
-            // OKbutton
+            // labelUser
             // 
-            this.OKbutton.Location = new System.Drawing.Point(92, 158);
-            this.OKbutton.Name = "OKbutton";
-            this.OKbutton.Size = new System.Drawing.Size(75, 23);
-            this.OKbutton.TabIndex = 3;
-            this.OKbutton.Text = "OK";
-            this.OKbutton.UseVisualStyleBackColor = true;
-            this.OKbutton.Click += new System.EventHandler(this.OKbutton_Click);
+            this.labelUser.AutoSize = true;
+            this.labelUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUser.Location = new System.Drawing.Point(12, 80);
+            this.labelUser.Name = "labelUser";
+            this.labelUser.Size = new System.Drawing.Size(74, 16);
+            this.labelUser.TabIndex = 5;
+            this.labelUser.Text = "Username:";
             // 
-            // Cancelbutton
+            // labelPass
             // 
-            this.Cancelbutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancelbutton.Location = new System.Drawing.Point(186, 158);
-            this.Cancelbutton.Name = "Cancelbutton";
-            this.Cancelbutton.Size = new System.Drawing.Size(75, 23);
-            this.Cancelbutton.TabIndex = 4;
-            this.Cancelbutton.Text = "Cancel";
-            this.Cancelbutton.UseVisualStyleBackColor = true;
-            this.Cancelbutton.Click += new System.EventHandler(this.Cancelbutton_Click);
+            this.labelPass.AutoSize = true;
+            this.labelPass.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPass.Location = new System.Drawing.Point(12, 112);
+            this.labelPass.Name = "labelPass";
+            this.labelPass.Size = new System.Drawing.Size(71, 16);
+            this.labelPass.TabIndex = 6;
+            this.labelPass.Text = "Password:";
             // 
-            // label2
+            // ghostmodePassword
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 80);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 16);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Username:";
+            this.ghostmodePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ghostmodePassword.Location = new System.Drawing.Point(59, 99);
+            this.ghostmodePassword.Name = "ghostmodePassword";
+            this.ghostmodePassword.Size = new System.Drawing.Size(229, 26);
+            this.ghostmodePassword.TabIndex = 7;
+            this.ghostmodePassword.UseSystemPasswordChar = true;
             // 
-            // label3
+            // ghostmodeLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(71, 16);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Password:";
+            this.ghostmodeLabel.AutoSize = true;
+            this.ghostmodeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ghostmodeLabel.Location = new System.Drawing.Point(66, 73);
+            this.ghostmodeLabel.Name = "ghostmodeLabel";
+            this.ghostmodeLabel.Size = new System.Drawing.Size(212, 20);
+            this.ghostmodeLabel.TabIndex = 8;
+            this.ghostmodeLabel.Text = "Please, enter your password:";
             // 
             // LoginForm
             // 
@@ -121,13 +142,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancelbutton;
             this.ClientSize = new System.Drawing.Size(333, 193);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.ghostmodeLabel);
+            this.Controls.Add(this.ghostmodePassword);
+            this.Controls.Add(this.labelPass);
+            this.Controls.Add(this.labelUser);
             this.Controls.Add(this.Cancelbutton);
             this.Controls.Add(this.OKbutton);
             this.Controls.Add(this.password);
             this.Controls.Add(this.username);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelMessage);
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -135,6 +158,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Login";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.LoginForm_Load);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LoginForm_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -143,12 +167,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelMessage;
         private System.Windows.Forms.TextBox username;
         private System.Windows.Forms.TextBox password;
         private System.Windows.Forms.Button OKbutton;
         private System.Windows.Forms.Button Cancelbutton;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelUser;
+        private System.Windows.Forms.Label labelPass;
+        private System.Windows.Forms.TextBox ghostmodePassword;
+        private System.Windows.Forms.Label ghostmodeLabel;
     }
 }

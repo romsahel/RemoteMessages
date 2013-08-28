@@ -18,7 +18,7 @@ namespace RemoteMessages
         private const int defaultFlash = 6;
         private string name, url;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost)
         {
             InitializeComponent();
             cancel.Select();
@@ -46,6 +46,9 @@ namespace RemoteMessages
             name = sName;
             url = (sUrl.Substring(7)).Split(':')[0];
             port.Text = sUrl.Split(':')[2];
+
+            activateGhostMode.Checked = bGhost;
+            password.Text = sGhost;
 
             if (activateAutoIP.Checked)
                 deviceName.Text = name;
@@ -181,6 +184,9 @@ namespace RemoteMessages
         public string getDeviceName() { return deviceName.Text; }
         public string getPort() { return port.Text; }
 
+        public bool getGhostModeActivated() { return activateGhostMode.Checked; }
+        public string getPassword() { return password.Text; }
+
         private void button1_Click(object sender, EventArgs e)
         {
             this.DialogResult = System.Windows.Forms.DialogResult.Abort;
@@ -208,6 +214,11 @@ namespace RemoteMessages
         private void showFlash_CheckedChanged(object sender, EventArgs e)
         {
             flashCount.Enabled = showFlash.Checked;
+        }
+
+        private void activateGhostMode_CheckedChanged(object sender, EventArgs e)
+        {
+            password.Enabled = activateGhostMode.Checked;
         }
     }
 }

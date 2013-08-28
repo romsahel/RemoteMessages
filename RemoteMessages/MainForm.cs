@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Net;
+using Utilities;
 
 namespace RemoteMessages
 {
@@ -20,6 +21,8 @@ namespace RemoteMessages
         private bool isPreviousAltDown;
         private bool isPreviousCtrlDown;
         private bool isPreviousMouse;
+        private bool isPreviousH;
+
         private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew, timerTimeOut;
         private Dictionary<string, string> drafts;
         private bool isPreviousF12;
@@ -37,7 +40,13 @@ namespace RemoteMessages
         private bool exceptionRaised;
         private bool loggedIn;
 
+        private globalKeyboardHook gkh;
+
         private const string VERSION = "3.1.0";
+        private bool pressedCtrl = false;
+
+        private bool isGhostMode;
+        private string password;
 
 
         public MainForm()
@@ -73,6 +82,7 @@ namespace RemoteMessages
                 isPreviousF1 = false;
                 isPreviousAltDown = false;
                 isPreviousCtrlDown = false;
+                isPreviousH = false;
                 isExiting = false;
                 isPreviousMouse = false;
                 justUnfocused = false;
@@ -91,6 +101,14 @@ namespace RemoteMessages
                 timerReplacing = new Timer();
                 timerCheckNew = new Timer();
                 timerTimeOut = new Timer();
+
+                gkh = new globalKeyboardHook();
+                gkh.HookedKeys.Add(Keys.H);
+                gkh.HookedKeys.Add(Keys.E);
+                gkh.HookedKeys.Add(Keys.LControlKey);
+                gkh.HookedKeys.Add(Keys.RControlKey);
+                gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
+                gkh.unhook();
             }
             catch (Exception e)
             {
@@ -106,8 +124,10 @@ namespace RemoteMessages
             using (PreferencesForm form2 = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
-                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url))
-            {                DialogResult res = form2.ShowDialog();
+                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url,
+                isGhostMode, password))
+            {                
+                DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
                 {
                     bool[] bBackgrounds = form2.getBackgrounderOptions();
@@ -130,7 +150,10 @@ namespace RemoteMessages
                     delayAutoUpdate = form2.getAutoIPDelay();
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
-                    
+
+                    isGhostMode = form2.getGhostModeActivated();
+                    password = form2.getPassword();
+
                     port = form2.getPort();
                     if (isAutoUpdate)
                         deviceName = form2.getDeviceName();
@@ -184,6 +207,9 @@ namespace RemoteMessages
                     delayReplacing = Int32.Parse(reader.ReadLine());
 
                     delayUnfocusing = Int32.Parse(reader.ReadLine());
+
+                    isGhostMode = Boolean.Parse(reader.ReadLine());
+                    password = reader.ReadLine();
                 }
                 return true;
             }
@@ -211,6 +237,9 @@ namespace RemoteMessages
                 delayReplacing = 500;
 
                 delayUnfocusing = 5000;
+
+                isGhostMode = false;
+                password = "";
 
                 raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
                 return false;
@@ -242,6 +271,9 @@ namespace RemoteMessages
                 writer.WriteLine(delayReplacing);
 
                 writer.WriteLine(delayUnfocusing);
+
+                writer.WriteLine(isGhostMode);
+                writer.WriteLine(password);
             }
         }
 
@@ -252,15 +284,16 @@ namespace RemoteMessages
         {
             if (e.KeyCode == Keys.Escape)
             {
-                if (escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
+                if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
                     this.Close();
                 else
                     saveDraft();
             }
+
             if (e.KeyCode == Keys.F1 && !isPreviousF1)
             {
                 displayOptions();
-                isPreviousF1 = true;
+                isPreviousF1 = e.KeyCode == Keys.F1;
             }
             else
                 isPreviousF1 = false;
@@ -297,26 +330,65 @@ namespace RemoteMessages
             else
                 isPreviousAltDown = false;
 
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter && !isPreviousCtrlDown)
+            if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
             {
-                webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
+                if (e.KeyCode == Keys.Enter)
+                {
+                    webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
+                    timerSend.Start();
+                    isPreviousCtrlDown = true;
+                }
+                else if (e.KeyCode == Keys.E)
+                {
+                    webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
 
-                timerSend.Start();
-
-                isPreviousCtrlDown = true;
+                    isPreviousCtrlDown = true;
+                }
+                else if (isGhostMode && e.KeyCode == Keys.H && !isPreviousH)
+                {
+                    if (notify.Visible)
+                    {
+                        gkh.hook();
+                        notify.Visible = false;
+                        this.Hide();
+                    }
+                }
             }
             else
                 isPreviousCtrlDown = false;
 
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E && !isPreviousCtrlDown)
-            {
-                webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
-
-                isPreviousCtrlDown = true;
-            }
-            else
-                isPreviousCtrlDown = false;
+            isPreviousH = (e.KeyCode == Keys.H);
         }
+        void gkh_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (pressedCtrl && e.KeyCode == Keys.H)
+            {
+                bool loop;
+                do
+                {
+                    loop = false;
+                    using (LoginForm login = new LoginForm(true))
+                    {
+                        DialogResult res = login.ShowDialog();
+                        if (res == System.Windows.Forms.DialogResult.OK)
+                        {
+                            if (login.getGhostModePassword() == password)
+                            {
+                                isPreviousCtrlDown = true;
+                                isPreviousH = true;
+                                gkh.unhook();
+                                notify.Visible = true;
+                                this.Show();
+                            }
+                            else
+                                loop = true;
+                        }
+                    }
+                } while (loop);
+            }
+            pressedCtrl = (e.KeyCode == Keys.RControlKey || e.KeyCode == Keys.LControlKey);
+            e.Handled = true;
+        } 
 
         #region Conversation change (saving/loading draft, emoji)
         ///<summary>
@@ -473,7 +545,7 @@ namespace RemoteMessages
         private void checkNewMsg(object sender, EventArgs e)
         {
             timerCheckNew.Stop();
-            if (!webBrowser1.Focused)
+            if (!webBrowser1.Focused && notify.Visible)
             {
                 HtmlElement list = getContactList();
                 if (previousFirst != list.Children[0].InnerHtml)
@@ -487,7 +559,7 @@ namespace RemoteMessages
                         notify.Text = "Remote Messages\nNew message from " + name + ".\n";
 
                         notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-
+                        
                         if (showBalloon)
                             notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
 
@@ -754,18 +826,11 @@ namespace RemoteMessages
         /// </summary>
         private HtmlElement getContactList()
         {
-            try
-            {
                 HtmlElement list = webBrowser1.Document.Body.Children[2];
                 if (list.InnerHtml.Contains("search"))
                     return list.Children[1].Children[0].Children[0];
                 else
                     return list.Children[0].Children[0].Children[0];
-            }
-            catch
-            {
-                return null;
-            }
         }
         /// <summary>
         /// Returns as a string the current contact name (followed by a 'x')
@@ -895,5 +960,7 @@ namespace RemoteMessages
             }
         }
         #endregion
+
+
     }
 }

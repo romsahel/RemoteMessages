@@ -65,10 +65,16 @@
             this.port = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.password = new System.Windows.Forms.TextBox();
+            this.activateGhostMode = new System.Windows.Forms.CheckBox();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.label14 = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // activateReplacement
@@ -157,7 +163,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(140, 571);
+            this.ok.Location = new System.Drawing.Point(140, 630);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -168,7 +174,7 @@
             // cancel
             // 
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(245, 571);
+            this.cancel.Location = new System.Drawing.Point(245, 630);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -238,7 +244,7 @@
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(370, 581);
+            this.tips.Location = new System.Drawing.Point(370, 640);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -443,12 +449,69 @@
             this.panel5.Size = new System.Drawing.Size(480, 60);
             this.panel5.TabIndex = 43;
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(60, 584);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(56, 13);
+            this.label13.TabIndex = 46;
+            this.label13.Text = "Password:";
+            // 
+            // password
+            // 
+            this.password.Location = new System.Drawing.Point(139, 581);
+            this.password.Name = "password";
+            this.password.Size = new System.Drawing.Size(100, 20);
+            this.password.TabIndex = 45;
+            this.password.Text = "password";
+            this.password.UseSystemPasswordChar = true;
+            // 
+            // activateGhostMode
+            // 
+            this.activateGhostMode.AutoSize = true;
+            this.activateGhostMode.Checked = true;
+            this.activateGhostMode.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.activateGhostMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.activateGhostMode.Location = new System.Drawing.Point(39, 551);
+            this.activateGhostMode.Name = "activateGhostMode";
+            this.activateGhostMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.activateGhostMode.Size = new System.Drawing.Size(178, 24);
+            this.activateGhostMode.TabIndex = 44;
+            this.activateGhostMode.Text = "Activate Ghost-Mode";
+            this.activateGhostMode.UseVisualStyleBackColor = true;
+            this.activateGhostMode.CheckedChanged += new System.EventHandler(this.activateGhostMode_CheckedChanged);
+            // 
+            // panel6
+            // 
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.label14);
+            this.panel6.Location = new System.Drawing.Point(23, 564);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(480, 60);
+            this.panel6.TabIndex = 47;
+            // 
+            // label14
+            // 
+            this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(221, 2);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(254, 52);
+            this.label14.TabIndex = 11;
+            this.label14.Text = "Quickly Hide/Show the app by pressing Ctrl+H. When hidden, the app will be invisi" +
+                "ble so that you wont get notifications.\r\n";
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 613);
+            this.ClientSize = new System.Drawing.Size(515, 675);
             this.ControlBox = false;
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.password);
+            this.Controls.Add(this.activateGhostMode);
+            this.Controls.Add(this.panel6);
             this.Controls.Add(this.activateAutoIP);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.showBalloon);
@@ -486,6 +549,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -529,5 +593,10 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox port;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox password;
+        private System.Windows.Forms.CheckBox activateGhostMode;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Label label14;
     }
 }
