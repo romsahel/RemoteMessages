@@ -7,7 +7,12 @@
     <meta name="description" content="Remote Messages App : A Client for Remote Messages" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
+	
+	<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+	
+	<script type="text/javascript" src="highslide/highslide-with-gallery.js"></script>
+	<script type="text/javascript" src="highslide/highslide.config.js" charset="utf-8"></script>
+	
     <title>Remote Client</title>
   </head>
 
@@ -32,8 +37,8 @@
       <section id="main_content" class="inner">
 <br>
 <h2>What is Remote Client?</h2>
-<p>Remote Client is a standalone application bringing some more features to the already awesome <a href="http://www.remotemessages.com/">Remote Messages</a>.
-This is a personal project shared here for those interested. If you have any constructive comment, suggestion, request, please check this <a href="http://www.remotemessages.com/forum/index.php?p=/discussion/157/windows-client-for-remote-messages#Item_1">link</a>.</p>
+<p>Remote Client is a standalone application for the already awesome <a href="http://www.remotemessages.com/">Remote Messages</a>. Not only does it support every native features but it also brings some more possibilities!
+<br>This is a personal project shared here for those interested. If you have any constructive comment, suggestion, request, please check this <a href="http://www.remotemessages.com/forum/index.php?p=/discussion/157/windows-client-for-remote-messages#Item_1">link</a>.</p>
 <br>
 <h2>Features:</h2>
 <ul>
@@ -42,7 +47,7 @@ This is a personal project shared here for those interested. If you have any con
 <li><span>Drafts.</span>
 <p>Sometimes, you’re writing a message but you receive another one that needs to be quickly answered: drafts are the solution. Just switch conversation, send your text, and go back: your previously began message has been saved and you can continue writing it.</p></li>
 <li><span>Replaces text smileys by their EMOJI equivalent.</span>
-<p>Some of your contacts might not have an iPhone and send you text emoticons such as “:)”, “:(“. Just like in BiteSMS, these are replaced by their corresponding Emoji.</p></li>
+<p>Some of your contacts might not have an iPhone and send you text emoticons such as “:)”. Just like in BiteSMS, these are replaced by their corresponding Emoji.</p></li>
 <li><span>Automatic Unfocus of a conversation.</span>
 <p>You might have let your browser opened on your computer and then forgot it so that some messages got read and you never answered it. The App automatically unfocuses a conversation after a certain delay (determined by you) so that this does not happen anymore.</p></li>
 <li><span>Half-screen mode.</span>
@@ -53,21 +58,52 @@ This is a personal project shared here for those interested. If you have any con
 <p>When you close the app, it remains in background so that you can still be warned when you get a new message and go back to your messages instantly. An icon is displayed the notification area (at the right-bottom) allowing you to show the app or exit it.</p></li>
 <li><span>Shortcuts.</span>
 <p>Typing on your computer rather than on your phone is more comfortable but also faster, uh? Well, be even more efficient with shortcuts to change conversation, send messages, etc.</p></li>
+<li><span>and all Native features.</span>
+<p>Authentication, conversation list searching, viewing medias, etc.</p></li>
 </ul>
 <br>
 <p>Press F1 to display options and help.</p>
 <br>
 <h2>Screenshots:</h2>
-<img src="images/main.jpg"><legend>Smileys replacement</legend></img>	
-<img src="images/options.jpg"><legend>Options available</legend></img>
-<img src="images/halfmode.jpg"><legend>Half-Screen mode</legend></img>
-<img src="images/notifications.jpg"><legend>Notifications</legend></img>
-<br>
-<h2>Features to come:</h2><p>Notifications (with sound – volume, choice), embedded Image Viewer.</p>
-=======
-<h2>Features to come:</h2>
-<p>Suggestion are welcomed!</p>
 
+
+
+<div class="highslide-gallery">
+	<ul>
+	<li>
+	<a href="images/main.jpg" class="highslide" 
+			title="Smileys replacement" 
+			onclick="return hs.expand(this, config1 )">
+		<img src="images/main_t.jpg"  alt=""/>
+	</a>
+	</li>
+	<li>
+	<a href="images/options.jpg" class="highslide" 
+			title="Options available" 
+			onclick="return hs.expand(this, config1 )">
+		<img src="images/options_t.jpg"  alt=""/>
+	</a>
+	</li>
+	<li>
+	<a href="images/notifications.jpg" class="highslide" 
+			title="Notifications" 
+			onclick="return hs.expand(this, config1 )">
+		<img src="images/notifications_t.jpg"  alt=""/>
+	</a>
+	</li>
+	<li>
+	<a href="images/halfmode.jpg" class="highslide" 
+			title="Half-Screen mode" 
+			onclick="return hs.expand(this, config1 )">
+		<img src="images/halfmode_t.jpg"  alt=""/>
+	</a>
+	</li>
+	</ul>
+	<div style="clear:both"></div></div>
+<br>
+<h2>Features to come:</h2><p>Notifications (with sound – volume, choice), embedded Image Viewer.
+<br>Suggestion are welcomed!</p>
+<br>
 <p>Thanks for reading.</p>
       </section>
     </div>
@@ -75,8 +111,7 @@ This is a personal project shared here for those interested. If you have any con
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Remote Messages App maintained by <a href="https://github.com/Aerr">Aerr</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p class="copyright">Remote Client maintained by <a href="https://github.com/Aerr">Aerr</a></p>
       </footer>
     </div>
 
