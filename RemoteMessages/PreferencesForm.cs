@@ -202,6 +202,7 @@ namespace RemoteMessages
                 + "You can press Ctrl+Enter instead of click the send button.\n"
                 + "Press Alt+1-9 to open the Nth conversation.\n"
                 + "Press Ctrl+E to focus the sending area (editable text).\n"
+                + "Press Alt+H when Ghost Mode is activated to hide the application.\n"
                 ;
 
             MessageBox.Show(tips, "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);

@@ -44,12 +44,12 @@ namespace RemoteMessages
 
         private globalKeyboardHook gkh;
 
-        private const string VERSION = "3.1.71";
-        private bool pressedCtrl = false;
-
+        private const string VERSION = "3.1.74";
+        private bool pressedAlt = false;
         private bool isGhostMode;
         private string password;
         private bool isPreviousF2;
+        private bool isPreviousAlt = false;
 
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
 
@@ -87,10 +87,10 @@ namespace RemoteMessages
 
                 gkh = new globalKeyboardHook();
                 gkh.HookedKeys.Add(Keys.H);
-                gkh.HookedKeys.Add(Keys.E);
-                gkh.HookedKeys.Add(Keys.LControlKey);
-                gkh.HookedKeys.Add(Keys.RControlKey);
+                gkh.HookedKeys.Add(Keys.LMenu);
+                gkh.HookedKeys.Add(Keys.RMenu);
                 gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
+                gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
                 gkh.unhook();
             }
             catch (Exception e)
@@ -135,7 +135,7 @@ namespace RemoteMessages
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url,
                 isGhostMode, password))
-            {                
+            {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
                 {
@@ -361,25 +361,27 @@ namespace RemoteMessages
 
                     isPreviousCtrlDown = true;
                 }
-                else if (isGhostMode && e.KeyCode == Keys.H && !isPreviousH)
-                {
-                    if (notify.Visible)
-                    {
-                        gkh.hook();
-                        notify.Visible = false;
-                        this.Hide();
-                    }
-                }
             }
             else
                 isPreviousCtrlDown = false;
+
+            if (notify.Visible && isGhostMode && e.Modifiers == Keys.Alt && !isPreviousAlt && e.KeyCode == Keys.H && !isPreviousH)
+            {
+                gkh.hook();
+                notify.Visible = false;
+                this.Hide();
+                isPreviousAlt = true;
+            }
+            else
+                isPreviousAlt = false;
 
             isPreviousH = (e.KeyCode == Keys.H);
         }
         void gkh_KeyDown(object sender, KeyEventArgs e)
         {
-            if (pressedCtrl && e.KeyCode == Keys.H)
+            if (pressedAlt && e.KeyCode == Keys.H)
             {
+                e.Handled = true;
                 bool loop;
                 do
                 {
@@ -403,9 +405,12 @@ namespace RemoteMessages
                     }
                 } while (loop);
             }
-            pressedCtrl = (e.KeyCode == Keys.RControlKey || e.KeyCode == Keys.LControlKey);
-            e.Handled = true;
-        } 
+            pressedAlt = (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu);
+        }
+        void gkh_KeyUp(object sender, KeyEventArgs e)
+        {
+            pressedAlt = false;
+        }
 
         #region Conversation change (saving/loading draft, emoji)
         ///<summary>
@@ -542,21 +547,22 @@ namespace RemoteMessages
         private void Form1_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized && minimizeToTray)
-                this.Close();
+                Form1_FormClosing(sender, null);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (documentCompleted && !exceptionRaised)
                 saveDraft();
-            if (!isExiting && closeToTray)
+            if ((!isExiting && closeToTray) || e == null)
             {
                 if (documentCompleted && !exceptionRaised)
                 {
                     previousFirst = getContactList().Children[0].InnerHtml;
                     previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
                 }
-                e.Cancel = true;
+                if (e != null)
+                    e.Cancel = true;
 
                 if (!timerCheckNew.Enabled)
                     Form1_Deactivate(null, null);
@@ -568,7 +574,7 @@ namespace RemoteMessages
         }
         #endregion
 
-            ///<summary>
+        ///<summary>
         /// Called on timer end to check for new message
         ///</summary>
         private void checkNewMsg(object sender, EventArgs e)
@@ -876,11 +882,11 @@ namespace RemoteMessages
         /// </summary>
         private HtmlElement getContactList()
         {
-                HtmlElement list = webBrowser1.Document.Body.Children[2];
-                if (list.InnerHtml.Contains("search"))
-                    return list.Children[1].Children[0].Children[0];
-                else
-                    return list.Children[0].Children[0].Children[0];
+            HtmlElement list = webBrowser1.Document.Body.Children[2];
+            if (list.InnerHtml.Contains("search"))
+                return list.Children[1].Children[0].Children[0];
+            else
+                return list.Children[0].Children[0].Children[0];
         }
         /// <summary>
         /// Returns as a string the current contact name (followed by a 'x')
@@ -960,7 +966,7 @@ namespace RemoteMessages
         /// </summary>
         private void sendEsc(object sender, EventArgs e)
         {
-            if (!webBrowser1.Document.Focused)
+            if (!webBrowser1.Document.Focused && getCurrentContactElement() != null)
             {
                 timerUnfocusing.Stop();
                 Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);

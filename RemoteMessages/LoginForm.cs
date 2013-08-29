@@ -72,6 +72,12 @@ namespace RemoteMessages
 
         private void LoginForm_KeyPress(object sender, KeyPressEventArgs e)
         {
+            if (ghostmodePassword.Visible &&e.KeyChar.ToString().Length == 1)
+            {
+                ghostmodePassword.Text += e.KeyChar;
+                e.Handled = true;
+            }
+
             if (e.KeyChar == (char)Keys.Return)
                 OKbutton_Click(null, null);
         }
@@ -89,13 +95,5 @@ namespace RemoteMessages
         public string getUsername() { return username.Text; }
         public string getPassword() { return password.Text; }
         public string getGhostModePassword() { return ghostmodePassword.Text; }
-
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-            if (ghostmodePassword.Visible)
-                this.ghostmodePassword.Focus();
-            else
-                this.password.Focus();
-        }
     }
 }

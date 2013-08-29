@@ -499,8 +499,8 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(254, 52);
             this.label14.TabIndex = 11;
-            this.label14.Text = "Quickly Hide/Show the app by pressing Ctrl+H. When hidden, the app will be invisi" +
-                "ble so that you wont get notifications.\r\n";
+            this.label14.Text = "Quickly Hide/Show the app by pressing Alt+H. When hidden, the app will be invisib" +
+                "le so that you wont get notifications.\r\n";
             // 
             // PreferencesForm
             // 
