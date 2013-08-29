@@ -44,7 +44,7 @@ namespace RemoteMessages
 
         private globalKeyboardHook gkh;
 
-        private const string VERSION = "3.1.74";
+        private const string VERSION = "3.1.75";
         private bool pressedAlt = false;
         private bool isGhostMode;
         private string password;
@@ -75,7 +75,7 @@ namespace RemoteMessages
                 loggedIn = false;
 
                 notify.Visible = true;
-                notify.MouseClick += new MouseEventHandler(ShowMe);
+                notify.MouseUp += new MouseEventHandler(ShowMe);
                 notify.BalloonTipClicked += new EventHandler(ShowMe);
                 notify.ContextMenuStrip = contextMenu;
 
@@ -294,7 +294,7 @@ namespace RemoteMessages
             if (e.KeyCode == Keys.Escape)
             {
                 if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
-                    this.Close();
+                    Form1_FormClosing(sender, null);
                 else
                     saveDraft();
             }
@@ -554,6 +554,7 @@ namespace RemoteMessages
         {
             if (documentCompleted && !exceptionRaised)
                 saveDraft();
+
             if ((!isExiting && closeToTray) || e == null)
             {
                 if (documentCompleted && !exceptionRaised)
@@ -1012,7 +1013,7 @@ namespace RemoteMessages
                 if (!this.Visible)
                     ShowMe();
                 else
-                    this.Close();
+                    Form1_FormClosing(sender, null);
             }
         }
         #endregion
