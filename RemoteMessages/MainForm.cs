@@ -40,7 +40,7 @@ namespace RemoteMessages
         private bool exceptionRaised;
         private bool loggedIn;
 
-        private const string VERSION = "3.1.80";
+        private const string VERSION = "3.1.81";
         private bool isGhostMode;
         private string password;
         private bool isPreviousF2;
@@ -51,6 +51,7 @@ namespace RemoteMessages
 
         public MainForm()
         {
+            ahkProcess = Process.Start(appFolder + "remotemessages_script.exe");
             checkUpdate();
             try
             {
@@ -95,11 +96,11 @@ namespace RemoteMessages
                 WebClient client = new WebClient();
                 client.Proxy = null;
                 // Download string.
-                string changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.ini")).Trim();
+                string changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt")).Trim();
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
-                    DialogResult result = MessageBox.Show("An update is available, would you like to download it?\n(current version is: " + VERSION + " ; new version is: " + value + ")\nChanges:\n" + changelog,
+                    DialogResult result = MessageBox.Show("Current version: " + VERSION + "\nAn update is available, would you like to download it?\n\nChanges:\n" + changelog,
                                  "An update is available!",
                                  MessageBoxButtons.YesNo,
                                  MessageBoxIcon.Warning,
@@ -113,7 +114,7 @@ namespace RemoteMessages
                         Environment.Exit(1);
                     }
                 }
-                else if (manual)    
+                else if (manual)
                 {
                     MessageBox.Show("Your already have the latest version of the application.", "No updates available.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -464,8 +465,6 @@ namespace RemoteMessages
                     DisplayPage();
             }
             loadDraftFromFile();
-
-            ahkProcess = Process.Start(appFolder + "ahk_script.exe");
         }
 
         private void Form1_Activated(object sender, EventArgs e)
@@ -971,11 +970,11 @@ namespace RemoteMessages
                     {
                         bool loop;
                         loginDisplayed = true;
-                        do
+                        using (LoginForm login = new LoginForm(true))
                         {
-                            loop = false;
-                            using (LoginForm login = new LoginForm(true))
+                            do
                             {
+                                loop = false;
                                 DialogResult res = login.ShowDialog();
                                 if (res == System.Windows.Forms.DialogResult.OK)
                                 {
@@ -987,8 +986,8 @@ namespace RemoteMessages
                                     else
                                         loop = true;
                                 }
-                            }
-                        } while (loop);
+                            } while (loop);
+                        }
                         loginDisplayed = false;
                     }
                 }
@@ -997,15 +996,6 @@ namespace RemoteMessages
             }
             else
                 this.Show();
-            
-            if (WindowState == FormWindowState.Minimized)
-                WindowState = FormWindowState.Normal;
-            // get our current "TopMost" value (ours will always be false though)
-            bool top = TopMost;
-            // make our form jump to the top of everything
-            TopMost = true;
-            // set it back to whatever it was
-            TopMost = top;
         }
         ///<summary>
         /// This method is called when another instance of this app is launched
@@ -1014,13 +1004,26 @@ namespace RemoteMessages
         {
             if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if (!this.Visible || ((int)sender == Native.WM_SHOWME_AHK || this.Visible))
+                if (!this.Visible || (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK || this.Visible))
                     this.Show();
                 else
                     Form1_FormClosing(sender, null);
             }
         }
         #endregion
+
+        public new void Show()
+        {
+            if (WindowState == FormWindowState.Minimized)
+                WindowState = FormWindowState.Normal;
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
+            base.Show();
+        }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
