@@ -13,6 +13,7 @@ namespace RemoteMessages
     internal class Native
     {
         public const int HWND_BROADCAST = 0xffff;
+        public static readonly int WM_SHOWME_AHK = RegisterWindowMessage("WM_SHOWME_AHK");
         public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
         [DllImport("user32")]
         public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
@@ -130,11 +131,15 @@ namespace RemoteMessages
                 }
                 else
                 {
+                    string[] args = Environment.GetCommandLineArgs();
+                    int msg = Native.WM_SHOWME;
+                    if (args.Length > 1)
+                        msg = Native.WM_SHOWME_AHK;
                     // send our Win32 message to make the currently running instance
                     // jump on top of all the other windows
                     Native.PostMessage(
                         (IntPtr)Native.HWND_BROADCAST,
-                        Native.WM_SHOWME,
+                        msg,
                         IntPtr.Zero,
                         IntPtr.Zero);
                 }
