@@ -40,7 +40,7 @@ namespace RemoteMessages
         private bool exceptionRaised;
         private bool loggedIn;
 
-        private const string VERSION = "3.1.81";
+        private const string VERSION = "3.1.82";
         private bool isGhostMode;
         private string password;
         private bool isPreviousF2;
@@ -474,6 +474,8 @@ namespace RemoteMessages
             timerCheckNew.Stop();
             timerUnfocusing.Stop();
 
+            webBrowser1.Document.Focus();
+
             if (previousSelectedContact != null && getCurrentContactElement() == null)
             {
                 Rectangle curr = previousSelectedContact.OffsetRectangle;
@@ -573,7 +575,7 @@ namespace RemoteMessages
 
         private void NotifyMe(HtmlElement list)
         {
-            if (!this.Focused)
+            if (!this.Focused && !webBrowser1.Focused)
             {
                 string name = (list.Children[0].InnerText).Split('×')[0];
                 notify.Text = "Remote Messages\nNew message from " + name + ".\n";
@@ -957,7 +959,7 @@ namespace RemoteMessages
         ///</summary>
         private void ShowMe(object sender = null, EventArgs e = null)
         {
-            if ((int)sender == Native.WM_SHOWME_AHK)
+            if (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK)
             {
                 if (isGhostMode)
                 {
@@ -1004,7 +1006,9 @@ namespace RemoteMessages
         {
             if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if (!this.Visible || (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK || this.Visible))
+
+
+                if ((!this.Visible) || (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK && (!this.Focused && !this.webBrowser1.Focused)))
                     this.Show();
                 else
                     Form1_FormClosing(sender, null);
@@ -1016,12 +1020,9 @@ namespace RemoteMessages
         {
             if (WindowState == FormWindowState.Minimized)
                 WindowState = FormWindowState.Normal;
-            // get our current "TopMost" value (ours will always be false though)
-            bool top = TopMost;
             // make our form jump to the top of everything
             TopMost = true;
-            // set it back to whatever it was
-            TopMost = top;
+            TopMost = false;
             base.Show();
         }
 
