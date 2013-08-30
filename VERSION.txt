@@ -1,3 +1,5 @@
+3.1.82
+- Two minor bugfixes (Notifyicon clicking & focus not set when reactivating the window)
 3.1.81
 - Fixed Installer (Ghost mode no longer working)
 - Fixed bug when clicking the notifyicon
