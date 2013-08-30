@@ -1,3 +1,5 @@
+3.1.83
+- Fixed installer and updater (should work for future updates)
 3.1.82
 - Two minor bugfixes (Notifyicon clicking & focus not set when reactivating the window)
 3.1.81
