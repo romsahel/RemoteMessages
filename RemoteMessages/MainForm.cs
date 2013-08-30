@@ -95,10 +95,11 @@ namespace RemoteMessages
                 WebClient client = new WebClient();
                 client.Proxy = null;
                 // Download string.
-                string value = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION")).Trim();
+                string changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.ini")).Trim();
+                string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
-                    DialogResult result = MessageBox.Show("An update is available, would you like to download it?\n(current version is: " + VERSION + " ; new version is: " + value + ")",
+                    DialogResult result = MessageBox.Show("An update is available, would you like to download it?\n(current version is: " + VERSION + " ; new version is: " + value + ")\nChanges:\n" + changelog,
                                  "An update is available!",
                                  MessageBoxButtons.YesNo,
                                  MessageBoxIcon.Warning,
