@@ -177,8 +177,11 @@ namespace RemoteMessages
                         url = "http://" + form2.getDeviceName() + ":" + port;
                     saveConfig();
 
-                    timerUnfocusing.Interval = delayUnfocusing;
-                    timerReplacing.Interval = delayReplacing;
+                    if (timerUnfocusing != null)
+                        timerUnfocusing.Interval = delayUnfocusing;
+
+                    if (timerReplacing != null) 
+                        timerReplacing.Interval = delayReplacing;
 
                     if (mustRefresh)
                     {
