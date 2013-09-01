@@ -1,3 +1,5 @@
+3.1.86
+- Minor bugfix (occurring when config file did not exist)
 3.1.85
 - Removed notification of 'pending message' becoming 'unsent' and of 'unsent message' becoming 'sent'
 - Added 'About' windows (accessible through the icon context menu)
