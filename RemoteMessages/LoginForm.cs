@@ -95,9 +95,10 @@ namespace RemoteMessages
             ghostmodePassword.Focus();
         }
 
-        public void focusPassword()
+        public void setPasswordClear()
         {
-            ghostmodePassword.Focus();
+            this.ghostmodePassword.Text = "";
+            this.ghostmodePassword.UseSystemPasswordChar = false;
         }
     }
 }

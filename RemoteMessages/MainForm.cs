@@ -40,7 +40,7 @@ namespace RemoteMessages
         private bool exceptionRaised;
         private bool loggedIn;
 
-        private const string VERSION = "3.1.82";
+        private const string VERSION = "3.1.85";
         private bool isGhostMode;
         private string password;
         private bool isPreviousF2;
@@ -56,6 +56,8 @@ namespace RemoteMessages
             try
             {
                 InitializeComponent();
+
+                webBrowser1.ScriptErrorsSuppressed = false;
 
                 exceptionRaised = false;
                 isPreviousF11 = false;
@@ -75,11 +77,7 @@ namespace RemoteMessages
                 notify.BalloonTipClicked += new EventHandler(ShowMe);
                 notify.ContextMenuStrip = contextMenu;
 
-                timerUnfocusing = new Timer();
-                timerSend = new Timer();
-                timerReplacing = new Timer();
-                timerCheckNew = new Timer();
-                timerTimeOut = new Timer();
+                this.webBrowser1.DocumentTitleChanged += new EventHandler(DocumentTitleChanged);
             }
             catch (Exception e)
             {
@@ -110,7 +108,15 @@ namespace RemoteMessages
                     {
                         client.DownloadFile(@"http://aerr.github.io/RemoteMessages/downloads/setup_RemoteMessages.exe", appFolder + "setup_update.exe");
 
-                        System.Diagnostics.Process.Start(appFolder + "update.bat", "/B");
+                        Process p = new Process();
+                        p.StartInfo.FileName = appFolder + "update.bat";
+                        p.StartInfo.Arguments = "/B";
+                        p.StartInfo.WorkingDirectory = appFolder;
+                        p.Start();
+
+                        ahkProcess.Kill();
+                        ahkProcess.Close();
+
                         Environment.Exit(1);
                     }
                 }
@@ -170,6 +176,9 @@ namespace RemoteMessages
                     else
                         url = "http://" + form2.getDeviceName() + ":" + port;
                     saveConfig();
+
+                    timerUnfocusing.Interval = delayUnfocusing;
+                    timerReplacing.Interval = delayReplacing;
 
                     if (mustRefresh)
                     {
@@ -292,6 +301,22 @@ namespace RemoteMessages
         ///</summary>
         private void webBrowser1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
+            //if (e.KeyCode == Keys.C)
+            //{
+            //    webBrowser1.Document.GetElementById("messages").All[0].OuterHtml = webBrowser1.Document.GetElementById("messages").All[0].OuterHtml.Replace("load-more", "load-more loading");
+            //    webBrowser1.Navigate("javascript:function foo() {" +
+            //        "($.ajax( {type:\"GET\",url:loadLimit,data: {" +
+            //        "hashid:" +
+            //        "$currentConvHash,incVal:" +
+            //        "$messagesLoadInc" +
+            //        "}" +
+            //        ",success:function(a) {" +
+            //        "1==a&&($(this).removeClass(\"loading\"),loadMessages($currentConvHash,0,0))" +
+            //        "}}));" +
+            //        "$messagesLoadWait=1" +
+            //        "}</script>");
+            //}
+
             if (e.KeyCode == Keys.Escape)
             {
                 if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
@@ -452,7 +477,8 @@ namespace RemoteMessages
         #region Form modification (Focus, Size, Closing)
         private void Form1_Shown(object sender, EventArgs e)
         {
-            timerTimeOut.Interval = 25000;
+            timerTimeOut = new Timer();
+            timerTimeOut.Interval = 30000;
             timerTimeOut.Tick += new EventHandler(raiseException);
 
             using (StreamWriter w = File.AppendText(appFolder + "drafts")) { }
@@ -471,6 +497,7 @@ namespace RemoteMessages
         {
             notify.Text = "Remote Messages\nClick to Show/Hide";
             notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon.ico"));
+
             timerCheckNew.Stop();
             timerUnfocusing.Stop();
 
@@ -528,13 +555,26 @@ namespace RemoteMessages
                 if (e != null)
                     e.Cancel = true;
 
-                if (!timerCheckNew.Enabled)
-                    Form1_Deactivate(null, null);
+                //if (!timerCheckNew.Enabled)
+                //    Form1_Deactivate(null, null);
 
                 this.Hide();
             }
-            else
+            else // True exiting
+            {
+                ahkProcess.Kill();
+                ahkProcess.Close();
+
                 saveDraftToFile();
+            }
+        }
+
+        private void DocumentTitleChanged(object sender, EventArgs e)
+        {
+            if (webBrowser1.DocumentTitle != "")
+                this.Text = webBrowser1.DocumentTitle;
+            else
+                this.Text = "Remote Messages";
         }
         #endregion
 
@@ -551,11 +591,14 @@ namespace RemoteMessages
                 {
                     if (webBrowser1.Document.Body.Children[1].InnerHtml != previousConversation)
                     {
+                        if (!previousConversation.Contains("pending") || !previousConversation.Contains("unsent"))
+                        {
+                            if (justUnfocused)
+                                justUnfocused = false;
+                            else
+                                NotifyMe(list);
+                        }
                         previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
-                        if (justUnfocused)
-                            justUnfocused = false;
-                        else
-                            NotifyMe(list);
                     }
                 }
                 else
@@ -731,16 +774,20 @@ namespace RemoteMessages
                     getContactList().MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
                     progressBar1.Visible = false;
 
+                    timerUnfocusing = new Timer();
                     timerUnfocusing.Interval = delayUnfocusing;
                     timerUnfocusing.Tick += new EventHandler(sendEsc);
 
+                    timerSend = new Timer();
                     timerSend.Interval = 600;
                     timerSend.Tick += new EventHandler(sendEnter);
 
+                    timerReplacing = new Timer();
                     timerReplacing.Interval = delayReplacing;
                     timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
-                    timerCheckNew.Interval = 2000;
+                    timerCheckNew = new Timer();
+                    timerCheckNew.Interval = 1500;
                     timerCheckNew.Tick += new EventHandler(checkNewMsg);
 
                     if (!Focused && !webBrowser1.Focused)
@@ -815,12 +862,12 @@ namespace RemoteMessages
                 HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
 
                 string currentDraft = "";
-                if (!justSent)
-                {
-                    currentDraft = editable.InnerHtml;
-                    //if (currentDraft != null)
-                    //    currentDraft = currentDraft.Replace("\r\n\r\n", "\r\n");
-                }
+                //if (!justSent)
+                //{
+                currentDraft = editable.InnerHtml;
+                //if (currentDraft != null)
+                //    currentDraft = currentDraft.Replace("\r\n\r\n", "\r\n");
+                //}
                 // Finds to which contact it belongs to
                 if (!drafts.ContainsKey(currentContact))
                     drafts.Add(currentContact, currentDraft);
@@ -900,6 +947,23 @@ namespace RemoteMessages
         {
             displayOptions();
         }
+
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string changelog = "/!\\ ERROR ! \nCould not reach the server.";
+            try
+            {
+                // Create web client.
+                WebClient client = new WebClient();
+                client.Proxy = null;
+                // Download string.
+                changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt")).Trim();
+            }
+            catch { }
+
+            MessageBox.Show("Remote Client\n\nCurrent version: " + VERSION + "\n\nChangelog:\n" + changelog, "About Remote Client", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
         #endregion
 
         #region Simulated inputs
@@ -929,7 +993,8 @@ namespace RemoteMessages
         /// </summary>
         private void sendEsc(object sender, EventArgs e)
         {
-            if (!webBrowser1.Document.Focused && getCurrentContactElement() != null)
+            if (!webBrowser1.Document.Focused && getCurrentContactElement() != null
+                && !previousConversation.Contains("pending") && !previousConversation.Contains("unsent"))
             {
                 timerUnfocusing.Stop();
                 Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
@@ -938,7 +1003,7 @@ namespace RemoteMessages
         }
         #endregion
 
-        #region Methods allowing the one instance only
+        #region Methods allowing the one instance only SHOWME + ghostmode
         ///<summary>
         /// This method is called when another instance of this app is launched
         ///</summary>
@@ -988,6 +1053,7 @@ namespace RemoteMessages
                                     else
                                         loop = true;
                                 }
+                                login.setPasswordClear();
                             } while (loop);
                         }
                         loginDisplayed = false;
@@ -1025,13 +1091,5 @@ namespace RemoteMessages
             TopMost = false;
             base.Show();
         }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            ahkProcess.Kill();
-            ahkProcess.Close();
-        }
-
-
     }
 }
