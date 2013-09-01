@@ -474,7 +474,7 @@ namespace RemoteMessages
         }
         #endregion
 
-        #region Form modification (Focus, Size, Closing)
+        #region Form modification (Focus, Size, Closing, Title)
         private void Form1_Shown(object sender, EventArgs e)
         {
             timerTimeOut = new Timer();
@@ -498,8 +498,11 @@ namespace RemoteMessages
             notify.Text = "Remote Messages\nClick to Show/Hide";
             notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon.ico"));
 
-            timerCheckNew.Stop();
-            timerUnfocusing.Stop();
+            if (timerCheckNew != null)
+               timerCheckNew.Stop();
+            
+            if (timerUnfocusing != null)
+                timerUnfocusing.Stop();
 
             webBrowser1.Document.Focus();
 
@@ -572,9 +575,15 @@ namespace RemoteMessages
         private void DocumentTitleChanged(object sender, EventArgs e)
         {
             if (webBrowser1.DocumentTitle != "")
+            {
+                this.notify.Text = webBrowser1.DocumentTitle;
                 this.Text = webBrowser1.DocumentTitle;
+            }
             else
+            {
+                this.notify.Text = "Remote Messages";
                 this.Text = "Remote Messages";
+            }
         }
         #endregion
 
@@ -862,12 +871,9 @@ namespace RemoteMessages
                 HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
 
                 string currentDraft = "";
-                //if (!justSent)
-                //{
-                currentDraft = editable.InnerHtml;
-                //if (currentDraft != null)
-                //    currentDraft = currentDraft.Replace("\r\n\r\n", "\r\n");
-                //}
+                if (!justSent)
+                    currentDraft = editable.InnerHtml;
+
                 // Finds to which contact it belongs to
                 if (!drafts.ContainsKey(currentContact))
                     drafts.Add(currentContact, currentDraft);
@@ -988,6 +994,7 @@ namespace RemoteMessages
             SendKeys.Send("~");
             timerSend.Enabled = false;
         }
+
         /// <summary>
         /// Simulates a keypress of Escape
         /// </summary>
