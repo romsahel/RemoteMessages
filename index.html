@@ -1,134 +1,210 @@
 <!DOCTYPE html>
-<html>
-
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Remote Messages App : A Client for Remote Messages" />
-    <title>Remote Client</title>
-    
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>Remote Client</title>
+        <link href="../favicon.ico" rel="shortcut icon">
+        <link href="css/default.css" rel="stylesheet" type="text/css"/>
+        <link href="css/component.css" rel="stylesheet" type="text/css"/>
+        <link href="highslide/highslide.css" rel="stylesheet" type="text/css"/>
+        <script src="js/modernizr.custom.js"></script>
+        <script src="js/jquery-2.0.3.min.js"></script>
+        <script src="js/main.js"></script>
+        <script type="text/javascript" src="highslide/highslide-with-gallery.js"></script>
+        <script type="text/javascript" src="highslide/highslide.config.js" charset="utf-8"></script>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                },
+                i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+            
+            ga('create', 'UA-41937465-2', 'aerr.github.io');
+            ga('send', 'pageview');
+        </script>
+    </head>
+    <body>
 	
-	<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
-	
-	<script type="text/javascript" src="highslide/highslide-with-gallery.js"></script>
-	<script type="text/javascript" src="highslide/highslide.config.js" charset="utf-8"></script>
-	
-	
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-	
-	  ga('create', 'UA-41937465-2', 'aerr.github.io');
-	  ga('send', 'pageview');
-	
-	</script>
-  </head>
+        <div class="container">
+            <header>
+                <h1>Remote Client<span>for Remote Messages</span></h1>
+            </header>
+            <div class="main clearfix">
+                <nav class="nav" id="menu">
+                    <ul>
+                        <li>
+                            <p class="invisible"></p>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="icon">
+                                    <i aria-hidden="true" class="icon-team"></i>
+                                </span>
+                                <span>Presentation</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="icon">
+                                    <i aria-hidden="true" class="icon-services"></i>
+                                </span>
+                                <span>Features</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="icon">
+                                    <i aria-hidden="true" class="icon-portfolio"></i>
+                                </span>
+                                <span>Medias</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <span class="icon">
+                                    <i aria-hidden="true" class="icon-contact"></i>
+                                </span>
+                                <span>Contact</span>
+                            </a>
+                        </li>
+                        <li>
+                            <p class="invisible"></p>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="inner">		   
+			<div id="presentation">
+                <h1>What is Remote Client?</h1>
+                <p>Remote Client is a standalone application for the already awesome
+                    <a href="http://www.remotemessages.com/">Remote Messages</a>. Not only
+                    does it support every native features but it also brings some more
+                    possibilities!
+                    <br>This is a personal project shared here for those interested. If you
+                    have any constructive comment, suggestion, request, please check this
+                    <a href="http://www.remotemessages.com/forum/index.php?p=/discussion/157/windows-client-for-remote-messages#Item_1">link</a>.</p>
+            </div>
+            <div id="features">
+                <h1>Features:</h1>
+                <ul id="feature-list">
+                    <li><span>Automatic detection of the device’s IP address.</span>
+                        <p>If you’re not always on the same Wi-Fi, constantly checking and
+                            changing your IP can become laborious. The App does this for you: just
+                            save your device’s name and it finds your IP.</p></li>
+                    <li><span>Drafts.</span>
+                        <p>Sometimes, you’re writing a message but you receive another one that
+                            needs to be quickly answered: drafts are the solution. Just switch
+                            conversation, send your text, and go back: your previously began message
+                            has been saved and you can continue writing it.</p></li>
+                    <li><span>Replaces text smileys by their EMOJI equivalent.</span>
+                        <p>Some of your contacts might not have an iPhone and send you text
+                            emoticons such as “:)”. Just like in BiteSMS, these are replaced by
+                            their corresponding Emoji.</p></li>
+                    <li><span>Notifications.</span>
+                        <p>Nobody likes to keep people waiting: when you get a message while the
+                            app is not visible, the icon will be flashing and a tooltip will
+                            appear.</p></li>
+                    <li><span>Backgrounding and Notify Icon.</span>
+                        <p>When you close the app, it remains in background so that you can
+                            still be warned when you get a new message and go back to your messages
+                            instantly. An icon is displayed the notification area (at the
+                            right-bottom) allowing you to show the app or exit it.</p></li>
+                    <li><span>Automatic Unfocus of a conversation.</span>
+                        <p>You might have let your browser opened on your computer and then
+                            forgot it so that some messages got read and you never answered it. The
+                            App automatically unfocuses a conversation after a certain delay
+                            (determined by you) so that this does not happen anymore.</p></li>
+                    <li><span>Ghost Mode.</span>
+                        <p>Need some privacy? Activate the Ghost Mode: it allows you to quickly
+                            Hide the application with a simple press of Ctrl+H so that it completely
+                            disappears. When you're alone again, press Ctrl+H again, enter your
+                            password and continue texting.</p></li>
+                    <li><span>Half-screen mode.</span>
+                        <p>No address bar, no title bar, just your messages.</p></li>
+                    <li><span>Shortcuts.</span>
+                        <p>Typing on your computer rather than on your phone is more comfortable
+                            but also faster, uh? Well, be even more efficient with shortcuts to
+                            change conversation, send messages, etc.</p></li>
+                    <li><span>and all Native features.</span>
+                        <p>Authentication, conversation list searching, viewing medias, etc.</p></li>
+				</ul>
+                </div>
+			<div id="medias">
+                    <h1>Screenshots:</h1>
+                    <br>
+                    <br>
+                    <div class="highslide-gallery">
+                        <ul>
+                            <li>
+                                <a class="highslide" href="images/main.jpg" onclick="return hs.expand(this, config1 )" title="Smileys replacement">
+                                    <img alt="" src="images/main_t.jpg"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="highslide" href="images/options.jpg" onclick="return hs.expand(this, config1 )" title="Options available">
+                                    <img alt="" src="images/options_t.jpg"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="highslide" href="images/notifications.jpg" onclick="return hs.expand(this, config1 )" title="Notifications">
+                                    <img alt="" src="images/notifications_t.jpg"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="highslide" href="images/halfmode.jpg" onclick="return hs.expand(this, config1 )" title="Half-Screen mode">
+                                    <img alt="" src="images/halfmode_t.jpg"/>
+                                </a>
+                            </li>
+                        </ul>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+		</div>
+		
+		<footer id="footer_inner">
+				<h1 class="copyright"><span> Remote Client maintained by</span>
+					<a href="https://github.com/Aerr">Aerr</a></h1>
+		</footer>
 
-  <body>
+		<script>		
+		//  The function to change the class
+		var changeClass = function (r, className1, className2) {
+				var regex = new RegExp("(?:^|\\s+)" + className1 + "(?:\\s+|$)");
+				if (regex.test(r.className)) {
+					r.className = r.className.replace(regex, ' ' + className2 + ' ');
+				} else {
+					r.className = r.className.replace(new RegExp("(?:^|\\s+)" + className2 + "(?:\\s+|$)"), ' ' + className1 + ' ');
+				}
+				return r.className;
+			};
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Aerr/RemoteMessages">View on GitHub</a>
+		//  Creating our button in JS for smaller screens
+		var menuElements = document.getElementById('menu');
+		menuElements.insertAdjacentHTML('afterBegin', '<button type="button" id="menutoggle" class="navtoogle" aria-hidden="true"><i aria-hidden="true" class="icon-menu"> </i> Menu</button>');
 
-          <h1 id="project_title">Remote Client</h1>
-          <h2 id="project_tagline">A Client for Remote Messages</h2>
+		//  Toggle the class on click to show / hide the menu
+		document.getElementById('menutoggle').onclick = function () {
+			changeClass(this, 'navtoogle active', 'navtoogle');
+		}
+		// http://tympanus.net/codrops/2013/05/08/responsive-retina-ready-menu/comment-page-2/#comment-438918
+		document.onclick = function (e) {
+			var mobileButton = document.getElementById('menutoggle'),
+				buttonStyle = mobileButton.currentStyle ? mobileButton.currentStyle.display : getComputedStyle(mobileButton, null).display;
 
-            <section id="downloads">
-              <a class="zip_download_link" href="downloads/setup_RemoteMessages.exe">Download this project as a .zip file</a><legend><br>Version 3.1.8 (30/08/2013)</legend>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-<br>
-<h2>What is Remote Client?</h2>
-<p>Remote Client is a standalone application for the already awesome <a href="http://www.remotemessages.com/">Remote Messages</a>. Not only does it support every native features but it also brings some more possibilities!
-<br>This is a personal project shared here for those interested. If you have any constructive comment, suggestion, request, please check this <a href="http://www.remotemessages.com/forum/index.php?p=/discussion/157/windows-client-for-remote-messages#Item_1">link</a>.</p>
-<br>
-<h2>Features:</h2>
-<ul>
-<li><span>Automatic detection of the device’s IP address.</span>
-<p>If you’re not always on the same Wi-Fi, you must always check and change your IP which can become laborious. The App does this for you: just save your device’s name and it finds your IP.</p></li>
-<li><span>Drafts.</span>
-<p>Sometimes, you’re writing a message but you receive another one that needs to be quickly answered: drafts are the solution. Just switch conversation, send your text, and go back: your previously began message has been saved and you can continue writing it.</p></li>
-<li><span>Replaces text smileys by their EMOJI equivalent.</span>
-<p>Some of your contacts might not have an iPhone and send you text emoticons such as “:)”. Just like in BiteSMS, these are replaced by their corresponding Emoji.</p></li>
-<li><span>Notifications.</span>
-<p>Nobody likes to keep people waiting: when you get a message while the app is not visible, the icon will be flashing and a tooltip will appear.</p></li>
-<li><span>Backgrounding and Notify Icon.</span>
-<p>When you close the app, it remains in background so that you can still be warned when you get a new message and go back to your messages instantly. An icon is displayed the notification area (at the right-bottom) allowing you to show the app or exit it.</p></li>
-<li><span>Automatic Unfocus of a conversation.</span>
-<p>You might have let your browser opened on your computer and then forgot it so that some messages got read and you never answered it. The App automatically unfocuses a conversation after a certain delay (determined by you) so that this does not happen anymore.</p></li>
-<li><span>Ghost Mode.</span>
-<p>Need some privacy? Activate the Ghost Mode: it allows you to quickly Hide the application with a simple press of Ctrl+H so that it completely disappears. When you're alone again, press Ctrl+H again, enter your password and continue texting.</p></li>
-<li><span>Half-screen mode.</span>
-<p>No address bar, no title bar, just your messages.</p></li>
-<li><span>Shortcuts.</span>
-<p>Typing on your computer rather than on your phone is more comfortable but also faster, uh? Well, be even more efficient with shortcuts to change conversation, send messages, etc.</p></li>
-<li><span>and all Native features.</span>
-<p>Authentication, conversation list searching, viewing medias, etc.</p></li>
-</ul>
-<br>
-<p>Press F1 to display options and help.</p>
-<br>
-<h2>Screenshots:</h2>
-
-
-
-<div class="highslide-gallery">
-	<ul>
-	<li>
-	<a href="images/main.jpg" class="highslide" 
-			title="Smileys replacement" 
-			onclick="return hs.expand(this, config1 )">
-		<img src="images/main_t.jpg"  alt=""/>
-	</a>
-	</li>
-	<li>
-	<a href="images/options.jpg" class="highslide" 
-			title="Options available" 
-			onclick="return hs.expand(this, config1 )">
-		<img src="images/options_t.jpg"  alt=""/>
-	</a>
-	</li>
-	<li>
-	<a href="images/notifications.jpg" class="highslide" 
-			title="Notifications" 
-			onclick="return hs.expand(this, config1 )">
-		<img src="images/notifications_t.jpg"  alt=""/>
-	</a>
-	</li>
-	<li>
-	<a href="images/halfmode.jpg" class="highslide" 
-			title="Half-Screen mode" 
-			onclick="return hs.expand(this, config1 )">
-		<img src="images/halfmode_t.jpg"  alt=""/>
-	</a>
-	</li>
-	</ul>
-	<div style="clear:both"></div></div>
-<br>
-<h2>Features to come:</h2><p>Notifications (with sound – volume, choice), embedded Image Viewer.
-<br>Suggestion are welcomed!</p>
-<br>
-<p>Thanks for reading.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Remote Client maintained by <a href="https://github.com/Aerr">Aerr</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+			if (buttonStyle === 'block' && e.target !== mobileButton && new RegExp(' ' + 'active' + ' ').test(' ' + mobileButton.className + ' ')) {
+				changeClass(mobileButton, 'navtoogle active', 'navtoogle');
+			}
+		}
+		</script> 
+	</body> 
 </html>
