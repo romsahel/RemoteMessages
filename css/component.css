@@ -17,7 +17,7 @@
 	};
 }
 
-.icon-team, .icon-blog, .icon-home, .icon-portfolio, .icon-services, .icon-contact, .icon-menu {
+.icon-medias, .icon-features, .icon-contact, .icon-download, .icon-presentation {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -27,33 +27,20 @@
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
-
-.icon-team:before {
-	content: "\e000";
-}
-
-.icon-blog:before {
-	content: "\e001";
-}
-
-.icon-home:before {
+.icon-medias:before {
 	content: "\e002";
 }
-
-.icon-portfolio:before {
+.icon-features:before {
 	content: "\e003";
 }
-
-.icon-services:before {
+.icon-contact:before {
 	content: "\e004";
 }
-
-.icon-contact:before {
-	content: "\e005";
+.icon-download:before {
+	content: "\e000";
 }
-
-.icon-menu:before {
-	content: "\f0c9";
+.icon-presentation:before {
+	content: "\e001";
 }
 
 a, li {
@@ -139,7 +126,6 @@ a, button {
 .nav li:nth-child(6n+5) {
 	background: #2A3036;
 }
-
 
 .invisible
 {
@@ -227,7 +213,8 @@ a, button {
 	}
 
 	/* Positioning the icons and preparing for the animation*/
-	.nav i {
+	.nav i,
+	#download i{
 		position: relative;
 		display: inline-block;
 		margin: 0 auto;
@@ -251,7 +238,8 @@ a, button {
 	/* Animate the box-shadow to create the effect */
 	.no-touch .nav a:hover i,
 	.no-touch .nav a:active i,
-	.no-touch .nav a:focus i {		
+	.no-touch .nav a:focus i,
+	#download:hover i {		
 		box-shadow: 0 0 0 0 rgba(255,255,255,0.2);
 		-webkit-transition: box-shadow .4s ease-in-out;
 		-moz-transition: box-shadow .4s ease-in-out;
@@ -259,7 +247,41 @@ a, button {
 		-ms-transition: box-shadow .4s ease-in-out;
 		transition: box-shadow .4s ease-in-out;
 	}
+	
+	#download {
+		font-family: 'Lato',Calibri,Arial,sans-serif;
 		
+		font-size: 1.5em;
+		font-weight: 300;
+		
+		text-align: center;
+		vertical-align: middle;
+	
+		background: #BBCCCB;
+		color:white;
+		
+		width: 300px;
+		height: auto;
+		
+		margin: auto;
+		margin-bottom: 20px;
+	}
+	#download p {
+		margin-top: 0px;
+		font-size: 0.65em;
+		opacity: 0; 
+		height: 0;
+		-webkit-transition: height 0.75s ease-in-out, opacity 0.25s ease-in-out;
+		-moz-transition: height 0.75s ease-in-out, opacity 0.25s ease-in-out;
+		-o-transition: height 0.75s ease-in-out, opacity 0.25s ease-in-out;
+		-ms-transition: height 0.75s ease-in-out, opacity 0.25s ease-in-out;
+		transition: height 0.75s ease-in-out, opacity 0.25s ease-in-out;
+		
+	}
+	#download:hover p {
+		opacity: 1;
+		height: 20px;
+	}
 }
 
 @media (min-width: 50em) and (max-width: 61.250em) {

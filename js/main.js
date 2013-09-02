@@ -1,13 +1,20 @@
 $(document).ready(function() {
-	hideUnselectedMenu(0);
-	
+	hideUnselectedMenu(0, null);
+	$("#empty").show();
 	$("#menu ul li").each(function(i) {
 		$(this).click(function() {
+					var alreadySelected = $(this).hasClass("selected");
 					unselectAllMenu();
-					$(this).addClass("selected");
-					$(this).removeClass("unselected");
-					hideUnselectedMenu(250);
-					$( ".inner div:nth-child(" + i + ')' ).fadeIn(1000);
+					curr = i + 1;
+					if (!alreadySelected)
+					{
+						$(this).addClass("selected");
+						$(this).removeClass("unselected");
+					}
+					else
+						curr = 1;
+					
+					hideUnselectedMenu(500, curr);
 			});
 	});
 	
@@ -20,6 +27,7 @@ $(document).ready(function() {
 				$("#feature-list li").removeClass("selected");
 				if (!alreadySelected)
 					$(this).addClass("selected");
+					
 				$("#feature-list li").each(function() {
 					if (!$(this).hasClass("selected"))
 						$(this).children().eq(1).slideUp();
@@ -30,10 +38,16 @@ $(document).ready(function() {
 	});
 });
 
-function hideUnselectedMenu(i) {
-	$( ".inner > div" ).each(function() {
-		if (!$(this).hasClass("selected"))
-			$(this).fadeOut(i)
+function hideUnselectedMenu(t, curr) {
+	$( ".inner > div" ).each(function(i) {
+			$(this).slideUp(t, function() {
+				if (i + 1 == $( ".inner > div" ).length && curr != null)
+				{
+						$( ".inner div:nth-child(" + curr + ')' ).slideDown(1500);
+						if (curr == 1)
+							$("#menu ul li").removeClass("unselected");
+				}
+			});
 			});
 	};
 	
