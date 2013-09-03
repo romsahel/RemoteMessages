@@ -75,6 +75,7 @@
             this.checkAlt = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.checkCtrl = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -168,7 +169,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(140, 682);
+            this.ok.Location = new System.Drawing.Point(149, 682);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -179,7 +180,7 @@
             // cancel
             // 
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(245, 682);
+            this.cancel.Location = new System.Drawing.Point(265, 682);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -249,7 +250,7 @@
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(370, 692);
+            this.tips.Location = new System.Drawing.Point(380, 692);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -565,12 +566,23 @@
             this.checkCtrl.Text = "Ctrl";
             this.checkCtrl.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 692);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(119, 23);
+            this.button1.TabIndex = 48;
+            this.button1.Text = "About";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(515, 727);
             this.ControlBox = false;
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.activateGhostMode);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.activateAutoIP);
@@ -665,5 +677,6 @@
         private System.Windows.Forms.CheckBox checkCtrl;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textHotkey;
+        private System.Windows.Forms.Button button1;
     }
 }

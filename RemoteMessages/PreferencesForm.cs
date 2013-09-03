@@ -17,9 +17,12 @@ namespace RemoteMessages
         private const int defaultBalloon = 500;
         private const int defaultFlash = 6;
         private string name, url;
+        private bool aboutDisplayed = false;
+        private string VERSION;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, string version)
         {
+            this.VERSION = version;
             InitializeComponent();
             cancel.Select();
 
@@ -241,6 +244,22 @@ namespace RemoteMessages
         private void activateGhostMode_CheckedChanged(object sender, EventArgs e)
         {
             password.Enabled = activateGhostMode.Checked;
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (!aboutDisplayed)
+            {
+                using (AboutForm about = new AboutForm(VERSION))
+                {
+                    aboutDisplayed = true;
+                    do
+                    {
+                        about.ShowDialog();
+                    } while (about.DialogResult != System.Windows.Forms.DialogResult.OK);
+                    aboutDisplayed = false;
+                }
+            }
         }
     }
 }

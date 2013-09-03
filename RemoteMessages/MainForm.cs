@@ -60,6 +60,7 @@ namespace RemoteMessages
         #endregion 
 
         private const string VERSION = "3.1.91";
+        private bool aboutDisplayed;
 
 
         public MainForm()
@@ -81,6 +82,7 @@ namespace RemoteMessages
                 justUnfocused = false;
                 drafts = new Dictionary<string, string>();
                 documentCompleted = false;
+                aboutDisplayed = false;
 
                 loggedIn = false;
 
@@ -162,7 +164,8 @@ namespace RemoteMessages
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url,
-                isGhostMode, password, hotkey))
+                isGhostMode, password, hotkey,
+                VERSION))
             {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
@@ -357,22 +360,6 @@ namespace RemoteMessages
         ///</summary>
         private void webBrowser1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            //if (e.KeyCode == Keys.C)
-            //{
-            //    webBrowser1.Document.GetElementById("messages").All[0].OuterHtml = webBrowser1.Document.GetElementById("messages").All[0].OuterHtml.Replace("load-more", "load-more loading");
-            //    webBrowser1.Navigate("javascript:function foo() {" +
-            //        "($.ajax( {type:\"GET\",url:loadLimit,data: {" +
-            //        "hashid:" +
-            //        "$currentConvHash,incVal:" +
-            //        "$messagesLoadInc" +
-            //        "}" +
-            //        ",success:function(a) {" +
-            //        "1==a&&($(this).removeClass(\"loading\"),loadMessages($currentConvHash,0,0))" +
-            //        "}}));" +
-            //        "$messagesLoadWait=1" +
-            //        "}</script>");
-            //}
-
             if (e.KeyCode == Keys.Escape)
             {
                 if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
@@ -1034,19 +1021,18 @@ namespace RemoteMessages
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string changelog = "/!\\ ERROR ! \nCould not reach the server.";
-            try
+            if (!aboutDisplayed)
             {
-                // Create web client.
-                WebClient client = new WebClient();
-                client.Proxy = null;
-                // Download string.
-                changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt"));
-                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.None)[0];
+                using (AboutForm about = new AboutForm(VERSION))
+                {
+                    aboutDisplayed = true;
+                    do
+                    {
+                        about.ShowDialog();
+                    } while (about.DialogResult != System.Windows.Forms.DialogResult.OK);
+                    aboutDisplayed = false;
+                }
             }
-            catch { }
-
-            MessageBox.Show("Remote Client\n\nCurrent version: " + VERSION + "\n\nChangelog:\n" + changelog, "About Remote Client", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
         #endregion
 
