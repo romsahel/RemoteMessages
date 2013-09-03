@@ -1,3 +1,5 @@
+3.1.95
+- Corrected error window buttons and text
 3.1.94
 - Actually working Drafts
 - Relabeled error window
