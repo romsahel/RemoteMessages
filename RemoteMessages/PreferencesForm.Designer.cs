@@ -70,6 +70,11 @@
             this.activateGhostMode = new System.Windows.Forms.CheckBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label14 = new System.Windows.Forms.Label();
+            this.checkWin = new System.Windows.Forms.CheckBox();
+            this.checkCtrl = new System.Windows.Forms.CheckBox();
+            this.checkAlt = new System.Windows.Forms.CheckBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textHotkey = new System.Windows.Forms.TextBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -163,7 +168,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(140, 630);
+            this.ok.Location = new System.Drawing.Point(140, 682);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -174,7 +179,7 @@
             // cancel
             // 
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(245, 630);
+            this.cancel.Location = new System.Drawing.Point(245, 682);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -244,7 +249,7 @@
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(370, 640);
+            this.tips.Location = new System.Drawing.Point(370, 692);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -485,10 +490,15 @@
             // panel6
             // 
             this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.textHotkey);
+            this.panel6.Controls.Add(this.label15);
+            this.panel6.Controls.Add(this.checkWin);
+            this.panel6.Controls.Add(this.checkAlt);
             this.panel6.Controls.Add(this.label14);
+            this.panel6.Controls.Add(this.checkCtrl);
             this.panel6.Location = new System.Drawing.Point(23, 564);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(480, 60);
+            this.panel6.Size = new System.Drawing.Size(480, 95);
             this.panel6.TabIndex = 47;
             // 
             // label14
@@ -502,11 +512,61 @@
             this.label14.Text = "Quickly Hide/Show the app by pressing Alt+H. When hidden, the app will be invisib" +
                 "le so that you wont get notifications.\r\n";
             // 
+            // checkWin
+            // 
+            this.checkWin.AutoSize = true;
+            this.checkWin.Location = new System.Drawing.Point(231, 70);
+            this.checkWin.Name = "checkWin";
+            this.checkWin.Size = new System.Drawing.Size(45, 17);
+            this.checkWin.TabIndex = 48;
+            this.checkWin.Text = "Win";
+            this.checkWin.UseVisualStyleBackColor = true;
+            // 
+            // checkCtrl
+            // 
+            this.checkCtrl.AutoSize = true;
+            this.checkCtrl.Location = new System.Drawing.Point(294, 70);
+            this.checkCtrl.Name = "checkCtrl";
+            this.checkCtrl.Size = new System.Drawing.Size(41, 17);
+            this.checkCtrl.TabIndex = 49;
+            this.checkCtrl.Text = "Ctrl";
+            this.checkCtrl.UseVisualStyleBackColor = true;
+            // 
+            // checkAlt
+            // 
+            this.checkAlt.AutoSize = true;
+            this.checkAlt.Location = new System.Drawing.Point(356, 70);
+            this.checkAlt.Name = "checkAlt";
+            this.checkAlt.Size = new System.Drawing.Size(38, 17);
+            this.checkAlt.TabIndex = 50;
+            this.checkAlt.Text = "Alt";
+            this.checkAlt.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(36, 70);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(44, 13);
+            this.label15.TabIndex = 51;
+            this.label15.Text = "Hotkey:";
+            // 
+            // textHotkey
+            // 
+            this.textHotkey.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.textHotkey.Location = new System.Drawing.Point(115, 67);
+            this.textHotkey.MaxLength = 1;
+            this.textHotkey.Name = "textHotkey";
+            this.textHotkey.Size = new System.Drawing.Size(100, 20);
+            this.textHotkey.TabIndex = 52;
+            this.textHotkey.Text = "H";
+            this.textHotkey.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 675);
+            this.ClientSize = new System.Drawing.Size(515, 727);
             this.ControlBox = false;
             this.Controls.Add(this.label13);
             this.Controls.Add(this.password);
@@ -550,6 +610,7 @@
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -598,5 +659,10 @@
         private System.Windows.Forms.CheckBox activateGhostMode;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.CheckBox checkWin;
+        private System.Windows.Forms.CheckBox checkAlt;
+        private System.Windows.Forms.CheckBox checkCtrl;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox textHotkey;
     }
 }

@@ -18,7 +18,7 @@ namespace RemoteMessages
         private const int defaultFlash = 6;
         private string name, url;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey)
         {
             InitializeComponent();
             cancel.Select();
@@ -54,6 +54,12 @@ namespace RemoteMessages
                 deviceName.Text = name;
             else
                 deviceName.Text = url;
+
+            checkWin.Checked = hotkey.Contains('#');
+            checkAlt.Checked = hotkey.Contains('!');
+            checkCtrl.Checked = hotkey.Contains('^');
+            textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
+               
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -186,6 +192,20 @@ namespace RemoteMessages
 
         public bool getGhostModeActivated() { return activateGhostMode.Checked; }
         public string getPassword() { return password.Text; }
+        public string getHotkey()
+        {
+            string h = "";
+
+
+            if (checkWin.Checked)
+                h += ('#');
+            if (checkAlt.Checked)
+                h += ('!');
+            if (checkCtrl.Checked)
+                h += ('^');
+
+            return h+textHotkey.Text;
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {

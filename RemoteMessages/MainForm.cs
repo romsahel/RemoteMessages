@@ -10,15 +10,24 @@ using System.Net;
 
 namespace RemoteMessages
 {
+    /// <TODO>
+    /// - Correct drafts (not saving correctly when sent message ; sometimes disappearing)
+    /// - Add sound notifications (correct 'em)
+    /// - Add embedded image viewer
+    /// - Smiley shortcut (menu to autoreplace smileys) or most recent/used menu
+    /// - 
+    /// </TODO>
 
     public partial class MainForm : Form
     {
+        #region Variables
         private string previousFirst;
         private string previousConversation;
         private HtmlElement previousSelectedContact;
 
         private bool isPreviousF11;
         private bool isPreviousF1;
+        private bool isPreviousF2;
         private bool isPreviousAltDown;
         private bool isPreviousCtrlDown;
         private bool isPreviousMouse;
@@ -40,24 +49,26 @@ namespace RemoteMessages
         private bool exceptionRaised;
         private bool loggedIn;
 
-        private const string VERSION = "3.1.85";
         private bool isGhostMode;
         private string password;
-        private bool isPreviousF2;
+        private string hotkey;
+        private bool loginDisplayed = false;
+
+        private Process ahkProcess;
 
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
-        private Process ahkProcess;
-        private bool loginDisplayed = false;
+        #endregion 
+        private const string VERSION = "3.1.88";
+
 
         public MainForm()
         {
-            ahkProcess = Process.Start(appFolder + "remotemessages_script.exe");
             checkUpdate();
             try
             {
                 InitializeComponent();
 
-                webBrowser1.ScriptErrorsSuppressed = false;
+                webBrowser1.ScriptErrorsSuppressed = true;
 
                 exceptionRaised = false;
                 isPreviousF11 = false;
@@ -85,7 +96,6 @@ namespace RemoteMessages
             }
         }
 
-
         private void checkUpdate(bool manual = false)
         {
             try
@@ -94,7 +104,8 @@ namespace RemoteMessages
                 WebClient client = new WebClient();
                 client.Proxy = null;
                 // Download string.
-                string changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt")).Trim();
+                string changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt"));
+                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.None)[0];
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
@@ -114,8 +125,12 @@ namespace RemoteMessages
                         p.StartInfo.WorkingDirectory = appFolder;
                         p.Start();
 
-                        ahkProcess.Kill();
-                        ahkProcess.Close();
+                        try
+                        {
+                            ahkProcess.Kill();
+                            ahkProcess.Close();
+                        }
+                        catch { }
 
                         Environment.Exit(1);
                     }
@@ -137,11 +152,16 @@ namespace RemoteMessages
         /// </summary>
         private void displayOptions()
         {
+            if (timerUnfocusing != null)
+                timerUnfocusing.Interval = int.MaxValue;
+            if (timerCheckNew != null)
+                timerCheckNew.Interval = int.MaxValue;
+
             using (PreferencesForm form2 = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url,
-                isGhostMode, password))
+                isGhostMode, password, hotkey))
             {
                 DialogResult res = form2.ShowDialog();
                 if (res == System.Windows.Forms.DialogResult.OK)
@@ -169,7 +189,17 @@ namespace RemoteMessages
 
                     isGhostMode = form2.getGhostModeActivated();
                     password = form2.getPassword();
-
+                    if (form2.getHotkey() != hotkey)
+                    {
+                        hotkey = form2.getHotkey();
+                        try
+                        {
+                            ahkProcess.Kill();
+                            ahkProcess.Close();
+                        }
+                        catch { }
+                        ahkProcess = Process.Start(appFolder + "remotemessages_script.exe", '"' + hotkey + '"');
+                    }
                     port = form2.getPort();
                     if (isAutoUpdate)
                         deviceName = form2.getDeviceName();
@@ -199,6 +229,10 @@ namespace RemoteMessages
                 }
             }
 
+            if (timerCheckNew != null)
+                timerCheckNew.Interval = 1500;
+            if (timerUnfocusing != null)
+                timerUnfocusing.Interval = delayUnfocusing;
         }
 
         private bool loadConfig()
@@ -232,40 +266,53 @@ namespace RemoteMessages
 
                     isGhostMode = Boolean.Parse(reader.ReadLine());
                     password = reader.ReadLine();
+                    hotkey = reader.ReadLine();
+                    if (reader.EndOfStream)
+                    {
+                        reader.Close();
+                        reader.Dispose();
+                        return configNotFound();
+                    }
                 }
                 return true;
             }
             catch
             {
-                url = "http://192.168.1.1:333";
-                deviceName = "yourDevicesName";
-                port = "333";
-
-                closeToTray = true;
-                minimizeToTray = true;
-                escapeToTray = true;
-
-                showBalloon = true;
-                delayBalloon = 500;
-                showFlash = true;
-                flashCount = 6;
-
-                isAutoUpdate = true;
-                isReplacing = true;
-                isUnfocusing = true;
-
-                delayAutoUpdate = 3;
-
-                delayReplacing = 500;
-
-                delayUnfocusing = 5000;
-
-                isGhostMode = false;
-                password = "";
-
-                raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
-                return false;
+                return configNotFound();
             }
+        }
+
+        private bool configNotFound()
+        {
+            url = "http://192.168.1.1:333";
+            deviceName = "yourDevicesName";
+            port = "333";
+
+            closeToTray = true;
+            minimizeToTray = true;
+            escapeToTray = true;
+
+            showBalloon = true;
+            delayBalloon = 500;
+            showFlash = true;
+            flashCount = 6;
+
+            isAutoUpdate = true;
+            isReplacing = true;
+            isUnfocusing = true;
+
+            delayAutoUpdate = 3;
+
+            delayReplacing = 500;
+
+            delayUnfocusing = 5000;
+
+            isGhostMode = false;
+            password = "";
+            hotkey = "!H";
+
+            raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
+            return false;
         }
         private void saveConfig()
         {
@@ -296,6 +343,11 @@ namespace RemoteMessages
 
                 writer.WriteLine(isGhostMode);
                 writer.WriteLine(password);
+                writer.WriteLine(hotkey);
+
+
+
+                writer.WriteLine();
             }
         }
 
@@ -324,7 +376,7 @@ namespace RemoteMessages
             {
                 if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
                     Form1_FormClosing(sender, null);
-                else
+                else if (documentCompleted && !exceptionRaised)
                     saveDraft();
             }
 
@@ -368,31 +420,34 @@ namespace RemoteMessages
             else
                 isPreviousF12 = false;
 
-            if (e.Modifiers == Keys.Alt && e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9 && !isPreviousAltDown)
+            if (documentCompleted && !exceptionRaised)
             {
-                ConversationChanged();
-                isPreviousAltDown = true;
-            }
-            else
-                isPreviousAltDown = false;
-
-            if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
-            {
-                if (e.KeyCode == Keys.Enter)
+                if (e.Modifiers == Keys.Alt && e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9 && !isPreviousAltDown)
                 {
-                    webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
-                    timerSend.Start();
-                    isPreviousCtrlDown = true;
+                    ConversationChanged();
+                    isPreviousAltDown = true;
                 }
-                else if (e.KeyCode == Keys.E)
-                {
-                    webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
+                else
+                    isPreviousAltDown = false;
 
-                    isPreviousCtrlDown = true;
+                if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
+                {
+                    if (e.KeyCode == Keys.Enter)
+                    {
+                        webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
+                        timerSend.Start();
+                        isPreviousCtrlDown = true;
+                    }
+                    else if (e.KeyCode == Keys.E)
+                    {
+                        webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
+                        
+                        isPreviousCtrlDown = true;
+                    }
                 }
+                else
+                    isPreviousCtrlDown = false;
             }
-            else
-                isPreviousCtrlDown = false;
         }
 
         #region Conversation change (saving/loading draft, emoji)
@@ -415,27 +470,33 @@ namespace RemoteMessages
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
         ///</summary>
-        private void ConversationChanged(bool sending = false)
+        private void ConversationChanged(bool justChanging = true, bool sending = false)
         {
-            timerReplacing.Interval = delayReplacing;
-            if (sending)
-                timerReplacing.Interval += 2000;
+            if (timerReplacing != null)
+            {
+                timerReplacing.Interval = delayReplacing;
+                if (sending)
+                    timerReplacing.Interval += 4000;
 
-            saveDraft(sending);
+                if (justChanging)
+                    saveDraft();
 
-            if (delayReplacing == 0)
-                ConversationChangedTimer(null, null);
-            else
-                timerReplacing.Start();
+                if (delayReplacing == 0)
+                    ConversationChangedTimer(null, null);
+                else
+                    timerReplacing.Start();
+            }
         }
 
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
-            isPreviousMouse = false;
-            timerReplacing.Stop();
+            loadDraft();
+
             if (isReplacing)
                 fromStringToEmoji();
-            loadDraft();
+
+            isPreviousMouse = false;
+            timerReplacing.Stop();
         }
         ///<summary>
         /// Replaces the smileys by their matching emoticons in messages 
@@ -486,6 +547,7 @@ namespace RemoteMessages
 
             using (StreamWriter w = File.AppendText(appFolder + "drafts")) { }
             bool successful = loadConfig();
+            ahkProcess = Process.Start(appFolder + "remotemessages_script.exe", '"' + hotkey + '"');
             if (successful)
             {
                 if (isAutoUpdate)
@@ -516,7 +578,7 @@ namespace RemoteMessages
                 int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
                 Y += curr.Y;
                 DoMouseClick(X, Y);
-                ConversationChanged(true);
+                ConversationChanged(false);
             }
         }
         private void Form1_Deactivate(object sender, EventArgs e)
@@ -568,9 +630,12 @@ namespace RemoteMessages
             }
             else // True exiting
             {
-                ahkProcess.Kill();
-                ahkProcess.Close();
-
+                try
+                {
+                    ahkProcess.Kill();
+                    ahkProcess.Close();
+                }
+                catch { }
                 saveDraftToFile();
             }
         }
@@ -590,6 +655,7 @@ namespace RemoteMessages
         }
         #endregion
 
+
         ///<summary>
         /// Called on timer end to check for new message
         ///</summary>
@@ -603,7 +669,7 @@ namespace RemoteMessages
                 {
                     if (webBrowser1.Document.Body.Children[1].InnerHtml != previousConversation)
                     {
-                        if (!previousConversation.Contains("pending") || !previousConversation.Contains("unsent"))
+                        if (!previousConversation.Contains("pending") && !previousConversation.Contains("unsent"))
                         {
                             if (justUnfocused)
                                 justUnfocused = false;
@@ -654,16 +720,23 @@ namespace RemoteMessages
                 webBrowser1.Stop();
 
                 progressBar1.Visible = false;
-                string msg = "Your device cannot be found.\nOtherwise, please check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nClick OK to open options, Cancel to quit.";
+                string msg = "Your device cannot be found.\nPlease check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nIgnore to open options, Retry or Abort.";
                 if (sender != null && e == null)
                     msg = (string)sender;
                 DialogResult res = MessageBox.Show(msg,
                     "Error!",
-        MessageBoxButtons.OKCancel,
+        MessageBoxButtons.AbortRetryIgnore,
         MessageBoxIcon.Error,
         MessageBoxDefaultButton.Button2);
-                if (res == System.Windows.Forms.DialogResult.OK)
+                if (res == System.Windows.Forms.DialogResult.Ignore)
                     displayOptions();
+                else if (res == System.Windows.Forms.DialogResult.Retry)
+                {
+                    if (isAutoUpdate)
+                        FindNewIP();
+                    else
+                        DisplayPage();
+                }
                 else
                 {
                     isExiting = true;
@@ -681,8 +754,6 @@ namespace RemoteMessages
             timerTimeOut.Stop();
 
             progressBar1.Value = 75;
-
-
 
             HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(url);
             wrq.Proxy = null;
@@ -813,6 +884,7 @@ namespace RemoteMessages
                 raiseException(null, null);
             }
         }
+
         #endregion
 
         #region Draft management
@@ -864,7 +936,7 @@ namespace RemoteMessages
         /// <summary>
         /// Finds current draft and saves it into drafts var
         /// </summary>
-        private void saveDraft(bool justSent = false)
+        private void saveDraft()
         {
             string currentContact = findCurrentContactName();
             if (currentContact != "")
@@ -873,15 +945,16 @@ namespace RemoteMessages
                 // Gets the current draft
                 HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
 
-                string currentDraft = "";
-                if (!justSent)
-                    currentDraft = editable.InnerHtml;
+                string currentDraft = editable.InnerHtml;
 
                 // Finds to which contact it belongs to
                 if (!drafts.ContainsKey(currentContact))
                     drafts.Add(currentContact, currentDraft);
                 else
-                    drafts[currentContact] = currentDraft;
+                {
+                    if (!(timerReplacing.Enabled && (currentDraft == null && drafts[currentContact] != null)))
+                        drafts[currentContact] = currentDraft;
+                }
             }
         }
         /// <summary>
@@ -967,7 +1040,8 @@ namespace RemoteMessages
                 WebClient client = new WebClient();
                 client.Proxy = null;
                 // Download string.
-                changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt")).Trim();
+                changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt"));
+                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.None)[0];
             }
             catch { }
 
@@ -993,7 +1067,7 @@ namespace RemoteMessages
         /// </summary>
         private void sendEnter(object sender, EventArgs e)
         {
-            ConversationChanged(true);
+            ConversationChanged(false, true);
             SendKeys.Send("~");
             timerSend.Enabled = false;
         }

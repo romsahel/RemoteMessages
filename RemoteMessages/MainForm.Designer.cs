@@ -37,9 +37,9 @@
             this.contextShowHide = new System.Windows.Forms.ToolStripMenuItem();
             this.contextOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextExit = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,31 +82,38 @@
             this.aboutToolStripMenuItem,
             this.contextExit});
             this.contextMenu.Name = "contextMenuStrip1";
-            this.contextMenu.Size = new System.Drawing.Size(153, 120);
+            this.contextMenu.Size = new System.Drawing.Size(136, 98);
             // 
             // contextShowHide
             // 
             this.contextShowHide.Name = "contextShowHide";
-            this.contextShowHide.Size = new System.Drawing.Size(152, 22);
+            this.contextShowHide.Size = new System.Drawing.Size(135, 22);
             this.contextShowHide.Text = "Show/Hide";
             this.contextShowHide.Click += new System.EventHandler(this.contextShowHide_Click);
             // 
             // contextOptions
             // 
             this.contextOptions.Name = "contextOptions";
-            this.contextOptions.Size = new System.Drawing.Size(152, 22);
+            this.contextOptions.Size = new System.Drawing.Size(135, 22);
             this.contextOptions.Text = "Preferences";
             this.contextOptions.Click += new System.EventHandler(this.contextOptions_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(132, 6);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // contextExit
             // 
             this.contextExit.Name = "contextExit";
-            this.contextExit.Size = new System.Drawing.Size(152, 22);
+            this.contextExit.Size = new System.Drawing.Size(135, 22);
             this.contextExit.Text = "Exit";
             this.contextExit.Click += new System.EventHandler(this.contextExit_Click);
             // 
@@ -121,13 +128,6 @@
             this.label1.Text = "Press F1 to display options.\r\nPress F12 to refresh the page and update your ID.";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label1.Visible = false;
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // MainForm
             // 
