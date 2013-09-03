@@ -164,6 +164,13 @@ footer {
 	margin: 280px;
 }
 
+small h1 {
+	font-size: 2em !important;
+}
+small ul  {
+	list-style: square;
+}
+
 @media screen and (max-width: 25em) { 
 	.container > header, footer {
 		font-size: 75%;

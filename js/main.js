@@ -36,18 +36,38 @@ $(document).ready(function() {
 					$(this).children().eq(1).slideToggle();
 			});
 	});
+	
+	$(document).keyup(function(e) {
+		if (e.keyCode == 27)  // ESCAPE
+		{
+			unselectAllMenu();
+			hideUnselectedMenu(500, 1)
+		}
+		
+		if (e.altKey)
+		{
+			if (e.keyCode > 48 && e.keyCode < 54)
+				$("#menu ul li:nth-child(" + (e.keyCode - 47) + ')').trigger('click');
+			
+		}
+	});
 });
 
 function hideUnselectedMenu(t, curr) {
 	$( ".inner > div" ).each(function(i) {
-			$(this).slideUp(t, function() {
-				if (i + 1 == $( ".inner > div" ).length && curr != null)
-				{
-						$( ".inner div:nth-child(" + curr + ')' ).slideDown(1500);
-						if (curr == 1)
-							$("#menu ul li").removeClass("unselected");
-				}
-			});
+			if (i + 1 != curr)
+			{
+				$(this).slideUp(t, function() {
+					if (i + 1 == $( ".inner > div" ).length && curr != null)
+					{
+							$( ".inner div:nth-child(" + curr + ')' ).slideDown(1500);
+							if (curr == 1)
+								$("#menu ul li").removeClass("unselected");
+					}
+				});
+			}
+			else
+				$( ".inner div:nth-child(" + curr + ')' ).slideDown(1500);
 			});
 	};
 	
