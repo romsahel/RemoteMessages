@@ -1,3 +1,6 @@
+3.1.92
+- Better looking about box and added button on preferences
+- Added icon for login window
 3.1.91
 - Modified GhostMode description to fit new hotkey
 - Password security maintained after error (according to OneyOzFest182_FBC's suggestion)
