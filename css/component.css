@@ -310,29 +310,33 @@ a, button {
 		width: 100%;
 	}
 	
+	.inner {
+		width: 85%;
+		text-align: center;
+	}
 	/* Instead of adding a border, we transition the background color */
 	.no-touch .nav li:nth-child(6n+2) a:hover,
 	.no-touch .nav li:nth-child(6n+2) a:active,
 	.no-touch .nav li:nth-child(6n+2) a:focus {
-		background: rgb(245, 160, 41);
+		background: #525D69;
 	}
 
 	.no-touch .nav li:nth-child(6n+3) a:hover,
 	.no-touch .nav li:nth-child(6n+3) a:active,
 	.no-touch .nav li:nth-child(6n+3) a:focus {
-		background: rgb(44, 168, 219);
+		background: #334C68;
 	}
 
 	.no-touch .nav li:nth-child(6n+4) a:hover,
 	.no-touch .nav li:nth-child(6n+4) a:active,
 	.no-touch .nav li:nth-child(6n+4) a:focus {
-		background: rgb(31, 120, 176);
+		background: #8496A8;
 	}
 
 	.no-touch .nav li:nth-child(6n+5) a:hover,
 	.no-touch .nav li:nth-child(6n+5) a:active,
 	.no-touch .nav li:nth-child(6n+5) a:focus {
-		background: rgb(39, 70, 90);
+		background: rgb(16, 34, 44);
 	}
 
 	.nav ul li {
@@ -493,13 +497,24 @@ a, button {
 	*/
 	/* Adapting the layout of the menu for smaller screens : icon on the left and text on the right*/
 	
+	.inner {
+		font-size: 1.2em;
+	}
 	
 	#feature-list span {
-		font-size: 0.7em !important;
-		
-		padding-top: 0 !important;
-		padding-bottom: 0 !important;
-	}	
+		font-size: 0.8em !important;
+	
+		line-height: 1.4em !important;
+		padding:  10px 0 10px 0 !important;
+	}
+	
+	#feature-list p {
+		font-size: 0.75em !important;
+	
+		line-height: 1.4em !important;
+		padding: 10px 0 0 0 !important;
+	}
+	
 	
 	
 	.nav li span {
@@ -519,15 +534,15 @@ a, button {
 	/* Adding a left border of 8 px with a different color for each menu item*/
 	
 	.nav li:nth-child(6n+2) {
-		border-left: 8px solid rgb(191, 117, 20);
+		border-left: 8px solid #525D69;
 	}
 
 	.nav li:nth-child(6n+3) {
-		border-left: 8px solid rgb(13, 111, 150);
+		border-left: 8px solid #334C68;
 	}
 
 	.nav li:nth-child(6n+4) {
-		border-left: 8px solid rgb(10, 75, 117);
+		border-left: 8px solid #8496A8;
 	}
 
 	.nav li:nth-child(6n+5) {
@@ -539,4 +554,3 @@ a, button {
 		padding: 0.8em;
 	}
 }
-
