@@ -1,3 +1,6 @@
+3.1.94
+- Actually working Drafts
+- Relabeled error window
 3.1.93
 - Possibility to Enable/Disable drafts
 3.1.92
