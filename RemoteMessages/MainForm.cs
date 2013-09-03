@@ -59,7 +59,7 @@ namespace RemoteMessages
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion 
 
-        private const string VERSION = "3.1.94";
+        private const string VERSION = "3.1.95";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused;
@@ -324,7 +324,7 @@ namespace RemoteMessages
             password = "";
             hotkey = "!H";
 
-            raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. The preferences will now be displayed: please, chose your preferences and enter your device's name or IP address.", null);
+            raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. Click the 'Options' button to display the preferences to enter your device's name or IP address and configure the application.", null);
             return false;
         }
         private void saveConfig()
@@ -718,13 +718,13 @@ namespace RemoteMessages
                 webBrowser1.Stop();
 
                 progressBar1.Visible = false;
-                string msg = "Your device cannot be found.\nPlease check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer).\nIgnore to open options, Retry or Abort.";
+                string msg = "Your device cannot be found.\nPlease click the 'Options' button and check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer) and then click 'Retry'.\nClicking Abort will close the application.";
                 
                 if (sender != null && e == null)
                     msg = (string)sender;
 
 
-                using (ErrorForm error = new ErrorForm(msg))
+                using (ErrorForm error = new ErrorForm(msg, (sender != null && e == null)))
                 {
                     switch (error.ShowDialog())
                     {

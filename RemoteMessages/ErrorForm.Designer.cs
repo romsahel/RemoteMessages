@@ -30,9 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorForm));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.retryButton = new System.Windows.Forms.Button();
             this.OKbutton = new System.Windows.Forms.Button();
+            this.retryButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
@@ -51,17 +51,17 @@
             this.panel1.Size = new System.Drawing.Size(471, 49);
             this.panel1.TabIndex = 1;
             // 
-            // cancelButton
+            // OKbutton
             // 
-            this.cancelButton.AutoSize = true;
-            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancelButton.Location = new System.Drawing.Point(384, 11);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 26);
-            this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "&Abort";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.OKbutton.AutoSize = true;
+            this.OKbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OKbutton.Location = new System.Drawing.Point(191, 11);
+            this.OKbutton.Name = "OKbutton";
+            this.OKbutton.Size = new System.Drawing.Size(85, 26);
+            this.OKbutton.TabIndex = 2;
+            this.OKbutton.Text = "&Options";
+            this.OKbutton.UseVisualStyleBackColor = true;
+            this.OKbutton.Click += new System.EventHandler(this.OKbutton_Click);
             // 
             // retryButton
             // 
@@ -75,17 +75,17 @@
             this.retryButton.UseVisualStyleBackColor = true;
             this.retryButton.Click += new System.EventHandler(this.retryButton_Click);
             // 
-            // OKbutton
+            // cancelButton
             // 
-            this.OKbutton.AutoSize = true;
-            this.OKbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OKbutton.Location = new System.Drawing.Point(212, 11);
-            this.OKbutton.Name = "OKbutton";
-            this.OKbutton.Size = new System.Drawing.Size(64, 26);
-            this.OKbutton.TabIndex = 2;
-            this.OKbutton.Text = "&Options";
-            this.OKbutton.UseVisualStyleBackColor = true;
-            this.OKbutton.Click += new System.EventHandler(this.OKbutton_Click);
+            this.cancelButton.AutoSize = true;
+            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelButton.Location = new System.Drawing.Point(384, 11);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 26);
+            this.cancelButton.TabIndex = 0;
+            this.cancelButton.Text = "&Abort";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // pictureBox1
             // 

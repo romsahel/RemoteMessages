@@ -11,10 +11,16 @@ namespace RemoteMessages
 {
     public partial class ErrorForm : Form
     {
-        public ErrorForm(string msg)
+        public ErrorForm(string msg, bool hideRetryButton)
         {
             InitializeComponent();
             pictureBox1.Image = SystemIcons.Error.ToBitmap();
+            label1.Text = msg;
+            if (hideRetryButton)
+            {
+                OKbutton.Location = retryButton.Location;
+                retryButton.Visible = false;
+            }
         }
 
         private void OKbutton_Click(object sender, EventArgs e)
