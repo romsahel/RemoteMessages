@@ -1,3 +1,9 @@
+3.1.91
+- Modified GhostMode description to fit new hotkey
+- Password security maintained after error (according to OneyOzFest182_FBC's suggestion)
+- Added tips to inform the possibility to use the hotkey when GhostMode is disabled
+- Modified behavior: To go into Ghost Mode, the app must now be focused
+	> When GM is Enabled, app is unfocused and the user presses the hotkey, it now focuses the app
 3.1.90
 - ADDED: choice of hotkey for Ghost Mode
 - Drafts fix (when message sent)

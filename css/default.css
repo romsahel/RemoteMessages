@@ -169,6 +169,7 @@ small h1 {
 }
 small ul  {
 	list-style: square;
+	line-height: 2.5em;
 }
 
 @media screen and (max-width: 25em) { 
