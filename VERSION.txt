@@ -9,6 +9,7 @@
 - Drafts fix (when message sent)
 - Bugfixes (initialized variable sometimes called)
 - Added splitter for changelog
+---___---___------___---___------___---___------___---___------___---___---
 3.1.87
 - Other bugfixes (when using shortcuts before document completed)
 3.1.86
@@ -16,7 +17,6 @@
 3.1.85
 - Removed notification of 'pending message' becoming 'unsent' and of 'unsent message' becoming 'sent'
 - Added 'About' windows (accessible through the icon context menu)
----___---___------___---___------___---___------___---___------___---___---
 3.1.84
 - Window's titles now contains selected contact's name
 - Ghost mode's textbox is now emptied on error. Plus, the password appears in clear (no *).
