@@ -58,7 +58,8 @@ namespace RemoteMessages
 
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion 
-        private const string VERSION = "3.1.88";
+
+        private const string VERSION = "3.1.91";
 
 
         public MainForm()
@@ -1114,8 +1115,13 @@ namespace RemoteMessages
                 {
                     if (notify.Visible)
                     {
-                        notify.Visible = false;
-                        this.Hide();
+                        if (this.Focused || this.webBrowser1.Focused)
+                        {
+                            notify.Visible = false;
+                            this.Hide();
+                        }
+                        else
+                            this.Show();
                     }
                     else
                     {

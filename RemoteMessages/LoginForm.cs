@@ -98,7 +98,6 @@ namespace RemoteMessages
         public void setPasswordClear()
         {
             this.ghostmodePassword.Text = "";
-            this.ghostmodePassword.UseSystemPasswordChar = false;
         }
     }
 }

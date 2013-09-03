@@ -215,14 +215,14 @@ namespace RemoteMessages
 
         private void tips_Click(object sender, EventArgs e)
         {
-            string tips = "Press F1 to display this window.\n"
-                + "Press F2 to check for updates.\n"
-                + "Press F11 to switch to fullscreen mode.\n"
-                + "Press F12 to manually update your IP.\n"
-                + "You can press Ctrl+Enter instead of click the send button.\n"
-                + "Press Alt+1-9 to open the Nth conversation.\n"
-                + "Press Ctrl+E to focus the sending area (editable text).\n"
-                + "Press Alt+H when Ghost Mode is activated to hide the application.\n"
+            string tips = "- Press F1 to display this window.\n"
+                + "- Press F2 to check for updates.\n"
+                + "- Press F11 to switch to fullscreen mode.\n"
+                + "- Press F12 to manually update your IP.\n"
+                + "- You can press Ctrl+Enter instead of click the send button.\n"
+                + "- Press Alt+1-9 to open the Nth conversation.\n"
+                + "- Press Ctrl+E to focus the sending area (editable text).\n"
+                + "- If Ghost Mode is disabled, the hotkey you chose can still be used to Show/Hide the window with no login required.\n"
                 ;
 
             MessageBox.Show(tips, "Tips!", MessageBoxButtons.OK, MessageBoxIcon.Information);

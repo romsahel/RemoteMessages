@@ -69,12 +69,12 @@
             this.password = new System.Windows.Forms.TextBox();
             this.activateGhostMode = new System.Windows.Forms.CheckBox();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.label14 = new System.Windows.Forms.Label();
-            this.checkWin = new System.Windows.Forms.CheckBox();
-            this.checkCtrl = new System.Windows.Forms.CheckBox();
-            this.checkAlt = new System.Windows.Forms.CheckBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.textHotkey = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.checkWin = new System.Windows.Forms.CheckBox();
+            this.checkAlt = new System.Windows.Forms.CheckBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.checkCtrl = new System.Windows.Forms.CheckBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -457,7 +457,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(60, 584);
+            this.label13.Location = new System.Drawing.Point(37, 19);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(56, 13);
             this.label13.TabIndex = 46;
@@ -465,7 +465,7 @@
             // 
             // password
             // 
-            this.password.Location = new System.Drawing.Point(139, 581);
+            this.password.Location = new System.Drawing.Point(116, 16);
             this.password.Name = "password";
             this.password.Size = new System.Drawing.Size(100, 20);
             this.password.TabIndex = 45;
@@ -490,7 +490,9 @@
             // panel6
             // 
             this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.label13);
             this.panel6.Controls.Add(this.textHotkey);
+            this.panel6.Controls.Add(this.password);
             this.panel6.Controls.Add(this.label15);
             this.panel6.Controls.Add(this.checkWin);
             this.panel6.Controls.Add(this.checkAlt);
@@ -498,63 +500,13 @@
             this.panel6.Controls.Add(this.checkCtrl);
             this.panel6.Location = new System.Drawing.Point(23, 564);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(480, 95);
+            this.panel6.Size = new System.Drawing.Size(480, 108);
             this.panel6.TabIndex = 47;
-            // 
-            // label14
-            // 
-            this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(221, 2);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(254, 52);
-            this.label14.TabIndex = 11;
-            this.label14.Text = "Quickly Hide/Show the app by pressing Alt+H. When hidden, the app will be invisib" +
-                "le so that you wont get notifications.\r\n";
-            // 
-            // checkWin
-            // 
-            this.checkWin.AutoSize = true;
-            this.checkWin.Location = new System.Drawing.Point(231, 70);
-            this.checkWin.Name = "checkWin";
-            this.checkWin.Size = new System.Drawing.Size(45, 17);
-            this.checkWin.TabIndex = 48;
-            this.checkWin.Text = "Win";
-            this.checkWin.UseVisualStyleBackColor = true;
-            // 
-            // checkCtrl
-            // 
-            this.checkCtrl.AutoSize = true;
-            this.checkCtrl.Location = new System.Drawing.Point(294, 70);
-            this.checkCtrl.Name = "checkCtrl";
-            this.checkCtrl.Size = new System.Drawing.Size(41, 17);
-            this.checkCtrl.TabIndex = 49;
-            this.checkCtrl.Text = "Ctrl";
-            this.checkCtrl.UseVisualStyleBackColor = true;
-            // 
-            // checkAlt
-            // 
-            this.checkAlt.AutoSize = true;
-            this.checkAlt.Location = new System.Drawing.Point(356, 70);
-            this.checkAlt.Name = "checkAlt";
-            this.checkAlt.Size = new System.Drawing.Size(38, 17);
-            this.checkAlt.TabIndex = 50;
-            this.checkAlt.Text = "Alt";
-            this.checkAlt.UseVisualStyleBackColor = true;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(36, 70);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(44, 13);
-            this.label15.TabIndex = 51;
-            this.label15.Text = "Hotkey:";
             // 
             // textHotkey
             // 
             this.textHotkey.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.textHotkey.Location = new System.Drawing.Point(115, 67);
+            this.textHotkey.Location = new System.Drawing.Point(116, 49);
             this.textHotkey.MaxLength = 1;
             this.textHotkey.Name = "textHotkey";
             this.textHotkey.Size = new System.Drawing.Size(100, 20);
@@ -562,14 +514,63 @@
             this.textHotkey.Text = "H";
             this.textHotkey.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(37, 52);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(44, 13);
+            this.label15.TabIndex = 51;
+            this.label15.Text = "Hotkey:";
+            // 
+            // checkWin
+            // 
+            this.checkWin.AutoSize = true;
+            this.checkWin.Location = new System.Drawing.Point(47, 80);
+            this.checkWin.Name = "checkWin";
+            this.checkWin.Size = new System.Drawing.Size(45, 17);
+            this.checkWin.TabIndex = 48;
+            this.checkWin.Text = "Win";
+            this.checkWin.UseVisualStyleBackColor = true;
+            // 
+            // checkAlt
+            // 
+            this.checkAlt.AutoSize = true;
+            this.checkAlt.Location = new System.Drawing.Point(173, 80);
+            this.checkAlt.Name = "checkAlt";
+            this.checkAlt.Size = new System.Drawing.Size(38, 17);
+            this.checkAlt.TabIndex = 50;
+            this.checkAlt.Text = "Alt";
+            this.checkAlt.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(221, 2);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(254, 99);
+            this.label14.TabIndex = 11;
+            this.label14.Text = "Quickly Hide/Show the app by pressing the hotkey of your choice. When hidden, the" +
+                " app will be invisible so that you won\'t get notifications.\r\nThe hotkey can stil" +
+                "l be used when GM is disabled.";
+            // 
+            // checkCtrl
+            // 
+            this.checkCtrl.AutoSize = true;
+            this.checkCtrl.Location = new System.Drawing.Point(110, 80);
+            this.checkCtrl.Name = "checkCtrl";
+            this.checkCtrl.Size = new System.Drawing.Size(41, 17);
+            this.checkCtrl.TabIndex = 49;
+            this.checkCtrl.Text = "Ctrl";
+            this.checkCtrl.UseVisualStyleBackColor = true;
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(515, 727);
             this.ControlBox = false;
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.password);
             this.Controls.Add(this.activateGhostMode);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.activateAutoIP);
