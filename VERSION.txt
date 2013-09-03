@@ -1,3 +1,5 @@
+3.1.93
+- Possibility to Enable/Disable drafts
 3.1.92
 - Better looking about box and added button on preferences
 - Added icon for login window
