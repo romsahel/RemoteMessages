@@ -76,11 +76,16 @@
             this.label14 = new System.Windows.Forms.Label();
             this.checkCtrl = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
+            this.checkDrafts = new System.Windows.Forms.CheckBox();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.label17 = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.panel7.SuspendLayout();
             this.SuspendLayout();
             // 
             // activateReplacement
@@ -89,7 +94,7 @@
             this.activateReplacement.Checked = true;
             this.activateReplacement.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateReplacement.Location = new System.Drawing.Point(39, 381);
+            this.activateReplacement.Location = new System.Drawing.Point(39, 423);
             this.activateReplacement.Name = "activateReplacement";
             this.activateReplacement.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateReplacement.Size = new System.Drawing.Size(225, 24);
@@ -100,7 +105,7 @@
             // 
             // delayReplacement
             // 
-            this.delayReplacement.Location = new System.Drawing.Point(139, 414);
+            this.delayReplacement.Location = new System.Drawing.Point(139, 456);
             this.delayReplacement.Name = "delayReplacement";
             this.delayReplacement.Size = new System.Drawing.Size(100, 20);
             this.delayReplacement.TabIndex = 2;
@@ -108,7 +113,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(60, 417);
+            this.label1.Location = new System.Drawing.Point(60, 459);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 3;
@@ -138,7 +143,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(60, 503);
+            this.label4.Location = new System.Drawing.Point(60, 545);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 10;
@@ -146,7 +151,7 @@
             // 
             // delayUnfocus
             // 
-            this.delayUnfocus.Location = new System.Drawing.Point(139, 500);
+            this.delayUnfocus.Location = new System.Drawing.Point(139, 542);
             this.delayUnfocus.Name = "delayUnfocus";
             this.delayUnfocus.Size = new System.Drawing.Size(100, 20);
             this.delayUnfocus.TabIndex = 9;
@@ -157,7 +162,7 @@
             this.activateUnfocus.Checked = true;
             this.activateUnfocus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateUnfocus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateUnfocus.Location = new System.Drawing.Point(39, 470);
+            this.activateUnfocus.Location = new System.Drawing.Point(39, 512);
             this.activateUnfocus.Name = "activateUnfocus";
             this.activateUnfocus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateUnfocus.Size = new System.Drawing.Size(183, 24);
@@ -169,7 +174,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(149, 682);
+            this.ok.Location = new System.Drawing.Point(149, 724);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -180,7 +185,7 @@
             // cancel
             // 
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(265, 682);
+            this.cancel.Location = new System.Drawing.Point(265, 724);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -223,7 +228,7 @@
             this.activateAutoIP.Checked = true;
             this.activateAutoIP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateAutoIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateAutoIP.Location = new System.Drawing.Point(39, 243);
+            this.activateAutoIP.Location = new System.Drawing.Point(39, 285);
             this.activateAutoIP.Name = "activateAutoIP";
             this.activateAutoIP.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateAutoIP.Size = new System.Drawing.Size(195, 24);
@@ -235,7 +240,7 @@
             // deviceNameLabel
             // 
             this.deviceNameLabel.AutoSize = true;
-            this.deviceNameLabel.Location = new System.Drawing.Point(51, 275);
+            this.deviceNameLabel.Location = new System.Drawing.Point(51, 317);
             this.deviceNameLabel.Name = "deviceNameLabel";
             this.deviceNameLabel.Size = new System.Drawing.Size(85, 13);
             this.deviceNameLabel.TabIndex = 19;
@@ -243,14 +248,14 @@
             // 
             // deviceName
             // 
-            this.deviceName.Location = new System.Drawing.Point(139, 275);
+            this.deviceName.Location = new System.Drawing.Point(139, 317);
             this.deviceName.Name = "deviceName";
             this.deviceName.Size = new System.Drawing.Size(100, 20);
             this.deviceName.TabIndex = 18;
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(380, 692);
+            this.tips.Location = new System.Drawing.Point(380, 734);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -264,7 +269,7 @@
             this.minimizeToTray.Checked = true;
             this.minimizeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.minimizeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minimizeToTray.Location = new System.Drawing.Point(48, 80);
+            this.minimizeToTray.Location = new System.Drawing.Point(48, 70);
             this.minimizeToTray.Name = "minimizeToTray";
             this.minimizeToTray.Size = new System.Drawing.Size(383, 20);
             this.minimizeToTray.TabIndex = 28;
@@ -277,7 +282,7 @@
             this.closeToTray.Checked = true;
             this.closeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.closeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.closeToTray.Location = new System.Drawing.Point(48, 57);
+            this.closeToTray.Location = new System.Drawing.Point(48, 47);
             this.closeToTray.Name = "closeToTray";
             this.closeToTray.Size = new System.Drawing.Size(347, 20);
             this.closeToTray.TabIndex = 29;
@@ -290,7 +295,7 @@
             this.escapeToTray.Checked = true;
             this.escapeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.escapeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.escapeToTray.Location = new System.Drawing.Point(48, 103);
+            this.escapeToTray.Location = new System.Drawing.Point(48, 93);
             this.escapeToTray.Name = "escapeToTray";
             this.escapeToTray.Size = new System.Drawing.Size(345, 20);
             this.escapeToTray.TabIndex = 30;
@@ -300,7 +305,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Location = new System.Drawing.Point(23, 32);
+            this.panel1.Location = new System.Drawing.Point(23, 22);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(480, 98);
             this.panel1.TabIndex = 35;
@@ -309,7 +314,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(35, 24);
+            this.label9.Location = new System.Drawing.Point(35, 14);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(116, 20);
             this.label9.TabIndex = 36;
@@ -319,7 +324,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(35, 147);
+            this.label7.Location = new System.Drawing.Point(35, 189);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(96, 20);
             this.label7.TabIndex = 41;
@@ -331,7 +336,7 @@
             this.showBalloon.Checked = true;
             this.showBalloon.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showBalloon.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.showBalloon.Location = new System.Drawing.Point(48, 178);
+            this.showBalloon.Location = new System.Drawing.Point(48, 220);
             this.showBalloon.Name = "showBalloon";
             this.showBalloon.Size = new System.Drawing.Size(219, 20);
             this.showBalloon.TabIndex = 38;
@@ -345,7 +350,7 @@
             this.showFlash.Checked = true;
             this.showFlash.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showFlash.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.showFlash.Location = new System.Drawing.Point(48, 203);
+            this.showFlash.Location = new System.Drawing.Point(48, 245);
             this.showFlash.Name = "showFlash";
             this.showFlash.Size = new System.Drawing.Size(137, 20);
             this.showFlash.TabIndex = 37;
@@ -361,7 +366,7 @@
             this.panel2.Controls.Add(this.label10);
             this.panel2.Controls.Add(this.label8);
             this.panel2.Controls.Add(this.delayBalloon);
-            this.panel2.Location = new System.Drawing.Point(23, 155);
+            this.panel2.Location = new System.Drawing.Point(23, 197);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(480, 77);
             this.panel2.TabIndex = 40;
@@ -416,7 +421,7 @@
             this.panel3.Controls.Add(this.port);
             this.panel3.Controls.Add(this.delayAutoIP);
             this.panel3.Controls.Add(this.label6);
-            this.panel3.Location = new System.Drawing.Point(23, 253);
+            this.panel3.Location = new System.Drawing.Point(23, 295);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(480, 122);
             this.panel3.TabIndex = 41;
@@ -441,7 +446,7 @@
             // 
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Controls.Add(this.label3);
-            this.panel4.Location = new System.Drawing.Point(23, 393);
+            this.panel4.Location = new System.Drawing.Point(23, 435);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(480, 62);
             this.panel4.TabIndex = 42;
@@ -450,7 +455,7 @@
             // 
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.label2);
-            this.panel5.Location = new System.Drawing.Point(23, 483);
+            this.panel5.Location = new System.Drawing.Point(23, 525);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(480, 60);
             this.panel5.TabIndex = 43;
@@ -479,7 +484,7 @@
             this.activateGhostMode.Checked = true;
             this.activateGhostMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateGhostMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateGhostMode.Location = new System.Drawing.Point(39, 551);
+            this.activateGhostMode.Location = new System.Drawing.Point(39, 593);
             this.activateGhostMode.Name = "activateGhostMode";
             this.activateGhostMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateGhostMode.Size = new System.Drawing.Size(178, 24);
@@ -499,7 +504,7 @@
             this.panel6.Controls.Add(this.checkAlt);
             this.panel6.Controls.Add(this.label14);
             this.panel6.Controls.Add(this.checkCtrl);
-            this.panel6.Location = new System.Drawing.Point(23, 564);
+            this.panel6.Location = new System.Drawing.Point(23, 606);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(480, 108);
             this.panel6.TabIndex = 47;
@@ -568,7 +573,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 692);
+            this.button1.Location = new System.Drawing.Point(12, 734);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(119, 23);
             this.button1.TabIndex = 48;
@@ -576,12 +581,56 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(35, 129);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(53, 20);
+            this.label16.TabIndex = 51;
+            this.label16.Text = "Drafts";
+            // 
+            // checkDrafts
+            // 
+            this.checkDrafts.AutoSize = true;
+            this.checkDrafts.Checked = true;
+            this.checkDrafts.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkDrafts.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkDrafts.Location = new System.Drawing.Point(24, 10);
+            this.checkDrafts.Name = "checkDrafts";
+            this.checkDrafts.Size = new System.Drawing.Size(111, 20);
+            this.checkDrafts.TabIndex = 49;
+            this.checkDrafts.Text = "Activate drafts";
+            this.checkDrafts.UseVisualStyleBackColor = true;
+            // 
+            // panel7
+            // 
+            this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.label17);
+            this.panel7.Controls.Add(this.checkDrafts);
+            this.panel7.Location = new System.Drawing.Point(23, 137);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(480, 38);
+            this.panel7.TabIndex = 50;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(141, 13);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(227, 13);
+            this.label17.TabIndex = 50;
+            this.label17.Text = "(Experimental, disable if you experience issues)";
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 727);
+            this.ClientSize = new System.Drawing.Size(515, 762);
             this.ControlBox = false;
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.panel7);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.activateGhostMode);
             this.Controls.Add(this.panel6);
@@ -624,6 +673,8 @@
             this.panel5.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -678,5 +729,9 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textHotkey;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckBox checkDrafts;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label label17;
     }
 }

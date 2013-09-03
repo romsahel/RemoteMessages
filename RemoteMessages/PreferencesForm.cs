@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace RemoteMessages
@@ -20,7 +15,7 @@ namespace RemoteMessages
         private bool aboutDisplayed = false;
         private string VERSION;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, string version)
         {
             this.VERSION = version;
             InitializeComponent();
@@ -29,6 +24,8 @@ namespace RemoteMessages
             closeToTray.Checked = bBackgrounds[0];
             minimizeToTray.Checked = bBackgrounds[1];
             escapeToTray.Checked = bBackgrounds[2];
+
+            checkDrafts.Checked = bDrafts;
 
             showBalloon.Checked = bNotifs[0];
             delayBalloon.Text = iB.ToString();
@@ -182,6 +179,8 @@ namespace RemoteMessages
         public bool[] getBackgrounderOptions() { return new bool[] { closeToTray.Checked, minimizeToTray.Checked, escapeToTray.Checked }; }
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
 
+        public bool getDraftActivated() { return checkDrafts.Checked; }
+
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
@@ -198,7 +197,6 @@ namespace RemoteMessages
         public string getHotkey()
         {
             string h = "";
-
 
             if (checkWin.Checked)
                 h += ('#');
