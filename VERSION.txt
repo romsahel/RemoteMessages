@@ -1,3 +1,8 @@
+3.2.00
+- New notification system : cleaner look, with sound - should be less buggy
+- Fixed preferences that were not saved
+- Some minor fixes 
+---___---___------___---___------___---___------___---___------___---___---
 3.1.95
 - Corrected error window buttons and text
 3.1.94
@@ -19,7 +24,6 @@
 - Drafts fix (when message sent)
 - Bugfixes (initialized variable sometimes called)
 - Added splitter for changelog
----___---___------___---___------___---___------___---___------___---___---
 3.1.87
 - Other bugfixes (when using shortcuts before document completed)
 3.1.86
