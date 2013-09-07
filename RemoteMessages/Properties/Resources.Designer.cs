@@ -69,5 +69,44 @@ namespace RemoteMessages.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap notificationbackground {
+            get {
+                object obj = ResourceManager.GetObject("notificationbackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ringtone_3notes {
+            get {
+                return ResourceManager.GetStream("ringtone_3notes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon xxsmall_favicon {
+            get {
+                object obj = ResourceManager.GetObject("xxsmall_favicon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon xxsmall_favicon_notif {
+            get {
+                object obj = ResourceManager.GetObject("xxsmall_favicon_notif", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

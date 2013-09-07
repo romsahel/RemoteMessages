@@ -40,8 +40,6 @@
             this.ok = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.delayAutoIP = new System.Windows.Forms.TextBox();
             this.activateAutoIP = new System.Windows.Forms.CheckBox();
             this.deviceNameLabel = new System.Windows.Forms.Label();
             this.deviceName = new System.Windows.Forms.TextBox();
@@ -80,12 +78,21 @@
             this.checkDrafts = new System.Windows.Forms.CheckBox();
             this.panel7 = new System.Windows.Forms.Panel();
             this.label17 = new System.Windows.Forms.Label();
+            this.checkSound = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.browseButton = new System.Windows.Forms.Button();
+            this.soundBox = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.trackBarVolume = new System.Windows.Forms.TrackBar();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVolume)).BeginInit();
             this.SuspendLayout();
             // 
             // activateReplacement
@@ -94,7 +101,7 @@
             this.activateReplacement.Checked = true;
             this.activateReplacement.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateReplacement.Location = new System.Drawing.Point(39, 423);
+            this.activateReplacement.Location = new System.Drawing.Point(39, 526);
             this.activateReplacement.Name = "activateReplacement";
             this.activateReplacement.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateReplacement.Size = new System.Drawing.Size(225, 24);
@@ -105,7 +112,7 @@
             // 
             // delayReplacement
             // 
-            this.delayReplacement.Location = new System.Drawing.Point(139, 456);
+            this.delayReplacement.Location = new System.Drawing.Point(139, 559);
             this.delayReplacement.Name = "delayReplacement";
             this.delayReplacement.Size = new System.Drawing.Size(100, 20);
             this.delayReplacement.TabIndex = 2;
@@ -113,7 +120,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(60, 459);
+            this.label1.Location = new System.Drawing.Point(60, 562);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 3;
@@ -143,7 +150,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(60, 545);
+            this.label4.Location = new System.Drawing.Point(60, 648);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 10;
@@ -151,7 +158,7 @@
             // 
             // delayUnfocus
             // 
-            this.delayUnfocus.Location = new System.Drawing.Point(139, 542);
+            this.delayUnfocus.Location = new System.Drawing.Point(139, 645);
             this.delayUnfocus.Name = "delayUnfocus";
             this.delayUnfocus.Size = new System.Drawing.Size(100, 20);
             this.delayUnfocus.TabIndex = 9;
@@ -162,7 +169,7 @@
             this.activateUnfocus.Checked = true;
             this.activateUnfocus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateUnfocus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateUnfocus.Location = new System.Drawing.Point(39, 512);
+            this.activateUnfocus.Location = new System.Drawing.Point(39, 615);
             this.activateUnfocus.Name = "activateUnfocus";
             this.activateUnfocus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateUnfocus.Size = new System.Drawing.Size(183, 24);
@@ -174,7 +181,7 @@
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ok.Location = new System.Drawing.Point(149, 724);
+            this.ok.Location = new System.Drawing.Point(149, 831);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(91, 33);
             this.ok.TabIndex = 12;
@@ -185,7 +192,7 @@
             // cancel
             // 
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(265, 724);
+            this.cancel.Location = new System.Drawing.Point(265, 831);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(91, 33);
             this.cancel.TabIndex = 13;
@@ -199,28 +206,10 @@
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.15F);
             this.label5.Location = new System.Drawing.Point(221, 2);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(254, 112);
+            this.label5.Size = new System.Drawing.Size(254, 71);
             this.label5.TabIndex = 17;
-            this.label5.Text = resources.GetString("label5.Text");
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Enabled = false;
-            this.label6.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.label6.Location = new System.Drawing.Point(28, 89);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(82, 13);
-            this.label6.TabIndex = 16;
-            this.label6.Text = "Delay (in days) :";
-            // 
-            // delayAutoIP
-            // 
-            this.delayAutoIP.Enabled = false;
-            this.delayAutoIP.Location = new System.Drawing.Point(116, 86);
-            this.delayAutoIP.Name = "delayAutoIP";
-            this.delayAutoIP.Size = new System.Drawing.Size(100, 20);
-            this.delayAutoIP.TabIndex = 15;
+            this.label5.Text = "Automatically finds the IP address of your device based on its name.\r\nYou must en" +
+                "ter the port you chose on your iDevice.";
             // 
             // activateAutoIP
             // 
@@ -228,7 +217,7 @@
             this.activateAutoIP.Checked = true;
             this.activateAutoIP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateAutoIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateAutoIP.Location = new System.Drawing.Point(39, 285);
+            this.activateAutoIP.Location = new System.Drawing.Point(39, 421);
             this.activateAutoIP.Name = "activateAutoIP";
             this.activateAutoIP.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateAutoIP.Size = new System.Drawing.Size(195, 24);
@@ -240,7 +229,7 @@
             // deviceNameLabel
             // 
             this.deviceNameLabel.AutoSize = true;
-            this.deviceNameLabel.Location = new System.Drawing.Point(51, 317);
+            this.deviceNameLabel.Location = new System.Drawing.Point(51, 453);
             this.deviceNameLabel.Name = "deviceNameLabel";
             this.deviceNameLabel.Size = new System.Drawing.Size(85, 13);
             this.deviceNameLabel.TabIndex = 19;
@@ -248,14 +237,14 @@
             // 
             // deviceName
             // 
-            this.deviceName.Location = new System.Drawing.Point(139, 317);
+            this.deviceName.Location = new System.Drawing.Point(139, 453);
             this.deviceName.Name = "deviceName";
             this.deviceName.Size = new System.Drawing.Size(100, 20);
             this.deviceName.TabIndex = 18;
             // 
             // tips
             // 
-            this.tips.Location = new System.Drawing.Point(380, 734);
+            this.tips.Location = new System.Drawing.Point(380, 841);
             this.tips.Name = "tips";
             this.tips.Size = new System.Drawing.Size(119, 23);
             this.tips.TabIndex = 26;
@@ -368,7 +357,7 @@
             this.panel2.Controls.Add(this.delayBalloon);
             this.panel2.Location = new System.Drawing.Point(23, 197);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(480, 77);
+            this.panel2.Size = new System.Drawing.Size(480, 90);
             this.panel2.TabIndex = 40;
             // 
             // flashCount
@@ -419,11 +408,9 @@
             this.panel3.Controls.Add(this.label12);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.port);
-            this.panel3.Controls.Add(this.delayAutoIP);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Location = new System.Drawing.Point(23, 295);
+            this.panel3.Location = new System.Drawing.Point(23, 431);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(480, 122);
+            this.panel3.Size = new System.Drawing.Size(480, 80);
             this.panel3.TabIndex = 41;
             // 
             // label12
@@ -446,7 +433,7 @@
             // 
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Controls.Add(this.label3);
-            this.panel4.Location = new System.Drawing.Point(23, 435);
+            this.panel4.Location = new System.Drawing.Point(23, 538);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(480, 62);
             this.panel4.TabIndex = 42;
@@ -455,7 +442,7 @@
             // 
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.label2);
-            this.panel5.Location = new System.Drawing.Point(23, 525);
+            this.panel5.Location = new System.Drawing.Point(23, 628);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(480, 60);
             this.panel5.TabIndex = 43;
@@ -484,7 +471,7 @@
             this.activateGhostMode.Checked = true;
             this.activateGhostMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateGhostMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateGhostMode.Location = new System.Drawing.Point(39, 593);
+            this.activateGhostMode.Location = new System.Drawing.Point(39, 696);
             this.activateGhostMode.Name = "activateGhostMode";
             this.activateGhostMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.activateGhostMode.Size = new System.Drawing.Size(178, 24);
@@ -504,7 +491,7 @@
             this.panel6.Controls.Add(this.checkAlt);
             this.panel6.Controls.Add(this.label14);
             this.panel6.Controls.Add(this.checkCtrl);
-            this.panel6.Location = new System.Drawing.Point(23, 606);
+            this.panel6.Location = new System.Drawing.Point(23, 709);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(480, 108);
             this.panel6.TabIndex = 47;
@@ -573,7 +560,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 734);
+            this.button1.Location = new System.Drawing.Point(12, 841);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(119, 23);
             this.button1.TabIndex = 48;
@@ -623,12 +610,92 @@
             this.label17.TabIndex = 50;
             this.label17.Text = "(Experimental, disable if you experience issues)";
             // 
+            // checkSound
+            // 
+            this.checkSound.AutoSize = true;
+            this.checkSound.Checked = true;
+            this.checkSound.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkSound.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkSound.Location = new System.Drawing.Point(24, 21);
+            this.checkSound.Name = "checkSound";
+            this.checkSound.Size = new System.Drawing.Size(110, 20);
+            this.checkSound.TabIndex = 53;
+            this.checkSound.Text = "Enable sound";
+            this.checkSound.UseVisualStyleBackColor = true;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(35, 303);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(56, 20);
+            this.label18.TabIndex = 57;
+            this.label18.Text = "Sound";
+            // 
+            // panel8
+            // 
+            this.panel8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel8.Controls.Add(this.browseButton);
+            this.panel8.Controls.Add(this.soundBox);
+            this.panel8.Controls.Add(this.label19);
+            this.panel8.Controls.Add(this.trackBarVolume);
+            this.panel8.Controls.Add(this.checkSound);
+            this.panel8.Location = new System.Drawing.Point(23, 311);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(480, 90);
+            this.panel8.TabIndex = 56;
+            // 
+            // browseButton
+            // 
+            this.browseButton.Enabled = false;
+            this.browseButton.Location = new System.Drawing.Point(378, 18);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(75, 23);
+            this.browseButton.TabIndex = 57;
+            this.browseButton.Text = "Browse";
+            this.browseButton.UseVisualStyleBackColor = true;
+            // 
+            // soundBox
+            // 
+            this.soundBox.Enabled = false;
+            this.soundBox.FormattingEnabled = true;
+            this.soundBox.Items.AddRange(new object[] {
+            "3 Notes"});
+            this.soundBox.Location = new System.Drawing.Point(140, 20);
+            this.soundBox.Name = "soundBox";
+            this.soundBox.Size = new System.Drawing.Size(231, 21);
+            this.soundBox.TabIndex = 56;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(51, 58);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(45, 13);
+            this.label19.TabIndex = 55;
+            this.label19.Text = "Volume:";
+            // 
+            // trackBarVolume
+            // 
+            this.trackBarVolume.LargeChange = 25;
+            this.trackBarVolume.Location = new System.Drawing.Point(140, 44);
+            this.trackBarVolume.Maximum = 100;
+            this.trackBarVolume.Name = "trackBarVolume";
+            this.trackBarVolume.Size = new System.Drawing.Size(316, 45);
+            this.trackBarVolume.TabIndex = 54;
+            this.trackBarVolume.TickFrequency = 5;
+            this.trackBarVolume.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBarVolume.Value = 25;
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 762);
+            this.ClientSize = new System.Drawing.Size(515, 867);
             this.ControlBox = false;
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.panel8);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.panel7);
             this.Controls.Add(this.button1);
@@ -675,6 +742,9 @@
             this.panel6.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVolume)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -693,8 +763,6 @@
         private System.Windows.Forms.Button ok;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox delayAutoIP;
         private System.Windows.Forms.CheckBox activateAutoIP;
         private System.Windows.Forms.Label deviceNameLabel;
         private System.Windows.Forms.TextBox deviceName;
@@ -733,5 +801,12 @@
         private System.Windows.Forms.CheckBox checkDrafts;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.CheckBox checkSound;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TrackBar trackBarVolume;
+        private System.Windows.Forms.ComboBox soundBox;
+        private System.Windows.Forms.Button browseButton;
     }
 }

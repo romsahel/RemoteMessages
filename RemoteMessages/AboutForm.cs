@@ -67,6 +67,7 @@ namespace RemoteMessages
             }
 
             DialogResult = System.Windows.Forms.DialogResult.None;
+            
         }
     }
 }

@@ -7,6 +7,9 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Media;
 
 namespace RemoteMessages
 {
@@ -21,7 +24,6 @@ namespace RemoteMessages
     public partial class MainForm : Form
     {
         #region Variables
-        private string previousFirst;
         private string previousConversation;
         private HtmlElement previousSelectedContact;
 
@@ -39,7 +41,7 @@ namespace RemoteMessages
         private bool isReplacing, isAutoUpdate, isUnfocusing;
         private bool closeToTray, minimizeToTray, escapeToTray;
         private bool showBalloon, showFlash;
-        private int delayReplacing, delayAutoUpdate, delayUnfocusing;
+        private int delayReplacing, delayUnfocusing;
         private int delayBalloon, flashCount;
         private string deviceName;
         private bool documentCompleted;
@@ -57,13 +59,17 @@ namespace RemoteMessages
         private Process ahkProcess;
 
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
-        #endregion 
+        #endregion
 
-        private const string VERSION = "3.1.95";
+        private const string VERSION = "3.2.00";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused;
 
+        private NotificationForm notification;
+        private SoundPlayer ringtone;
+        private HtmlElement previousFirstContact;
+        private bool soundEnabled;
 
         public MainForm()
         {
@@ -90,8 +96,11 @@ namespace RemoteMessages
 
                 notify.Visible = true;
                 notify.MouseUp += new MouseEventHandler(ShowMeToggle);
-                notify.BalloonTipClicked += new EventHandler(ShowMe);
                 notify.ContextMenuStrip = contextMenu;
+
+                notification = new NotificationForm();
+                notification.Click += new EventHandler(notification_Click);
+                notification.Hide();
 
                 this.webBrowser1.DocumentTitleChanged += new EventHandler(DocumentTitleChanged);
             }
@@ -161,12 +170,12 @@ namespace RemoteMessages
                 timerUnfocusing.Interval = int.MaxValue;
             if (timerCheckNew != null)
                 timerCheckNew.Interval = int.MaxValue;
-
+            
             using (PreferencesForm form2 = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
-                isAutoUpdate, isReplacing, isUnfocusing, delayAutoUpdate, delayReplacing, delayUnfocusing, deviceName, url,
-                isGhostMode, password, hotkey, isDrafting,
+                isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
+                isGhostMode, password, hotkey, isDrafting, soundEnabled, getVolume(),
                 VERSION))
             {
                 DialogResult res = form2.ShowDialog();
@@ -174,6 +183,7 @@ namespace RemoteMessages
                 {
                     bool[] bBackgrounds = form2.getBackgrounderOptions();
                     bool[] bNotifs = form2.getNotifOptions();
+                    int[] sMoreNotifs = form2.getNotifMoreOptions();
 
                     closeToTray = bBackgrounds[0];
                     minimizeToTray = bBackgrounds[1];
@@ -181,23 +191,32 @@ namespace RemoteMessages
 
                     isDrafting = form2.getDraftActivated();
 
+
                     showBalloon = bNotifs[0];
                     showFlash = bNotifs[1];
-                    
+
+                    flashCount = sMoreNotifs[0];
+                    delayBalloon = sMoreNotifs[1];
+
+
                     bool mustRefresh = (isAutoUpdate != form2.getAutoIPActivated())
                         || (isAutoUpdate && deviceName != form2.getDeviceName())
-                        || (!isAutoUpdate && url != form2.getDeviceName());
+                        || (!isAutoUpdate && url != form2.getDeviceName())
+                        || port != form2.getPort();
+
+                    soundEnabled = form2.getSoundActivated();
+                    ChangeVolume(form2.getSoundVolume());
 
                     isAutoUpdate = form2.getAutoIPActivated();
                     isReplacing = form2.getReplacementActivated();
                     isUnfocusing = form2.getUnfocusActivated();
 
-                    delayAutoUpdate = form2.getAutoIPDelay();
                     delayReplacing = form2.getReplacementDelay();
                     delayUnfocusing = form2.getUnfocusDelay();
 
                     isGhostMode = form2.getGhostModeActivated();
                     password = form2.getPassword();
+
                     if (form2.getHotkey() != hotkey)
                     {
                         hotkey = form2.getHotkey();
@@ -209,17 +228,24 @@ namespace RemoteMessages
                         catch { }
                         ahkProcess = Process.Start(appFolder + "remotemessages_script.exe", '"' + hotkey + '"');
                     }
+
                     port = form2.getPort();
+
                     if (isAutoUpdate)
+                    {
                         deviceName = form2.getDeviceName();
+                        string[] temp = url.Split(':');
+                        url = temp[0] + ':' + temp[1] + ':' + port;
+                    }
                     else
                         url = "http://" + form2.getDeviceName() + ":" + port;
+
                     saveConfig();
 
                     if (timerUnfocusing != null)
                         timerUnfocusing.Interval = delayUnfocusing;
 
-                    if (timerReplacing != null) 
+                    if (timerReplacing != null)
                         timerReplacing.Interval = delayReplacing;
 
                     if (mustRefresh)
@@ -244,8 +270,22 @@ namespace RemoteMessages
                 timerUnfocusing.Interval = delayUnfocusing;
         }
 
+        private static int getVolume()
+        {
+            uint soundVolume;
+            // At this point, CurrVol gets assigned the volume
+            Native.waveOutGetVolume(IntPtr.Zero, out soundVolume);
+            // Calculate the volume
+            ushort CalcVol = (ushort)(soundVolume & 0x0000ffff);
+            // Get the volume on a scale of 1 to 10 (to fit the trackbar)
+            int currVolume = CalcVol / (ushort.MaxValue / 100);
+            return currVolume;
+        }
+
         private bool loadConfig()
         {
+            ringtone = new SoundPlayer(RemoteMessages.Properties.Resources.ringtone_3notes);
+
             try
             {
                 using (StreamReader reader = new StreamReader(appFolder + "remote.cfg"))
@@ -264,12 +304,14 @@ namespace RemoteMessages
                     showFlash = Boolean.Parse(reader.ReadLine());
                     flashCount = Int32.Parse(reader.ReadLine());
 
+                    soundEnabled = Boolean.Parse(reader.ReadLine());
+                    ChangeVolume(Int32.Parse(reader.ReadLine()));
+
                     isAutoUpdate = Boolean.Parse(reader.ReadLine());
                     isReplacing = Boolean.Parse(reader.ReadLine());
                     isUnfocusing = Boolean.Parse(reader.ReadLine());
 
                     deviceName = reader.ReadLine();
-                    delayAutoUpdate = Int32.Parse(reader.ReadLine());
 
                     delayReplacing = Int32.Parse(reader.ReadLine());
 
@@ -293,6 +335,17 @@ namespace RemoteMessages
             }
         }
 
+        private static void ChangeVolume(int vol)
+        {
+
+            // Calculate the volume that's being set. BTW: this is a trackbar!
+            int NewVolume = ((ushort.MaxValue / 100) * vol);
+            // Set the same volume for both the left and the right channels
+            uint NewVolumeAllChannels = (((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16));
+            // Set the volume
+            Native.waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
+        }
+
         private bool configNotFound()
         {
             url = "http://192.168.1.1:333";
@@ -306,15 +359,13 @@ namespace RemoteMessages
             isDrafting = true;
 
             showBalloon = true;
-            delayBalloon = 500;
+            delayBalloon = 3000;
             showFlash = true;
             flashCount = 6;
 
             isAutoUpdate = true;
             isReplacing = true;
             isUnfocusing = true;
-
-            delayAutoUpdate = 3;
 
             delayReplacing = 500;
 
@@ -345,12 +396,14 @@ namespace RemoteMessages
                 writer.WriteLine(showFlash);
                 writer.WriteLine(flashCount);
 
+                writer.WriteLine(soundEnabled);
+                writer.WriteLine(getVolume());
+
                 writer.WriteLine(isAutoUpdate);
                 writer.WriteLine(isReplacing);
                 writer.WriteLine(isUnfocusing);
 
                 writer.WriteLine(deviceName);
-                writer.WriteLine(delayAutoUpdate);
 
                 writer.WriteLine(delayReplacing);
 
@@ -432,10 +485,12 @@ namespace RemoteMessages
                 }
                 else
                     isPreviousAltDown = false;
+
                 if (sendFocused && e.KeyCode == Keys.Enter)
                 {
                     emptyCurrentDraft();
                 }
+
                 if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
                 {
                     if (e.KeyCode == Keys.Enter)
@@ -447,7 +502,7 @@ namespace RemoteMessages
                     else if (e.KeyCode == Keys.E)
                     {
                         webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
-                        
+
                         isPreviousCtrlDown = true;
                     }
                 }
@@ -537,7 +592,69 @@ namespace RemoteMessages
 
             webBrowser1.Document.Body.Children[1].InnerHtml = removedByStringBuilder;
         }
-        #endregion  
+        #endregion
+
+        private void Conversations_OnNewMessage(object sender, EventArgs e)
+        {
+            timerCheckNew.Enabled = false;
+
+            // We check if the window is not focused
+            if (!justUnfocused && !this.Focused && !webBrowser1.Focused && notify.Visible &&
+                // And if First contact has changed
+                previousFirstContact != webBrowser1.Document.GetElementById("conversations").FirstChild)
+            {
+                // We check if no conversations are selected
+                if (getCurrentContactElement() == null || getCurrentContactElement() != webBrowser1.Document.GetElementById("conversations").FirstChild)
+                {
+                    NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                }
+                // If there is a selection, change occurred in conversation
+                // So we check if it's not some of the user's pending/unsent message
+                else if (previousConversation != webBrowser1.Document.Body.Children[1].InnerHtml)
+                {
+                    HtmlElementCollection children = this.webBrowser1.Document.GetElementById("messages").Children;
+                    if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
+                        NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                }
+            }
+            previousFirstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
+            previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
+    
+            justUnfocused = false;
+            timerCheckNew.Start();
+        }
+
+        private void NotifyMe(HtmlElement list)
+        {
+            if (showFlash)
+                Native.Flash(this, (uint)flashCount);
+
+            string name = (list.Children[0].InnerText).Split('×')[0];
+            notify.Text = "Remote Messages\nNew message from " + name + ".\n";
+
+            notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
+
+            if (soundEnabled && !notification.Visible)
+            {
+                ringtone.Stop();
+                ringtone.Play();
+            }
+
+            if (showBalloon)
+            {
+                Native.ShowInactiveTopmost(notification);
+                notification.ShowNotification(name, "You just received a new message!", delayBalloon, list.Children[0].InnerHtml);
+            }
+        }
+
+        void notification_Click(object sender, EventArgs e)
+        {
+            ShowMe();
+            int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
+            int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
+            DoMouseClick(X, Y);
+        }
+
 
         #region Form modification (Focus, Size, Closing, Title)
         private void Form1_Shown(object sender, EventArgs e)
@@ -562,11 +679,11 @@ namespace RemoteMessages
         private void Form1_Activated(object sender, EventArgs e)
         {
             notify.Text = "Remote Messages\nClick to Show/Hide";
-            notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon.ico"));
+            notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon;
 
             if (timerCheckNew != null)
-               timerCheckNew.Stop();
-            
+                timerCheckNew.Stop();
+
             if (timerUnfocusing != null)
                 timerUnfocusing.Stop();
 
@@ -589,7 +706,6 @@ namespace RemoteMessages
             if (documentCompleted && !exceptionRaised)
             {
                 previousSelectedContact = getCurrentContactElement();
-                previousFirst = webBrowser1.Document.GetElementById("conversations").Children[0].InnerHtml;
                 previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
 
                 if (findCurrentContactName() != "" && isUnfocusing)
@@ -599,7 +715,9 @@ namespace RemoteMessages
                     else
                         timerUnfocusing.Start();
                 }
+
                 timerCheckNew.Start();
+                previousFirstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
             }
         }
 
@@ -615,14 +733,10 @@ namespace RemoteMessages
             {
                 if (documentCompleted && !exceptionRaised)
                 {
-                    previousFirst = webBrowser1.Document.GetElementById("conversations").Children[0].InnerHtml;
                     previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
                 }
                 if (e != null)
                     e.Cancel = true;
-
-                //if (!timerCheckNew.Enabled)
-                //    Form1_Deactivate(null, null);
 
                 this.Hide();
             }
@@ -640,74 +754,22 @@ namespace RemoteMessages
 
         private void DocumentTitleChanged(object sender, EventArgs e)
         {
-            if (webBrowser1.DocumentTitle != "")
+            // We check if title has really changed
+            if (webBrowser1.DocumentTitle != this.Text)
             {
-                this.notify.Text = webBrowser1.DocumentTitle;
-                this.Text = webBrowser1.DocumentTitle;
-            }
-            else
-            {
-                this.notify.Text = "Remote Messages";
-                this.Text = "Remote Messages";
-            }
-        }
-        #endregion
-
-
-        ///<summary>
-        /// Called on timer end to check for new message
-        ///</summary>
-        private void checkNewMsg(object sender, EventArgs e)
-        {
-            timerCheckNew.Stop();
-            if (!webBrowser1.Focused && notify.Visible)
-            {
-                HtmlElement list = webBrowser1.Document.GetElementById("conversations");
-                if (getCurrentContactElement() != null)
+                if (webBrowser1.DocumentTitle != "")
                 {
-                    if (webBrowser1.Document.Body.Children[1].InnerHtml != previousConversation)
-                    {
-                        if (!previousConversation.Contains("pending") && !previousConversation.Contains("unsent"))
-                        {
-                            if (justUnfocused)
-                                justUnfocused = false;
-                            else
-                                NotifyMe(list);
-                        }
-                        previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
-                    }
+                    this.notify.Text = webBrowser1.DocumentTitle;
+                    this.Text = webBrowser1.DocumentTitle;
                 }
                 else
                 {
-                    if (previousFirst != list.Children[0].InnerHtml)
-                    {
-                        previousFirst = list.Children[0].InnerHtml;
-                        if (justUnfocused)
-                            justUnfocused = false;
-                        else
-                            NotifyMe(list);
-                    }
+                    this.notify.Text = "Remote Messages";
+                    this.Text = "Remote Messages";
                 }
-                timerCheckNew.Enabled = true;
             }
         }
-
-        private void NotifyMe(HtmlElement list)
-        {
-            if (!this.Focused && !webBrowser1.Focused)
-            {
-                string name = (list.Children[0].InnerText).Split('×')[0];
-                notify.Text = "Remote Messages\nNew message from " + name + ".\n";
-
-                notify.Icon = new System.Drawing.Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("RemoteMessages.xxsmall_favicon_notif.ico"));
-
-                if (showBalloon)
-                    notify.ShowBalloonTip(delayBalloon, "New message: " + name, "You just received a message from " + name + ".", ToolTipIcon.Info);
-
-                if (showFlash)
-                    Native.Flash(this, (uint)flashCount);
-            }
-        }
+        #endregion
 
         #region At launch
         private void raiseException(object sender, EventArgs e)
@@ -719,7 +781,7 @@ namespace RemoteMessages
 
                 progressBar1.Visible = false;
                 string msg = "Your device cannot be found.\nPlease click the 'Options' button and check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer) and then click 'Retry'.\nClicking Abort will close the application.";
-                
+
                 if (sender != null && e == null)
                     msg = (string)sender;
 
@@ -873,7 +935,7 @@ namespace RemoteMessages
                     timerUnfocusing.Tick += new EventHandler(sendEsc);
 
                     timerSend = new Timer();
-                    timerSend.Interval = 600;
+                    timerSend.Interval = 300;
                     timerSend.Tick += new EventHandler(sendEnter);
 
                     timerReplacing = new Timer();
@@ -881,8 +943,9 @@ namespace RemoteMessages
                     timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
                     timerCheckNew = new Timer();
-                    timerCheckNew.Interval = 1500;
-                    timerCheckNew.Tick += new EventHandler(checkNewMsg);
+                    timerCheckNew.Interval = 500;
+                    timerCheckNew.Tick += new EventHandler(Conversations_OnNewMessage);
+                    timerCheckNew.Enabled = false;
 
                     if (!Focused && !webBrowser1.Focused)
                         Form1_Deactivate(null, null);
@@ -986,20 +1049,13 @@ namespace RemoteMessages
                 string currentContact = findCurrentContactName();
                 if (currentContact != "")
                 {
-                    HtmlElement body = webBrowser1.Document.Body;
-                    // Gets the current draft
-                    HtmlElement editable = body.Children[3].Children[0].Children[0].Children[4].Children[2];
-
-                    string currentDraft = editable.InnerHtml;
+                    string currentDraft = webBrowser1.Document.GetElementById("editor").InnerHtml;
 
                     // Finds to which contact it belongs to
                     if (!drafts.ContainsKey(currentContact))
                         drafts.Add(currentContact, currentDraft);
                     else
-                    {
-                        if (!(timerReplacing.Enabled && (currentDraft == null && drafts[currentContact] != null)))
-                            drafts[currentContact] = currentDraft;
-                    }
+                        drafts[currentContact] = currentDraft;
                 }
             }
         }
@@ -1012,7 +1068,9 @@ namespace RemoteMessages
             {
                 string contact = findCurrentContactName();
                 if (drafts.ContainsKey(contact))
-                    webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].InnerHtml = drafts[contact];
+                {
+                    webBrowser1.Document.GetElementById("editor").InnerHtml = drafts[contact];
+                }
             }
         }
 
@@ -1089,7 +1147,7 @@ namespace RemoteMessages
                     do
                     {
                         about.ShowDialog();
-                    } while (about.DialogResult != System.Windows.Forms.DialogResult.OK);
+                    } while (about.DialogResult != System.Windows.Forms.DialogResult.OK && !isExiting);
                     aboutDisplayed = false;
                 }
             }
@@ -1156,7 +1214,7 @@ namespace RemoteMessages
         ///</summary>
         private void ShowMe(object sender = null, EventArgs e = null)
         {
-            if (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK)
+            if (sender != null && sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK)
             {
                 if (isGhostMode)
                 {
@@ -1179,6 +1237,7 @@ namespace RemoteMessages
                             do
                             {
                                 loop = false;
+                                login.Activate();
                                 DialogResult res = login.ShowDialog();
                                 if (res == System.Windows.Forms.DialogResult.OK)
                                 {
@@ -1225,8 +1284,9 @@ namespace RemoteMessages
                 WindowState = FormWindowState.Normal;
             // make our form jump to the top of everything
             TopMost = true;
-            TopMost = false;
             base.Show();
+            TopMost = false;
+            this.Activate();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace RemoteMessages
         private bool aboutDisplayed = false;
         private string VERSION;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iA, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, bool soundEnabled, int soundVolume, string version)
         {
             this.VERSION = version;
             InitializeComponent();
@@ -32,6 +32,9 @@ namespace RemoteMessages
             showFlash.Checked = bNotifs[1];
             flashCount.Text = iF.ToString();
 
+            checkSound.Checked = soundEnabled;
+            trackBarVolume.Value = soundVolume;
+
             activateAutoIP.Checked = bA;
             activateReplacement.Checked = bR;
             activateUnfocus.Checked = bU;
@@ -40,7 +43,6 @@ namespace RemoteMessages
             delayReplacement.Enabled = bR;
             delayUnfocus.Enabled = bU;
 
-            delayAutoIP.Text = iA.ToString();
             delayReplacement.Text = iR.ToString();
             delayUnfocus.Text = iU.ToString();
             name = sName;
@@ -59,7 +61,9 @@ namespace RemoteMessages
             checkAlt.Checked = hotkey.Contains('!');
             checkCtrl.Checked = hotkey.Contains('^');
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
-               
+
+
+            soundBox.SelectedItem = soundBox.Items[0];
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -86,17 +90,6 @@ namespace RemoteMessages
             else if (x < 0)
             {
                 flashCount.Text = defaultFlash.ToString();
-                error = true;
-            }
-
-            if (delayAutoIP.Enabled && !Int32.TryParse(delayAutoIP.Text, out x))
-            {
-                delayAutoIP.Text = defaultAutoIP.ToString();
-                error = true;
-            }
-            else if (x < 0)
-            {
-                delayAutoIP.Text = defaultAutoIP.ToString();
                 error = true;
             }
 
@@ -152,7 +145,6 @@ namespace RemoteMessages
 
         private void activateAutoIP_CheckedChanged(object sender, EventArgs e)
         {
-            delayAutoIP.Enabled = activateAutoIP.Checked;
             if (activateAutoIP.Checked)
             {
                 deviceNameLabel.Text = "Device's Name: ";
@@ -178,14 +170,17 @@ namespace RemoteMessages
 
         public bool[] getBackgrounderOptions() { return new bool[] { closeToTray.Checked, minimizeToTray.Checked, escapeToTray.Checked }; }
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
+        public int[] getNotifMoreOptions() { return new int[] { Int32.Parse(flashCount.Text), Int32.Parse(delayBalloon.Text) }; }
 
         public bool getDraftActivated() { return checkDrafts.Checked; }
+
+        public bool getSoundActivated() { return checkSound.Checked; }
+        public int getSoundVolume() { return trackBarVolume.Value; }
 
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
         public bool getUnfocusActivated() { return activateUnfocus.Checked; }
 
-        public int getAutoIPDelay() { return Int32.Parse(delayAutoIP.Text); }
         public int getReplacementDelay() { return Int32.Parse(delayReplacement.Text); }
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
 
