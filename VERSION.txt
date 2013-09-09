@@ -1,3 +1,6 @@
+3.2.01
+- Fixed: script not closing - (first part, for update)
+- Refocus is now more 'stable'
 3.2.00
 - New notification system : cleaner look, with sound - should be less buggy
 - Fixed preferences that were not saved
