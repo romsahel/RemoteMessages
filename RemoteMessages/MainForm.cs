@@ -34,7 +34,7 @@ namespace RemoteMessages
         private bool isPreviousCtrlDown;
         private bool isPreviousMouse;
 
-        private Timer timerReplacing, timerUnfocusing, timerSend, timerCheckNew, timerTimeOut;
+        private Timer timerReplacing, timerUnfocusing, timerCheckNew, timerTimeOut;
         private Dictionary<string, string> drafts;
         private bool isPreviousF12;
         private string url, port;
@@ -61,7 +61,7 @@ namespace RemoteMessages
         private string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.00";
+        private const string VERSION = "3.2.01";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused;
@@ -495,9 +495,7 @@ namespace RemoteMessages
                 {
                     if (e.KeyCode == Keys.Enter)
                     {
-                        webBrowser1.Document.Body.Children[3].All[0].Children[1].Children[0].Children[0].Focus();
-                        timerSend.Start();
-                        isPreviousCtrlDown = true;
+                        webBrowser1.Document.GetElementById("send").InvokeMember("click");
                     }
                     else if (e.KeyCode == Keys.E)
                     {
@@ -933,11 +931,7 @@ namespace RemoteMessages
                     timerUnfocusing = new Timer();
                     timerUnfocusing.Interval = delayUnfocusing;
                     timerUnfocusing.Tick += new EventHandler(sendEsc);
-
-                    timerSend = new Timer();
-                    timerSend.Interval = 300;
-                    timerSend.Tick += new EventHandler(sendEnter);
-
+                    
                     timerReplacing = new Timer();
                     timerReplacing.Interval = delayReplacing;
                     timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
@@ -1166,16 +1160,6 @@ namespace RemoteMessages
             fakeClick = true;
             Native.mouse_event(Native.MOUSEEVENTF_LEFTDOWN | Native.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
             Cursor.Position = prevPos;
-        }
-        /// <summary>
-        /// Simulates a keypress of Enter
-        /// </summary>
-        private void sendEnter(object sender, EventArgs e)
-        {
-            ConversationChanged(false, true);
-            SendKeys.Send("~");
-            timerSend.Enabled = false;
-            emptyCurrentDraft();
         }
 
         /// <summary>
