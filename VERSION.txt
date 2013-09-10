@@ -1,11 +1,19 @@
+3.2.10
+/!\ WARNING : If you have a "failing to load remotemessages_script.exe" error at install, go to taskmanager, and kill the process named remotemessages_script.exe. Then, then click the Retry button of the installer - This issue should now be fixed.
+- NEW: Custom emoji shortcuts
+- Fixed: Draft not working when authentication enabled
+- Fixed: script not closing - (Second part: autokill when main app is closed)
+- No more unfocusing while on popup
+- App's size can no longer be greater than screen size at launch
+- Preferences are no longer completely reset when corrupted (or when update adds some options)
 3.2.01
 - Fixed: script not closing - (first part, for update)
-- Refocus is now more 'stable'
-3.2.00
-- New notification system : cleaner look, with sound - should be less buggy
-- Fixed preferences that were not saved
-- Some minor fixes 
+- Modified: Refocus is now more 'stable'
 ---___---___------___---___------___---___------___---___------___---___---
+3.2.00
+- NEW notification system : cleaner look, with sound - should be less buggy
+- Fixed: preferences that were not saved
+- Some minor fixes 
 3.1.95
 - Corrected error window buttons and text
 3.1.94
