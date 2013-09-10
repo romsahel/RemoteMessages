@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace RemoteMessages
 {
@@ -14,11 +15,31 @@ namespace RemoteMessages
         private string name, url;
         private bool aboutDisplayed = false;
         private string VERSION;
+        private List<Panel> panels;
 
         public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, bool soundEnabled, int soundVolume, string version)
         {
             this.VERSION = version;
             InitializeComponent();
+
+            panels = new List<Panel>();
+            panels.Add(panelBackgrounding);
+            panels.Add(panelDrafts);
+            panels.Add(panelNotifications);
+            panels.Add(panelSound);
+            panels.Add(panelAutoUpdate);
+            panels.Add(panelUnfocus);
+            panels.Add(panelGhostMode);
+
+            foreach (Panel p in panels)
+            {
+                p.Visible = false;
+            }
+
+            panels[0].Visible = true;
+            ok.Location = new System.Drawing.Point(this.Width / 2 - ok.Width / 2 - 50, panels[0].Height + 20);
+            cancel.Location = new System.Drawing.Point(this.Width / 2 - cancel.Width / 2 + 50, panels[0].Height + 20);
+
             cancel.Select();
 
             closeToTray.Checked = bBackgrounds[0];

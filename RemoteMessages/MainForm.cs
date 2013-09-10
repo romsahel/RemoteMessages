@@ -937,12 +937,18 @@ namespace RemoteMessages
                     documentCompleted = true;
                     webBrowser1.ScrollBarsEnabled = false;
 
+                    string button = "<div title=\"Use this button to convert your text smileys to emoji\" id=\"smiley-button\" class=\"button\" type=\"button\" style=\" height: 18px;  background-repeat: no-repeat;  background-position: center;  width: 26px;  min-width: 26px;  background-image: url(/themes/iOS/emoji.png); background-color: #F6F6F6;  border-color: #B7B7B7;\"></div>";
+                    webBrowser1.Document.GetElementById("send").OuterHtml += button;
+                    webBrowser1.Document.GetElementById("smiley-button").Click += new HtmlElementEventHandler(SmileyButton_Click);
+
+                    webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
+
                     webBrowser1.Document.GetElementById("conversations").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
 
                     webBrowser1.Document.GetElementById("editor").Focusing += new HtmlElementEventHandler(Editor_Focusing);
                     webBrowser1.Document.GetElementById("editor").LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
 
-                    webBrowser1.Document.GetElementById("send").MouseUp += new HtmlElementEventHandler(Send_MouseUp);
+                    webBrowser1.Document.GetElementById("send").MouseDown += new HtmlElementEventHandler(Send_MouseUp);
                     webBrowser1.Document.GetElementById("send").Focusing += new HtmlElementEventHandler(Send_Focusing);
                     webBrowser1.Document.GetElementById("send").LosingFocus += new HtmlElementEventHandler(Send_LosingFocus);
 
@@ -965,12 +971,6 @@ namespace RemoteMessages
                         Form1_Deactivate(null, null);
 
                     url = webBrowser1.Url.ToString();
-
-                    string button = "<div title=\"Use this button to convert your text smileys to emoji\" id=\"smiley-button\" class=\"button\" type=\"button\" style=\" height: 18px;  background-repeat: no-repeat;  background-position: center;  width: 26px;  min-width: 26px;  background-image: url(/themes/iOS/emoji.png); background-color: #F6F6F6;  border-color: #B7B7B7;\"></div>";
-                    webBrowser1.Document.GetElementById("send").OuterHtml += button;
-                    webBrowser1.Document.GetElementById("smiley-button").Click += new HtmlElementEventHandler(SmileyButton_Click);
-
-                    webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
                 }
                 loggedIn = true;
             }
@@ -999,7 +999,7 @@ namespace RemoteMessages
                     DialogResult res = form.ShowDialog();
                     if (res == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (form.getAlreadyExists())
+                        if (!form.getAlreadyExists())
                             shortcuts.Add(currentEmoji, form.getShortcut());
                         else
                             shortcuts[currentEmoji] = form.getShortcut();
@@ -1020,6 +1020,7 @@ namespace RemoteMessages
             }
 
             webBrowser1.Document.GetElementById("editor").Focus();
+            SendKeys.Send("{PGDN}");
         }
 
         private Point getOffset(HtmlElement el)
