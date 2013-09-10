@@ -60,6 +60,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomEmoji.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomEmoji.Designer.cs">
+      <DependentUpon>CustomEmoji.cs</DependentUpon>
+    </Compile>
     <Compile Include="ErrorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="CustomEmoji.resx">
+      <DependentUpon>CustomEmoji.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ErrorForm.resx">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -144,7 +153,6 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="small_favicon.ico" />
-    <Content Include="xxsmall_favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

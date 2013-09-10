@@ -43,7 +43,6 @@
             this.activateAutoIP = new System.Windows.Forms.CheckBox();
             this.deviceNameLabel = new System.Windows.Forms.Label();
             this.deviceName = new System.Windows.Forms.TextBox();
-            this.tips = new System.Windows.Forms.Button();
             this.minimizeToTray = new System.Windows.Forms.CheckBox();
             this.closeToTray = new System.Windows.Forms.CheckBox();
             this.escapeToTray = new System.Windows.Forms.CheckBox();
@@ -73,7 +72,6 @@
             this.checkAlt = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.checkCtrl = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.checkDrafts = new System.Windows.Forms.CheckBox();
             this.panel7 = new System.Windows.Forms.Panel();
@@ -241,16 +239,6 @@
             this.deviceName.Name = "deviceName";
             this.deviceName.Size = new System.Drawing.Size(100, 20);
             this.deviceName.TabIndex = 18;
-            // 
-            // tips
-            // 
-            this.tips.Location = new System.Drawing.Point(380, 841);
-            this.tips.Name = "tips";
-            this.tips.Size = new System.Drawing.Size(119, 23);
-            this.tips.TabIndex = 26;
-            this.tips.Text = "Tips and shortcuts";
-            this.tips.UseVisualStyleBackColor = true;
-            this.tips.Click += new System.EventHandler(this.tips_Click);
             // 
             // minimizeToTray
             // 
@@ -558,16 +546,6 @@
             this.checkCtrl.Text = "Ctrl";
             this.checkCtrl.UseVisualStyleBackColor = true;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 841);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 23);
-            this.button1.TabIndex = 48;
-            this.button1.Text = "About";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
-            // 
             // label16
             // 
             this.label16.AutoSize = true;
@@ -692,13 +670,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 867);
-            this.ControlBox = false;
+            this.ClientSize = new System.Drawing.Size(515, 871);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.panel8);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.panel7);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.activateGhostMode);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.activateAutoIP);
@@ -710,7 +686,6 @@
             this.Controls.Add(this.escapeToTray);
             this.Controls.Add(this.closeToTray);
             this.Controls.Add(this.minimizeToTray);
-            this.Controls.Add(this.tips);
             this.Controls.Add(this.deviceNameLabel);
             this.Controls.Add(this.deviceName);
             this.Controls.Add(this.cancel);
@@ -726,11 +701,15 @@
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "PreferencesForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Preferences";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PreferencesForm_HelpButtonClicked);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form2_KeyDown);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -766,7 +745,6 @@
         private System.Windows.Forms.CheckBox activateAutoIP;
         private System.Windows.Forms.Label deviceNameLabel;
         private System.Windows.Forms.TextBox deviceName;
-        private System.Windows.Forms.Button tips;
         private System.Windows.Forms.CheckBox minimizeToTray;
         private System.Windows.Forms.CheckBox closeToTray;
         private System.Windows.Forms.CheckBox escapeToTray;
@@ -796,7 +774,6 @@
         private System.Windows.Forms.CheckBox checkCtrl;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textHotkey;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.CheckBox checkDrafts;
         private System.Windows.Forms.Panel panel7;

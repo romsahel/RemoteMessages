@@ -47,7 +47,7 @@ namespace RemoteMessages
             delayUnfocus.Text = iU.ToString();
             name = sName;
             url = (sUrl.Substring(7)).Split(':')[0];
-            port.Text = sUrl.Split(':')[2];
+            port.Text = sUrl.Split(':')[2].Trim('/');
 
             activateGhostMode.Checked = bGhost;
             password.Text = sGhost;
@@ -200,7 +200,7 @@ namespace RemoteMessages
             if (checkCtrl.Checked)
                 h += ('^');
 
-            return h+textHotkey.Text;
+            return h + textHotkey.Text;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -241,15 +241,16 @@ namespace RemoteMessages
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+        }
+
+        private void PreferencesForm_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        {
             if (!aboutDisplayed)
             {
                 using (AboutForm about = new AboutForm(VERSION))
                 {
                     aboutDisplayed = true;
-                    do
-                    {
-                        about.ShowDialog();
-                    } while (about.DialogResult != System.Windows.Forms.DialogResult.OK);
+                    about.ShowDialog();
                     aboutDisplayed = false;
                 }
             }
