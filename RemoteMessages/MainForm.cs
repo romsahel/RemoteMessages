@@ -61,7 +61,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.14";
+        private const string VERSION = "3.2.15";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused = false;
@@ -658,7 +658,6 @@ namespace RemoteMessages
                 Native.Flash(this, (uint)flashCount);
 
             string name = (list.Children[0].InnerText).Split('×')[0];
-            notify.Text = "Remote Messages\nNew message from " + name + ".\n";
 
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
