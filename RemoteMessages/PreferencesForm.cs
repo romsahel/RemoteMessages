@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace RemoteMessages
 {
@@ -15,30 +14,13 @@ namespace RemoteMessages
         private string name, url;
         private bool aboutDisplayed = false;
         private string VERSION;
-        private List<Panel> panels;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, bool soundEnabled, int soundVolume, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, bool soundEnabled, int soundVolume, int soundIndex, string version)
         {
             this.VERSION = version;
             InitializeComponent();
 
-            panels = new List<Panel>();
-            panels.Add(panelBackgrounding);
-            panels.Add(panelDrafts);
-            panels.Add(panelNotifications);
-            panels.Add(panelSound);
-            panels.Add(panelAutoUpdate);
-            panels.Add(panelUnfocus);
-            panels.Add(panelGhostMode);
-
-            foreach (Panel p in panels)
-            {
-                p.Visible = false;
-            }
-
-            panels[0].Visible = true;
-            ok.Location = new System.Drawing.Point(this.Width / 2 - ok.Width / 2 - 50, panels[0].Height + 20);
-            cancel.Location = new System.Drawing.Point(this.Width / 2 - cancel.Width / 2 + 50, panels[0].Height + 20);
+            comboBox1.SelectedIndex = 0;
 
             cancel.Select();
 
@@ -84,7 +66,63 @@ namespace RemoteMessages
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
 
 
-            soundBox.SelectedItem = soundBox.Items[0];
+            soundBox.SelectedIndex = soundIndex;
+        }
+
+        private void ChangeTab(int i)
+        {
+            SuspendLayout();
+            foreach (Control c in this.Controls)
+            {
+                if (c != ok && c != cancel && c != comboBox1)
+                    c.Visible = false;
+            }
+
+            Panel panel;
+            switch (i)
+            {
+                case 1:
+                    panelBackgrounding.Visible = true;
+                    panel = panelBackgrounding;
+                    break;
+                case 2:
+                    panelReplacement.Visible = true;
+
+                    panelReplacement.Location = panelBackgrounding.Location;
+                    panel = panelReplacement;
+                    break;
+                    break;
+                case 3:
+                    panelNotifications.Visible = true;
+
+                    panelNotifications.Location = panelBackgrounding.Location;
+                    panel = panelNotifications;
+                    break;
+                case 4:
+                    activateAutoIP.Visible = true;
+                    panelAutoUpdate.Visible = true;
+
+                    activateAutoIP.Location = new System.Drawing.Point(activateGhostMode.Location.X, comboBox1.Location.Y + 5);
+                    panelAutoUpdate.Location = panelBackgrounding.Location;
+                    panel = panelAutoUpdate;
+                    break;
+                case 5:
+                    activateGhostMode.Visible = true;
+                    panelGhostMode.Visible = true;
+
+                    activateGhostMode.Location = new System.Drawing.Point(activateGhostMode.Location.X, comboBox1.Location.Y + 5);
+                    panelGhostMode.Location = panelBackgrounding.Location;
+                    panel = panelGhostMode;
+                    break;
+                default:
+                    panelBackgrounding.Visible = true;
+                    panel = panelBackgrounding;
+                    break;
+            }
+
+            ok.Location = new System.Drawing.Point(this.Width / 2 - ok.Width / 2 - 50, panel.Height + 40);
+            cancel.Location = new System.Drawing.Point(this.Width / 2 - cancel.Width / 2 + 50, panel.Height + 40);
+            ResumeLayout();
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -197,6 +235,7 @@ namespace RemoteMessages
 
         public bool getSoundActivated() { return checkSound.Checked; }
         public int getSoundVolume() { return trackBarVolume.Value; }
+        public int getSoundIndex() { return soundBox.SelectedIndex; }
 
         public bool getAutoIPActivated() { return activateAutoIP.Checked; }
         public bool getReplacementActivated() { return activateReplacement.Checked; }
@@ -275,6 +314,16 @@ namespace RemoteMessages
                     aboutDisplayed = false;
                 }
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ChangeTab(comboBox1.SelectedIndex + 1);
+        }
+
+        private void checkSound_CheckedChanged(object sender, EventArgs e)
+        {
+            soundBox.Enabled = checkSound.Checked;
         }
     }
 }

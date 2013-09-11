@@ -61,7 +61,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.10";
+        private const string VERSION = "3.2.13";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused = false;
@@ -70,6 +70,7 @@ namespace RemoteMessages
         private SoundPlayer ringtone;
         private HtmlElement previousFirstContact;
         private bool soundEnabled;
+        private int soundIndex = -1;
 
         public MainForm()
         {
@@ -173,7 +174,7 @@ namespace RemoteMessages
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
-                isGhostMode, password, hotkey, isDrafting, soundEnabled, getVolume(),
+                isGhostMode, password, hotkey, isDrafting, soundEnabled, getVolume(), soundIndex,
                 VERSION))
             {
                 DialogResult res = form2.ShowDialog();
@@ -214,6 +215,12 @@ namespace RemoteMessages
 
                     isGhostMode = form2.getGhostModeActivated();
                     password = form2.getPassword();
+
+                    if (soundIndex != form2.getSoundIndex())
+                    {
+                        soundIndex = form2.getSoundIndex();
+                        ChangeRingtone();
+                    }
 
                     if (form2.getHotkey() != hotkey)
                     {
@@ -277,8 +284,6 @@ namespace RemoteMessages
 
         private bool loadConfig()
         {
-            ringtone = new SoundPlayer(RemoteMessages.Properties.Resources.ringtone_3notes);
-
             loadShortcutsFromFile();
 
             try
@@ -315,6 +320,7 @@ namespace RemoteMessages
                     isGhostMode = Boolean.Parse(reader.ReadLine());
                     password = reader.ReadLine();
                     hotkey = reader.ReadLine();
+                    soundIndex = Int32.Parse(reader.ReadLine());
                     if (reader.EndOfStream)
                     {
                         reader.Close();
@@ -379,6 +385,8 @@ namespace RemoteMessages
                 password = "";
             if (hotkey == null)
                 hotkey = "!H";
+            if (soundIndex == -1)
+                soundIndex = 0;
 
             raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. Click the 'Options' button to display the preferences to enter your device's name or IP address and configure the application.", null);
             return false;
@@ -418,6 +426,7 @@ namespace RemoteMessages
                 writer.WriteLine(password);
                 writer.WriteLine(hotkey);
 
+                writer.WriteLine(soundIndex);
 
                 writer.WriteLine();
             }
@@ -685,6 +694,7 @@ namespace RemoteMessages
             using (StreamWriter w = File.AppendText(appFolder + "customemoji.cfg")) { }
 
             bool successful = loadConfig();
+            ChangeRingtone();
             ahkProcess = Process.Start(appFolder + "remotemessages_script.exe", '"' + hotkey + '"');
             if (successful)
             {
@@ -694,6 +704,22 @@ namespace RemoteMessages
                     DisplayPage();
             }
             loadDraftFromFile();
+        }
+
+        private void ChangeRingtone()
+        {
+            switch (soundIndex)
+            {
+                case 0:
+                    ringtone = new SoundPlayer(RemoteMessages.Properties.Resources.ringtone_3notes);
+                    break;
+                case 1:
+                    ringtone = new SoundPlayer(RemoteMessages.Properties.Resources.ringtone_Calypso);
+                    break;
+                default:
+                    ringtone = new SoundPlayer(RemoteMessages.Properties.Resources.ringtone_3notes);
+                    break;
+            }
         }
 
         private void Form1_Activated(object sender, EventArgs e)
