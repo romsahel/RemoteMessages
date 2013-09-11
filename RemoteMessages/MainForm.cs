@@ -61,7 +61,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.13";
+        private const string VERSION = "3.2.14";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused = false;
@@ -110,7 +110,6 @@ namespace RemoteMessages
 
             this.webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.DocumentTitleChanged += new EventHandler(DocumentTitleChanged);
-
         }
 
         private void checkUpdate(bool manual = false)
@@ -439,6 +438,7 @@ namespace RemoteMessages
         {
             if (!this.webBrowser1.IsWebBrowserContextMenuEnabled)
                 this.webBrowser1.IsWebBrowserContextMenuEnabled = true;
+
             if (e.KeyCode == Keys.F10)
             {
                 SmileyButton_Click(sender, null);
@@ -1178,7 +1178,8 @@ namespace RemoteMessages
                 string contact = findCurrentContactName();
                 if (drafts.ContainsKey(contact))
                 {
-                    webBrowser1.Document.GetElementById("editor").InnerHtml = drafts[contact];
+                    if (webBrowser1.Document.GetElementById("editor").InnerHtml != drafts[contact])
+                        webBrowser1.Document.GetElementById("editor").InnerHtml = drafts[contact];
                 }
             }
         }

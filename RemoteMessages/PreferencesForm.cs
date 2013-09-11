@@ -91,7 +91,6 @@ namespace RemoteMessages
                     panelReplacement.Location = panelBackgrounding.Location;
                     panel = panelReplacement;
                     break;
-                    break;
                 case 3:
                     panelNotifications.Visible = true;
 
