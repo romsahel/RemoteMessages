@@ -1,3 +1,5 @@
+3.2.13
+- Fixed: Ghost mode not working anymore
 3.2.12
 - Modified: Preferences appearance to solve the size problem
 - Added: new sound notification
