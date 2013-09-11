@@ -1,3 +1,5 @@
+3.2.16
+- Fixed: Autounfocus setting not changing
 3.2.15
 - Fixed: Emojis are now inserted where the user is.
 - Fixed: Error with notification when contact's name too long
