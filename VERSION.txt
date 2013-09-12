@@ -1,8 +1,11 @@
+3.2.17
+- Improved: text smiley replacement
 3.2.16
 - Fixed: Autounfocus setting not changing
 3.2.15
 - Fixed: Emojis are now inserted where the user is.
 - Fixed: Error with notification when contact's name too long
+---___---___------___---___------___---___------___---___------___---___---
 3.2.13
 - Fixed: Ghost mode not working anymore
 3.2.12
@@ -15,7 +18,6 @@
 - No more unfocusing while on popup
 - App's size can no longer be greater than screen size at launch
 - Preferences are no longer completely reset when corrupted (or when update adds some options)
----___---___------___---___------___---___------___---___------___---___---
 3.2.01
 - Fixed: script not closing - (first part, for update)
 - Modified: Refocus is now more 'stable'
