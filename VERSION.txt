@@ -1,3 +1,5 @@
+3.2.18
+- Fixed: minor corrections and possibly crash issues
 3.2.17
 - Improved: text smiley replacement
 3.2.16
