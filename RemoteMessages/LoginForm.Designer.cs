@@ -157,9 +157,10 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LoginForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login";
             this.Activated += new System.EventHandler(this.LoginForm_Activated);
+            this.Deactivate += new System.EventHandler(this.LoginForm_Deactivate);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LoginForm_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();

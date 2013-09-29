@@ -94,5 +94,10 @@ namespace RemoteMessages
         {
             this.ghostmodePassword.Text = "";
         }
+
+        private void LoginForm_Deactivate(object sender, EventArgs e)
+        {
+            TopMost = true;
+        }
     }
 }

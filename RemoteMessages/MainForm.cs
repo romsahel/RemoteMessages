@@ -61,7 +61,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.16";
+        private const string VERSION = "3.2.18";
         private bool aboutDisplayed;
         private bool isDrafting;
         private bool sendFocused = false;
@@ -613,6 +613,7 @@ namespace RemoteMessages
                 if (element.InnerHtml != removedByStringBuilder)
                 {
                     element.InnerHtml = removedByStringBuilder;
+                    element.ScrollIntoView(false);
                     return true;
                 }
                 else
@@ -723,9 +724,9 @@ namespace RemoteMessages
 
         private void Form1_Activated(object sender, EventArgs e)
         {
-            if (isReplacing)
+            if (isReplacing && documentCompleted && !exceptionRaised)
                 fromStringToEmoji(webBrowser1.Document.Body.Children[1]);
-            
+
             notify.Text = "Remote Messages\nClick to Show/Hide";
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon;
 
@@ -772,7 +773,9 @@ namespace RemoteMessages
         private void Form1_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized && minimizeToTray)
+            {
                 Form1_FormClosing(sender, null);
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -786,6 +789,7 @@ namespace RemoteMessages
                 if (e != null)
                     e.Cancel = true;
 
+                WindowState = FormWindowState.Normal;
                 this.Hide();
             }
             else // True exiting
@@ -1320,46 +1324,54 @@ namespace RemoteMessages
                 {
                     if (notify.Visible)
                     {
-                        if (this.Focused || this.webBrowser1.Focused)
-                        {
-                            notify.Visible = false;
-                            this.Hide();
-                        }
-                        else
-                            this.Show();
+                        this.Focus();
+                        this.WindowState = FormWindowState.Normal;
+                        notify.Visible = false;
+                        this.Hide();
                     }
                     else
                     {
-                        bool loop;
-                        loginDisplayed = true;
-                        using (LoginForm login = new LoginForm(true))
-                        {
-                            do
-                            {
-                                loop = false;
-                                login.Activate();
-                                DialogResult res = login.ShowDialog();
-                                if (res == System.Windows.Forms.DialogResult.OK)
-                                {
-                                    if (login.getGhostModePassword() == password)
-                                    {
-                                        notify.Visible = true;
-                                        this.Show();
-                                    }
-                                    else
-                                        loop = true;
-                                }
-                                login.setPasswordClear();
-                            } while (loop);
-                        }
-                        loginDisplayed = false;
+                        LoginGhostMode();
                     }
                 }
                 else
                     ShowMeToggle(sender, null);
             }
             else
-                this.Show();
+                LoginGhostMode();
+        }
+
+        private void LoginGhostMode()
+        {
+            if (loginDisplayed)
+                return;
+            bool loop;
+            loginDisplayed = true;
+            using (LoginForm login = new LoginForm(true))
+            {
+                do
+                {
+                    loop = true;
+                    login.WindowState = FormWindowState.Normal;
+                    login.Activate();
+                    DialogResult res = login.ShowDialog();
+                    if (res == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (login.getGhostModePassword() == password)
+                        {
+                            notify.Visible = true;
+                            loginDisplayed = false;
+                            this.Show();
+                            loop = false;
+                        }
+                    }
+                    else
+                        loop = false;
+
+                    login.setPasswordClear();
+                } while (loop);
+            }
+            loginDisplayed = false;
         }
         ///<summary>
         /// This method is called when another instance of this app is launched
@@ -1368,8 +1380,6 @@ namespace RemoteMessages
         {
             if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-
-
                 if ((!this.Visible) || (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK && (!this.Focused && !this.webBrowser1.Focused)))
                     this.Show();
                 else
@@ -1398,13 +1408,14 @@ namespace RemoteMessages
 
         public new void Show()
         {
-            if (WindowState == FormWindowState.Minimized)
-                WindowState = FormWindowState.Normal;
-            // make our form jump to the top of everything
-            TopMost = true;
-            base.Show();
-            TopMost = false;
-            this.Activate();
+            if (!loginDisplayed)
+            {
+                // make our form jump to the top of everything
+                TopMost = true;
+                base.Show();
+                TopMost = false;
+                this.Activate();
+            }
         }
     }
 }
