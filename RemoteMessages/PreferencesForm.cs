@@ -15,20 +15,18 @@ namespace RemoteMessages
         private bool aboutDisplayed = false;
         private string VERSION;
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool bDrafts, bool soundEnabled, int soundVolume, int soundIndex, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, string version)
         {
             this.VERSION = version;
             InitializeComponent();
 
-            comboBox1.SelectedIndex = 0;
+            ChangeTab(1);
 
-            cancel.Select();
-
+            navBackgrounding.Select();
+                
             closeToTray.Checked = bBackgrounds[0];
             minimizeToTray.Checked = bBackgrounds[1];
             escapeToTray.Checked = bBackgrounds[2];
-
-            checkDrafts.Checked = bDrafts;
 
             showBalloon.Checked = bNotifs[0];
             delayBalloon.Text = iB.ToString();
@@ -74,42 +72,51 @@ namespace RemoteMessages
             SuspendLayout();
             foreach (Control c in this.Controls)
             {
-                if (c != ok && c != cancel && c != comboBox1)
+                if (c != ok && c != cancel && c != navigationPanel)
                     c.Visible = false;
             }
-
             Panel panel;
             switch (i)
             {
+                    // Backgrounding
                 case 1:
+                    this.Text = "Preferences - Backgrounding";
                     panelBackgrounding.Visible = true;
                     panel = panelBackgrounding;
                     break;
+                // conversation
                 case 2:
+                    this.Text = "Preferences - Conversations";
                     panelReplacement.Visible = true;
 
                     panelReplacement.Location = panelBackgrounding.Location;
                     panel = panelReplacement;
                     break;
+                // Notifications
                 case 3:
+                    this.Text = "Preferences - Notifications";
                     panelNotifications.Visible = true;
 
                     panelNotifications.Location = panelBackgrounding.Location;
                     panel = panelNotifications;
                     break;
+                // Auto-IP update
                 case 4:
+                    this.Text = "Preferences - IP Update";
                     activateAutoIP.Visible = true;
                     panelAutoUpdate.Visible = true;
 
-                    activateAutoIP.Location = new System.Drawing.Point(activateGhostMode.Location.X, comboBox1.Location.Y + 5);
+                    activateAutoIP.Location = new System.Drawing.Point(activateGhostMode.Location.X, 10 + 5);
                     panelAutoUpdate.Location = panelBackgrounding.Location;
                     panel = panelAutoUpdate;
                     break;
+                // Ghost mode
                 case 5:
+                    this.Text = "Preferences - Ghost-Mode";
                     activateGhostMode.Visible = true;
                     panelGhostMode.Visible = true;
 
-                    activateGhostMode.Location = new System.Drawing.Point(activateGhostMode.Location.X, comboBox1.Location.Y + 5);
+                    activateGhostMode.Location = new System.Drawing.Point(activateGhostMode.Location.X, 10 + 5);
                     panelGhostMode.Location = panelBackgrounding.Location;
                     panel = panelGhostMode;
                     break;
@@ -119,8 +126,8 @@ namespace RemoteMessages
                     break;
             }
 
-            ok.Location = new System.Drawing.Point(this.Width / 2 - ok.Width / 2 - 50, panel.Height + 40);
-            cancel.Location = new System.Drawing.Point(this.Width / 2 - cancel.Width / 2 + 50, panel.Height + 40);
+            ok.Location = new System.Drawing.Point(this.Width / 2 - ok.Width / 2 - 50, panel.Height + 27);
+            cancel.Location = new System.Drawing.Point(this.Width / 2 - cancel.Width / 2 + 50, panel.Height + 27);
             ResumeLayout();
         }
 
@@ -230,8 +237,6 @@ namespace RemoteMessages
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
         public int[] getNotifMoreOptions() { return new int[] { Int32.Parse(flashCount.Text), Int32.Parse(delayBalloon.Text) }; }
 
-        public bool getDraftActivated() { return checkDrafts.Checked; }
-
         public bool getSoundActivated() { return checkSound.Checked; }
         public int getSoundVolume() { return trackBarVolume.Value; }
         public int getSoundIndex() { return soundBox.SelectedIndex; }
@@ -315,14 +320,31 @@ namespace RemoteMessages
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ChangeTab(comboBox1.SelectedIndex + 1);
-        }
-
         private void checkSound_CheckedChanged(object sender, EventArgs e)
         {
             soundBox.Enabled = checkSound.Checked;
+        }
+
+        private void navigation_Click(object sender, EventArgs e)
+        {
+            switch (((Button)(sender)).Text)
+            {
+                case "Backgrounding":
+                    ChangeTab(1);
+                    break;
+                case "Conversations":
+                    ChangeTab(2);
+                    break;
+                case "Notifications":
+                    ChangeTab(3);
+                    break;
+                case "IP Update":
+                    ChangeTab(4);
+                    break;
+                case "Ghost Mode":
+                    ChangeTab(5);
+                    break;
+            }
         }
     }
 }

@@ -69,5 +69,10 @@ namespace RemoteMessages
             DialogResult = System.Windows.Forms.DialogResult.None;
             
         }
+
+        private void contactButton_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("mailto:romsahel@gmail.com?subject=[RMCLIENT] Suggestion/Bug report");
+        }
     }
 }

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Media;
+using mshtml;
 
 namespace RemoteMessages
 {
@@ -35,7 +36,7 @@ namespace RemoteMessages
         private bool isPreviousMouse;
 
         private Timer timerReplacing, timerUnfocusing, timerCheckNew, timerTimeOut;
-        private Dictionary<string, string> drafts, shortcuts;
+        private Dictionary<string, string> shortcuts;
         private bool isPreviousF12;
         private string url, port;
         private bool isReplacing, isAutoUpdate, isUnfocusing;
@@ -61,10 +62,8 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "3.2.18";
+        private const string VERSION = "4.0.00";
         private bool aboutDisplayed;
-        private bool isDrafting;
-        private bool sendFocused = false;
 
         private NotificationForm notification;
         private SoundPlayer ringtone;
@@ -93,7 +92,6 @@ namespace RemoteMessages
             isExiting = false;
             isPreviousMouse = false;
             justUnfocused = false;
-            drafts = new Dictionary<string, string>();
             shortcuts = new Dictionary<string, string>();
             documentCompleted = false;
             aboutDisplayed = false;
@@ -172,7 +170,7 @@ namespace RemoteMessages
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
-                isGhostMode, password, hotkey, isDrafting, soundEnabled, getVolume(), soundIndex,
+                isGhostMode, password, hotkey, soundEnabled, getVolume(), soundIndex,
                 VERSION))
             {
                 isUnfocusing = false;
@@ -186,9 +184,6 @@ namespace RemoteMessages
                     closeToTray = bBackgrounds[0];
                     minimizeToTray = bBackgrounds[1];
                     escapeToTray = bBackgrounds[2];
-
-                    isDrafting = form2.getDraftActivated();
-
 
                     showBalloon = bNotifs[0];
                     showFlash = bNotifs[1];
@@ -296,7 +291,7 @@ namespace RemoteMessages
                     minimizeToTray = Boolean.Parse(reader.ReadLine());
                     escapeToTray = Boolean.Parse(reader.ReadLine());
 
-                    isDrafting = Boolean.Parse(reader.ReadLine());
+                    reader.ReadLine();
 
                     showBalloon = Boolean.Parse(reader.ReadLine());
                     delayBalloon = Int32.Parse(reader.ReadLine());
@@ -359,8 +354,6 @@ namespace RemoteMessages
             minimizeToTray = true;
             escapeToTray = true;
 
-            isDrafting = true;
-
             showBalloon = true;
             if (delayBalloon == -1)
                 delayBalloon = 3000;
@@ -401,7 +394,7 @@ namespace RemoteMessages
                 writer.WriteLine(minimizeToTray);
                 writer.WriteLine(escapeToTray);
 
-                writer.WriteLine(isDrafting);
+                writer.WriteLine("deprecated");
 
                 writer.WriteLine(showBalloon);
                 writer.WriteLine(delayBalloon);
@@ -505,11 +498,6 @@ namespace RemoteMessages
                 }
                 else
                     isPreviousAltDown = false;
-
-                if (sendFocused && e.KeyCode == Keys.Enter)
-                {
-                    emptyCurrentDraft();
-                }
 
                 if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
                 {
@@ -655,6 +643,8 @@ namespace RemoteMessages
 
         private void NotifyMe(HtmlElement list)
         {
+            if (isGhostMode)
+                return;
             if (showFlash)
                 Native.Flash(this, (uint)flashCount);
 
@@ -678,7 +668,7 @@ namespace RemoteMessages
         void notification_Click(object sender, EventArgs e)
         {
             ShowMe();
-            int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
+            int X = 30;
             int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
             DoMouseClick(X, Y);
         }
@@ -703,7 +693,6 @@ namespace RemoteMessages
                 else
                     DisplayPage();
             }
-            loadDraftFromFile();
         }
 
         private void ChangeRingtone()
@@ -741,7 +730,7 @@ namespace RemoteMessages
             if (previousSelectedContact != null && getCurrentContactElement() == null)
             {
                 Rectangle curr = previousSelectedContact.OffsetRectangle;
-                int X = webBrowser1.Document.Body.Children[1].OffsetRectangle.Width + 80;
+                int X = 30;
                 int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
                 Y += curr.Y;
                 DoMouseClick(X, Y);
@@ -800,7 +789,6 @@ namespace RemoteMessages
                     ahkProcess.Close();
                 }
                 catch { }
-                saveDraftToFile();
             }
         }
 
@@ -963,26 +951,17 @@ namespace RemoteMessages
                     exceptionRaised = false;
                     progressBar1.Visible = false;
                 }
+
                 timerTimeOut.Stop();
                 if (loggedIn && !documentCompleted)
                 {
                     documentCompleted = true;
+    
                     webBrowser1.ScrollBarsEnabled = false;
-
-                    string button = "<div title=\"Use this button to convert your text smileys to emoji\" id=\"smiley-button\" class=\"button\" type=\"button\" style=\" height: 18px;  background-repeat: no-repeat;  background-position: center;  width: 26px;  min-width: 26px;  background-image: url(/themes/iOS/emoji.png); background-color: #F6F6F6;  border-color: #B7B7B7;\"></div>";
-                    webBrowser1.Document.GetElementById("send").OuterHtml += button;
-                    webBrowser1.Document.GetElementById("smiley-button").Click += new HtmlElementEventHandler(SmileyButton_Click);
 
                     webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
 
                     webBrowser1.Document.GetElementById("conversations").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-
-                    webBrowser1.Document.GetElementById("editor").Focusing += new HtmlElementEventHandler(Editor_Focusing);
-                    webBrowser1.Document.GetElementById("editor").LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
-
-                    webBrowser1.Document.GetElementById("send").Click += new HtmlElementEventHandler(Send_MouseUp);
-                    webBrowser1.Document.GetElementById("send").Focusing += new HtmlElementEventHandler(Send_Focusing);
-                    webBrowser1.Document.GetElementById("send").LosingFocus += new HtmlElementEventHandler(Send_LosingFocus);
 
                     progressBar1.Visible = false;
 
@@ -1073,130 +1052,7 @@ namespace RemoteMessages
 
             return (new Point(xPos, yPos));
         }
-
-        private void Send_MouseUp(object sender, HtmlElementEventArgs e)
-        {
-            emptyCurrentDraft();
-        }
-
-        private void Send_Focusing(object sender, HtmlElementEventArgs e)
-        {
-            sendFocused = true;
-        }
-
-        private void Send_LosingFocus(object sender, HtmlElementEventArgs e)
-        {
-            sendFocused = false;
-        }
-
-
-        private void Editor_Focusing(object sender, HtmlElementEventArgs e)
-        {
-            loadDraft();
-        }
-
-        private void Editor_LosingFocus(object sender, HtmlElementEventArgs e)
-        {
-            saveDraft();
-        }
-
-        #endregion
-
-        #region Draft management
-        /// <summary>
-        /// Save content of drafts var to a file
-        /// </summary>
-        private void saveDraftToFile()
-        {
-            if (isDrafting)
-            {
-                if (documentCompleted && !exceptionRaised)
-                    saveDraft();
-                List<string> contactList = new List<string>(drafts.Keys);
-                using (StreamWriter writer = new StreamWriter(appFolder + "drafts"))
-                {
-                    foreach (string s in contactList)
-                    {
-                        if (drafts[s] != "" && drafts[s] != null)
-                            writer.WriteLine("/|\\" + s + "||--||" + drafts[s]);
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Loads from file to drafts var
-        /// </summary>
-        private void loadDraftFromFile()
-        {
-            if (isDrafting)
-            {
-                string previous = "";
-                using (StreamReader reader = new StreamReader(appFolder + "drafts"))
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        string line = reader.ReadLine();
-                        if (line != "")
-                        {
-                            if (line.StartsWith("/|\\"))
-                            {
-                                string[] parts = line.Substring(3).Split(new string[] { "||--||" }, StringSplitOptions.RemoveEmptyEntries);
-                                drafts.Add(parts[0], parts[1]);
-                                previous = parts[0];
-                            }
-                            else
-                            {
-                                if (previous.Trim() != "")
-                                    drafts[previous] += "\n" + line;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Finds current draft and saves it into drafts var
-        /// </summary>
-        private void saveDraft()
-        {
-            if (isDrafting)
-            {
-                string currentContact = findCurrentContactName();
-                if (currentContact != "")
-                {
-                    string currentDraft = webBrowser1.Document.GetElementById("editor").InnerHtml;
-
-                    // Finds to which contact it belongs to
-                    if (!drafts.ContainsKey(currentContact))
-                        drafts.Add(currentContact, currentDraft);
-                    else
-                        drafts[currentContact] = currentDraft;
-                }
-            }
-        }
-        /// <summary>
-        /// Finds current contact and loads the matching draft
-        /// </summary>
-        private void loadDraft()
-        {
-            if (isDrafting)
-            {
-                string contact = findCurrentContactName();
-                if (drafts.ContainsKey(contact) && webBrowser1.Document.GetElementById("editor").InnerHtml != drafts[contact])
-                    webBrowser1.Document.GetElementById("editor").InnerHtml = drafts[contact];
-            }
-        }
-
-        private void emptyCurrentDraft()
-        {
-            timerReplacing.Start();
-            if (isDrafting)
-            {
-                string contact = findCurrentContactName();
-                if (drafts.ContainsKey(contact))
-                    drafts[contact] = "";
-            }
-        }
+       
         #endregion
 
         #region Basic Html manipulations methods
@@ -1345,6 +1201,13 @@ namespace RemoteMessages
         {
             if (loginDisplayed)
                 return;
+
+            if (!isGhostMode)
+            {
+                this.Show();
+                return;
+            }
+
             bool loop;
             loginDisplayed = true;
             using (LoginForm login = new LoginForm(true))

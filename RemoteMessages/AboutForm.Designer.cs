@@ -40,6 +40,7 @@ namespace RemoteMessages
             this.okButton = new System.Windows.Forms.Button();
             this.linkLabel = new System.Windows.Forms.LinkLabel();
             this.mainPicture = new System.Windows.Forms.PictureBox();
+            this.contactButton = new System.Windows.Forms.Button();
             this.bottomPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.SuspendLayout();
@@ -113,7 +114,8 @@ namespace RemoteMessages
             // 
             // bottomPanel
             // 
-            this.bottomPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.bottomPanel.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.bottomPanel.Controls.Add(this.contactButton);
             this.bottomPanel.Controls.Add(this.logButton);
             this.bottomPanel.Controls.Add(this.okButton);
             this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -165,6 +167,16 @@ namespace RemoteMessages
             this.mainPicture.TabIndex = 6;
             this.mainPicture.TabStop = false;
             // 
+            // contactButton
+            // 
+            this.contactButton.Location = new System.Drawing.Point(160, 10);
+            this.contactButton.Name = "contactButton";
+            this.contactButton.Size = new System.Drawing.Size(75, 23);
+            this.contactButton.TabIndex = 2;
+            this.contactButton.Text = "&Contact";
+            this.contactButton.UseVisualStyleBackColor = true;
+            this.contactButton.Click += new System.EventHandler(this.contactButton_Click);
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -207,6 +219,7 @@ namespace RemoteMessages
         private Button okButton;
         private LinkLabel linkLabel;
         private Button logButton;
+        private Button contactButton;
 
     }
 }
