@@ -1,3 +1,15 @@
+4.0.0
+ _
+/!\
+DISCLAIMER: 
+I can't access RemoteMessages forum, so please, use the Contact button (in the About window) to send me an email for bug report/feature request. Thanks.
+
+- iOS 7 Update : Compatibility fixes
+- Minor fixes
+- Redone settings panel
+- Added a "Contact" button (About window
+
+---___---___------___---___------___---___------___---___------___---___---
 3.2.18
 - Fixed: minor corrections and possibly crash issues
 3.2.17
@@ -7,7 +19,6 @@
 3.2.15
 - Fixed: Emojis are now inserted where the user is.
 - Fixed: Error with notification when contact's name too long
----___---___------___---___------___---___------___---___------___---___---
 3.2.13
 - Fixed: Ghost mode not working anymore
 3.2.12
