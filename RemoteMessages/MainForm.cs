@@ -62,7 +62,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.05";
+        private const string VERSION = "4.0.10";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -613,31 +613,50 @@ namespace RemoteMessages
         private void Conversations_OnNewMessage(object sender, EventArgs e)
         {
             timerCheckNew.Enabled = false;
-
+            HtmlElement firstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
             // We check if the window is not focused
             if (!justUnfocused && !this.Focused && !webBrowser1.Focused && notify.Visible &&
                 // And if First contact has changed
-                previousFirstContact != webBrowser1.Document.GetElementById("conversations").FirstChild)
+                previousFirstContact != firstContact)
             {
-                // We check if no conversations are selected
-                if (getCurrentContactElement() == null || getCurrentContactElement() != webBrowser1.Document.GetElementById("conversations").FirstChild)
+                // We check if the notification check came in
+                if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
-                    NotifyMe(webBrowser1.Document.GetElementById("conversations"));
-                }
-                // If there is a selection, change occurred in conversation
-                // So we check if it's not some of the user's pending/unsent message
-                else if (previousConversation != webBrowser1.Document.Body.Children[1].InnerHtml)
-                {
-                    HtmlElementCollection children = this.webBrowser1.Document.GetElementById("messages").Children;
-                    if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
+                    // We check if no conversations are selected
+                    if (getCurrentContactElement() == null || getCurrentContactElement() != firstContact)
+                    {
                         NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                    }
+                    // If there is a selection, change occurred in conversation
+                    // So we check if it's not some of the user's pending/unsent message
+                    else if (previousConversation != webBrowser1.Document.Body.Children[1].InnerHtml)
+                    {
+                        HtmlElementCollection children = this.webBrowser1.Document.GetElementById("messages").Children;
+                        if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
+                            NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                    }
                 }
             }
-            previousFirstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
+            previousFirstContact = firstContact;
             previousConversation = webBrowser1.Document.Body.Children[1].InnerHtml;
 
             justUnfocused = false;
             timerCheckNew.Start();
+        }
+
+        private bool compareDates(string date)
+        {
+            DateTime now = DateTime.Now;
+            string[] elts = date.Split(new char[] { ' ', ':' });
+            return now.Day == Int32.Parse(elts[0]) && now.Hour == Int32.Parse(elts[3]) && now.Minute == Int32.Parse(elts[4]);
+        }
+
+
+        string ExtractString(string s, string start, string end)
+        {
+            int startIndex = s.IndexOf(start) + start.Length;
+            int endIndex = s.IndexOf(end, startIndex);
+            return s.Substring(startIndex, endIndex - startIndex);
         }
 
         private void NotifyMe(HtmlElement list)
@@ -656,11 +675,11 @@ namespace RemoteMessages
                 ringtone.Stop();
                 ringtone.Play();
             }
-
-            if (showBalloon)
+            string currentHash = list.Children[0].InnerHtml;
+            if (showBalloon && !notification.hasAlreadyBeenDisplayed(currentHash))
             {
                 Native.ShowInactiveTopmost(notification);
-                notification.ShowNotification(name, "You just received a new message!", delayBalloon, list.Children[0].InnerHtml);
+                notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
             }
         }
 
@@ -965,7 +984,7 @@ namespace RemoteMessages
                 if (loggedIn && !documentCompleted)
                 {
                     documentCompleted = true;
-    
+
                     webBrowser1.ScrollBarsEnabled = false;
 
                     webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
@@ -1061,7 +1080,7 @@ namespace RemoteMessages
 
             return (new Point(xPos, yPos));
         }
-       
+
         #endregion
 
         #region Basic Html manipulations methods
