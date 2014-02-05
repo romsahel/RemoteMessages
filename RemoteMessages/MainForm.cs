@@ -62,7 +62,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.00";
+        private const string VERSION = "4.0.05";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -119,7 +119,6 @@ namespace RemoteMessages
                 client.Proxy = null;
                 // Download string.
                 string changelog = client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt");
-                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.None)[0];
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
@@ -769,6 +768,16 @@ namespace RemoteMessages
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (e != null && e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                try
+                {
+                    ahkProcess.Kill();
+                    ahkProcess.Close();
+                }
+                catch { }
+                return;
+            }
             if ((!isExiting && closeToTray) || e == null)
             {
                 if (documentCompleted && !exceptionRaised)

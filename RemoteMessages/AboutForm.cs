@@ -58,7 +58,7 @@ namespace RemoteMessages
                 client.Proxy = null;
                 // Download string.
                 changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt"));
-                changelog = changelog.Replace("---___---___---", "").Trim();
+                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.RemoveEmptyEntries)[0];
                 MessageBox.Show("Changelog:\n" + changelog, "Changelog", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             catch
