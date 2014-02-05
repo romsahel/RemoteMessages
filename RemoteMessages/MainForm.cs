@@ -62,7 +62,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.10";
+        private const string VERSION = "4.0.11";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -648,7 +648,9 @@ namespace RemoteMessages
         {
             DateTime now = DateTime.Now;
             string[] elts = date.Split(new char[] { ' ', ':' });
-            return now.Day == Int32.Parse(elts[0]) && now.Hour == Int32.Parse(elts[3]) && now.Minute == Int32.Parse(elts[4]);
+            return (now.Day == Int32.Parse(elts[0]) 
+                    && (now.Hour >= 12 ? now.Hour - 12 : now.Hour) == Int32.Parse(elts[3]) 
+                    && now.Minute == Int32.Parse(elts[4]));
         }
 
 
