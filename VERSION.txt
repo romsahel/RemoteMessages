@@ -1,13 +1,17 @@
+4.0.10
+- Fixed unwanted (already displayed / mistaken) notification popping
+4.0.06
+- Slightly improved memory usage
+- Fixed notification sometimes displayed twice
+4.0.05
+- Fixed the issue that prevented Windows from closing the app when shutting down.
 4.0.01
+- Fix for update detection
 4.0.00
---- DISCLAIMER: -----
-I can't access RemoteMessages forum, so please, use the Contact button (in the About window) to send me an email for bug report/feature request. Thanks.
----------------------
-
+- Added a "Contact" button in the about window to send bug reports/feature request.
 - iOS 7 Update : Compatibility fixes
 - Minor fixes
 - Redone settings panel
-- Added a "Contact" button (About window
 
 ---___---___------___---___------___---___------___---___------___---___---
 3.2.18
