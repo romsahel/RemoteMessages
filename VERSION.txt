@@ -1,3 +1,5 @@
+4.0.11
+- Fixed wrong notifications timestamping due to AM/PM notation
 4.0.10
 - Fixed unwanted (already displayed / mistaken) notification popping
 4.0.06
