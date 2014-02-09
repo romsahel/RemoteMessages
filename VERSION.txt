@@ -1,3 +1,8 @@
+4.0.20
+- Added feature (@highlanderx): IE is no longer opened when clicking an image ; 
+it is now downloaded and opened in the default associated image app
+- Fixed some minor bugs
+- The client now uses IE11
 4.0.11
 - Fixed wrong notifications timestamping due to AM/PM notation
 4.0.10
