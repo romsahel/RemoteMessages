@@ -62,7 +62,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.11";
+        private const string VERSION = "4.0.20";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -122,6 +122,8 @@ namespace RemoteMessages
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
+                    changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.RemoveEmptyEntries)[0];
+
                     DialogResult result = MessageBox.Show("Current version: " + VERSION + "\nAn update is available, would you like to download it?\n\nChanges:\n" + changelog,
                                  "An update is available!",
                                  MessageBoxButtons.YesNo,
@@ -382,6 +384,7 @@ namespace RemoteMessages
             raiseException("No configuration has been found.\nIf this is the first time you use Remote Client, this is perfectly normal. Click the 'Options' button to display the preferences to enter your device's name or IP address and configure the application.", null);
             return false;
         }
+
         private void saveConfig()
         {
             using (StreamWriter writer = new StreamWriter(appFolder + "remote.cfg"))
@@ -648,8 +651,8 @@ namespace RemoteMessages
         {
             DateTime now = DateTime.Now;
             string[] elts = date.Split(new char[] { ' ', ':' });
-            return (now.Day == Int32.Parse(elts[0]) 
-                    && (now.Hour >= 12 ? now.Hour - 12 : now.Hour) == Int32.Parse(elts[3]) 
+            return (now.Day == Int32.Parse(elts[0])
+                    && (now.Hour >= 12 ? now.Hour - 12 : now.Hour) == Int32.Parse(elts[3])
                     && now.Minute == Int32.Parse(elts[4]));
         }
 
@@ -990,8 +993,9 @@ namespace RemoteMessages
                     webBrowser1.ScrollBarsEnabled = false;
 
                     webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
+                    webBrowser1.Document.GetElementById("messages-window").MouseDown += new HtmlElementEventHandler(Messages_MouseDown);
+                    webBrowser1.Document.GetElementById("conversations-window").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
 
-                    webBrowser1.Document.GetElementById("conversations").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
 
                     progressBar1.Visible = false;
 
@@ -1018,6 +1022,23 @@ namespace RemoteMessages
             else
             {
                 raiseException(null, null);
+            }
+        }
+
+        private void Messages_MouseDown(object sender, HtmlElementEventArgs e)
+        {
+            Point BrowserCoord = webBrowser1.PointToClient(new Point(MousePosition.X, MousePosition.Y));
+            HtmlElement elem = webBrowser1.Document.GetElementFromPoint(BrowserCoord);
+            if (elem.TagName == "IMG" && !elem.OuterHtml.Contains("class=\"emoji\""))
+            {
+                string path = ExtractString(elem.Parent.OuterHtml, "href=\"", "\"").Replace("&amp;", "&");
+                // Create web client.
+                using (WebClient client = new WebClient())
+                {
+                    client.Proxy = null;
+                    client.DownloadFile(webBrowser1.Url + path.Substring(1), "tmp.png");
+                    System.Diagnostics.Process.Start("tmp.png");
+                }       
             }
         }
 
@@ -1309,6 +1330,11 @@ namespace RemoteMessages
                 TopMost = false;
                 this.Activate();
             }
+        }
+
+        private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
