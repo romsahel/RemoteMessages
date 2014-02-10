@@ -1,3 +1,10 @@
+4.0.25
+- Removed the "Click" sound especially happening with autoscroll
+4.0.24
+- NEW: Added auto-scroll down (of a line height) when typing multiline messages (suggested by @TheFragileOne)
+4.0.22
+- NEW: Added a Run at Windows Startup option (@Reeiiko)
+- Fixed some minor bugs (conversation loading, notifications)
 4.0.20
 - Added feature (@highlanderx): IE is no longer opened when clicking an image ; 
 it is now downloaded and opened in the default associated image app
