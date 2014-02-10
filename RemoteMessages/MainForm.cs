@@ -73,6 +73,7 @@ namespace RemoteMessages
         private int soundIndex = -1;
         private int editor_previousHeight = -1;
         private bool authentication_needed;
+        private bool timeformat_is24hour;
 
         public MainForm()
         {
@@ -176,6 +177,7 @@ namespace RemoteMessages
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
                 isGhostMode, password, hotkey, soundEnabled, getVolume(), soundIndex,
+                timeformat_is24hour,
                 VERSION))
             {
                 isUnfocusing = false;
@@ -198,8 +200,7 @@ namespace RemoteMessages
 
                     bool mustRefresh = (isAutoUpdate != prefs.getAutoIPActivated())
                         || (isAutoUpdate && deviceName != prefs.getDeviceName())
-                        || (!isAutoUpdate && url != prefs.getDeviceName())
-                        || port != prefs.getPort();
+                        || (!isAutoUpdate && url.Trim('/') != String.Format(@"http://{0}:{1}", prefs.getDeviceName(), prefs.getPort()));
 
                     soundEnabled = prefs.getSoundActivated();
                     ChangeVolume(prefs.getSoundVolume());
@@ -213,6 +214,8 @@ namespace RemoteMessages
 
                     isGhostMode = prefs.getGhostModeActivated();
                     password = prefs.getPassword();
+
+                    timeformat_is24hour = prefs.getTimeFormat();
 
                     if (soundIndex != prefs.getSoundIndex())
                     {
@@ -319,7 +322,11 @@ namespace RemoteMessages
                     password = reader.ReadLine();
                     hotkey = reader.ReadLine();
                     soundIndex = Int32.Parse(reader.ReadLine());
-                    if (reader.EndOfStream)
+
+                    string tmp = reader.ReadLine();
+                    Boolean.TryParse(tmp, out timeformat_is24hour);
+
+                    if (reader.EndOfStream && tmp != "")
                     {
                         reader.Close();
                         reader.Dispose();
@@ -354,6 +361,8 @@ namespace RemoteMessages
             if (port == null)
                 port = "333";
 
+            timeformat_is24hour = false;
+            
             closeToTray = true;
             minimizeToTray = true;
             escapeToTray = true;
@@ -424,6 +433,8 @@ namespace RemoteMessages
                 writer.WriteLine(hotkey);
 
                 writer.WriteLine(soundIndex);
+
+                writer.WriteLine(timeformat_is24hour);
 
                 writer.WriteLine();
             }
@@ -512,7 +523,7 @@ namespace RemoteMessages
                     }
                     else if (e.KeyCode == Keys.E)
                     {
-                        webBrowser1.Document.Body.Children[3].Children[0].Children[0].Children[4].Children[2].Focus();
+                         webBrowser1.Document.GetElementById("editor").Focus();
 
                         isPreviousCtrlDown = true;
                     }
@@ -641,7 +652,7 @@ namespace RemoteMessages
                 previousFirstContact != firstContact)
             {
                 // We check if the notification check came in
-                if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
+                // if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
                     // We check if no conversations are selected
                     if (getCurrentContactElement() == null || getCurrentContactElement() != firstContact)
@@ -802,10 +813,12 @@ namespace RemoteMessages
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Minimized && minimizeToTray)
+            if (WindowState == FormWindowState.Minimized)
             {
-                Form1_FormClosing(sender, null);
+                if (minimizeToTray)
+                    Form1_FormClosing(sender, null);
             }
+
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -1386,6 +1399,9 @@ namespace RemoteMessages
 
         private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            WebBrowser page = (WebBrowser)sender;
+            if (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")))
+                System.Diagnostics.Process.Start(page.StatusText);
             e.Cancel = true;
         }
     }

@@ -64,7 +64,6 @@
             this.label12 = new System.Windows.Forms.Label();
             this.port = new System.Windows.Forms.TextBox();
             this.panelReplacement = new System.Windows.Forms.Panel();
-            this.checkReceipt = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.password = new System.Windows.Forms.TextBox();
             this.activateGhostMode = new System.Windows.Forms.CheckBox();
@@ -81,6 +80,8 @@
             this.navIP = new System.Windows.Forms.Button();
             this.navGhostMode = new System.Windows.Forms.Button();
             this.navigationPanel = new System.Windows.Forms.Panel();
+            this.button12hour = new System.Windows.Forms.RadioButton();
+            this.button24hour = new System.Windows.Forms.RadioButton();
             this.panelBackgrounding.SuspendLayout();
             this.panelNotifications.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolume)).BeginInit();
@@ -96,7 +97,7 @@
             this.activateReplacement.Checked = true;
             this.activateReplacement.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateReplacement.Location = new System.Drawing.Point(39, 50);
+            this.activateReplacement.Location = new System.Drawing.Point(39, 25);
             this.activateReplacement.Name = "activateReplacement";
             this.activateReplacement.Size = new System.Drawing.Size(190, 20);
             this.activateReplacement.TabIndex = 1;
@@ -106,7 +107,7 @@
             // 
             // delayReplacement
             // 
-            this.delayReplacement.Location = new System.Drawing.Point(116, 76);
+            this.delayReplacement.Location = new System.Drawing.Point(116, 51);
             this.delayReplacement.Name = "delayReplacement";
             this.delayReplacement.Size = new System.Drawing.Size(100, 20);
             this.delayReplacement.TabIndex = 2;
@@ -114,7 +115,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(37, 79);
+            this.label1.Location = new System.Drawing.Point(37, 54);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 3;
@@ -124,7 +125,7 @@
             // 
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(237, 50);
+            this.label3.Location = new System.Drawing.Point(237, 25);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(224, 46);
             this.label3.TabIndex = 7;
@@ -134,7 +135,7 @@
             // 
             this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(237, 105);
+            this.label21.Location = new System.Drawing.Point(237, 103);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(224, 52);
             this.label21.TabIndex = 11;
@@ -144,7 +145,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(36, 140);
+            this.label4.Location = new System.Drawing.Point(36, 138);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 10;
@@ -152,7 +153,7 @@
             // 
             // delayUnfocus
             // 
-            this.delayUnfocus.Location = new System.Drawing.Point(115, 137);
+            this.delayUnfocus.Location = new System.Drawing.Point(115, 135);
             this.delayUnfocus.Name = "delayUnfocus";
             this.delayUnfocus.Size = new System.Drawing.Size(100, 20);
             this.delayUnfocus.TabIndex = 9;
@@ -163,7 +164,7 @@
             this.activateUnfocus.Checked = true;
             this.activateUnfocus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateUnfocus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateUnfocus.Location = new System.Drawing.Point(39, 105);
+            this.activateUnfocus.Location = new System.Drawing.Point(39, 103);
             this.activateUnfocus.Name = "activateUnfocus";
             this.activateUnfocus.Size = new System.Drawing.Size(158, 20);
             this.activateUnfocus.TabIndex = 8;
@@ -277,6 +278,8 @@
             // panelBackgrounding
             // 
             this.panelBackgrounding.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBackgrounding.Controls.Add(this.button24hour);
+            this.panelBackgrounding.Controls.Add(this.button12hour);
             this.panelBackgrounding.Controls.Add(this.checkOnstartup);
             this.panelBackgrounding.Controls.Add(this.minimizeToTray);
             this.panelBackgrounding.Controls.Add(this.closeToTray);
@@ -468,7 +471,6 @@
             // panelReplacement
             // 
             this.panelReplacement.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelReplacement.Controls.Add(this.checkReceipt);
             this.panelReplacement.Controls.Add(this.label21);
             this.panelReplacement.Controls.Add(this.label4);
             this.panelReplacement.Controls.Add(this.delayUnfocus);
@@ -481,18 +483,6 @@
             this.panelReplacement.Name = "panelReplacement";
             this.panelReplacement.Size = new System.Drawing.Size(480, 176);
             this.panelReplacement.TabIndex = 42;
-            // 
-            // checkReceipt
-            // 
-            this.checkReceipt.AutoSize = true;
-            this.checkReceipt.Enabled = false;
-            this.checkReceipt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkReceipt.Location = new System.Drawing.Point(39, 18);
-            this.checkReceipt.Name = "checkReceipt";
-            this.checkReceipt.Size = new System.Drawing.Size(285, 20);
-            this.checkReceipt.TabIndex = 12;
-            this.checkReceipt.Text = "Activate read receipts in 12-hour time format";
-            this.checkReceipt.UseVisualStyleBackColor = true;
             // 
             // label13
             // 
@@ -678,6 +668,32 @@
             this.navigationPanel.Size = new System.Drawing.Size(134, 176);
             this.navigationPanel.TabIndex = 53;
             // 
+            // button12hour
+            // 
+            this.button12hour.AutoSize = true;
+            this.button12hour.Checked = true;
+            this.button12hour.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button12hour.Location = new System.Drawing.Point(23, 50);
+            this.button12hour.Name = "button12hour";
+            this.button12hour.Size = new System.Drawing.Size(138, 20);
+            this.button12hour.TabIndex = 32;
+            this.button12hour.TabStop = true;
+            this.button12hour.Text = "12-hour time format";
+            this.button12hour.UseVisualStyleBackColor = true;
+            this.button12hour.CheckedChanged += new System.EventHandler(this.button12hour_CheckedChanged);
+            // 
+            // button24hour
+            // 
+            this.button24hour.AutoSize = true;
+            this.button24hour.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button24hour.Location = new System.Drawing.Point(233, 50);
+            this.button24hour.Name = "button24hour";
+            this.button24hour.Size = new System.Drawing.Size(138, 20);
+            this.button24hour.TabIndex = 33;
+            this.button24hour.Text = "24-hour time format";
+            this.button24hour.UseVisualStyleBackColor = true;
+            this.button24hour.CheckedChanged += new System.EventHandler(this.button24hour_CheckedChanged);
+            // 
             // PreferencesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -775,6 +791,7 @@
         private System.Windows.Forms.Button navGhostMode;
         private System.Windows.Forms.Panel navigationPanel;
         private System.Windows.Forms.CheckBox checkOnstartup;
-        private System.Windows.Forms.CheckBox checkReceipt;
+        private System.Windows.Forms.RadioButton button24hour;
+        private System.Windows.Forms.RadioButton button12hour;
     }
 }

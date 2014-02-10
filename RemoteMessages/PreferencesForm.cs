@@ -15,8 +15,10 @@ namespace RemoteMessages
         private string name, url;
         private bool aboutDisplayed = false;
         private string VERSION;
+        // The path to the key where Windows looks for startup applications
+        RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, bool timeformat, string version)
         {
             this.VERSION = version;
             InitializeComponent();
@@ -63,7 +65,10 @@ namespace RemoteMessages
             checkCtrl.Checked = hotkey.Contains('^');
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
 
-            RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            button24hour.Checked = timeformat;
+            button24hour.Visible = false;
+            button12hour.Visible = false;
+
             if (rkApp.GetValue("RemoteClient") == null) // The value doesn't exist, the application is not set to run at startup
                 checkOnstartup.Checked = false;
             else // The value exists, the application is set to run at startup
@@ -193,6 +198,11 @@ namespace RemoteMessages
             }
             else
             {
+                if (checkOnstartup.Checked) // Add the value in the registry so that the application runs at startup
+                    rkApp.SetValue("RemoteClient", Application.ExecutablePath.ToString());
+                else // Remove the value from the registry so that the application doesn't start
+                    rkApp.DeleteValue("RemoteClient", false);
+
                 this.DialogResult = System.Windows.Forms.DialogResult.OK;
                 this.Close();
             }
@@ -241,6 +251,7 @@ namespace RemoteMessages
         public bool[] getBackgrounderOptions() { return new bool[] { closeToTray.Checked, minimizeToTray.Checked, escapeToTray.Checked }; }
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
         public int[] getNotifMoreOptions() { return new int[] { Int32.Parse(flashCount.Text), Int32.Parse(delayBalloon.Text) }; }
+        public bool getTimeFormat() { return button24hour.Checked; }
 
         public bool getSoundActivated() { return checkSound.Checked; }
         public int getSoundVolume() { return trackBarVolume.Value; }
@@ -253,7 +264,6 @@ namespace RemoteMessages
         public int getReplacementDelay() { return Int32.Parse(delayReplacement.Text); }
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
         public bool getOnStartupActivated() { return checkOnstartup.Checked; }
-        public bool getReceiptActivated() { return checkReceipt.Checked; }
 
         public string getDeviceName() { return deviceName.Text; }
         public string getPort() { return port.Text; }
@@ -310,9 +320,6 @@ namespace RemoteMessages
             password.Enabled = activateGhostMode.Checked;
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-        }
 
         private void PreferencesForm_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -337,7 +344,7 @@ namespace RemoteMessages
         {
             switch (((Button)(sender)).Text)
             {
-                case "Backgrounding":
+                case "General":
                     ChangeTab(1);
                     break;
                 case "Conversations":
@@ -353,6 +360,18 @@ namespace RemoteMessages
                     ChangeTab(5);
                     break;
             }
+        }
+
+        private void button12hour_CheckedChanged(object sender, EventArgs e)
+        {
+            if (button12hour.Checked)
+                button24hour.Checked = false;
+        }
+
+        private void button24hour_CheckedChanged(object sender, EventArgs e)
+        {
+            if (button24hour.Checked)
+                button12hour.Checked = false;
         }
     }
 }
