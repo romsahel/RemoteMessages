@@ -10,7 +10,7 @@
 4.0.22
 - NEW: Added a Run at Windows Startup option (@Reeiiko)
 - Fixed some minor bugs (conversation loading, notifications)
-
+---___---___---
 4.0.20
 - Added feature (@highlanderx): IE is no longer opened when clicking an image ; 
 it is now downloaded and opened in the default associated image app
@@ -32,7 +32,7 @@ it is now downloaded and opened in the default associated image app
 - iOS 7 Update : Compatibility fixes
 - Minor fixes
 - Redone settings panel
-
+---___---___---
 3.2.18
 - Fixed: minor corrections and possibly crash issues
 3.2.17
