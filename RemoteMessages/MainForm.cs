@@ -127,9 +127,8 @@ namespace RemoteMessages
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {
-                    changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.RemoveEmptyEntries)[0];
-
-                    DialogResult result = MessageBox.Show("Current version: " + VERSION + "\nAn update is available, would you like to download it?\n\nChanges:\n" + changelog,
+                    DialogResult result = MessageBox.Show("Current version: " + VERSION + "\nAn update is available, would you like to download it?\n\nChanges:\n"
+                                                          + String.Join("-", changelog.Split('-'), 0, 10),
                                  "An update is available!",
                                  MessageBoxButtons.YesNo,
                                  MessageBoxIcon.Warning,
@@ -564,7 +563,7 @@ namespace RemoteMessages
             //    date[3] = (Int32.Parse(date[3]) + 12).ToString();
             //}
             //ExtractString("<h5 class=\"read\">Read 15:35</h5>", "<h5 class=\"read\">", "</h5>");
-            
+
             if (timerReplacing != null)
             {
                 timerReplacing.Interval = delayReplacing;
