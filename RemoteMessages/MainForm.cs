@@ -63,8 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-        private const string VERSION = "4.0.27";
+        private const string VERSION = "4.0.28";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -73,6 +72,7 @@ namespace RemoteMessages
         private bool soundEnabled;
         private int soundIndex = -1;
         private int editor_previousHeight = -1;
+        private bool authentication_needed;
 
         public MainForm()
         {
@@ -196,11 +196,6 @@ namespace RemoteMessages
                     flashCount = sMoreNotifs[0];
                     delayBalloon = sMoreNotifs[1];
 
-                    if (prefs.getOnStartupActivated()) // Add the value in the registry so that the application runs at startup
-                        rkApp.SetValue("RemoteClient", Application.ExecutablePath.ToString());
-                    else // Remove the value from the registry so that the application doesn't start
-                        rkApp.DeleteValue("RemoteClient", false);
-
                     bool mustRefresh = (isAutoUpdate != prefs.getAutoIPActivated())
                         || (isAutoUpdate && deviceName != prefs.getDeviceName())
                         || (!isAutoUpdate && url != prefs.getDeviceName())
@@ -262,7 +257,7 @@ namespace RemoteMessages
                         if (isAutoUpdate)
                             FindNewIP();
                         else
-                            DisplayPage();
+                            DisplayPage(url);
                     }
                 }
                 else if (res == System.Windows.Forms.DialogResult.Abort)
@@ -737,7 +732,7 @@ namespace RemoteMessages
                 if (isAutoUpdate)
                     FindNewIP();
                 else
-                    DisplayPage();
+                    DisplayPage(url);
             }
         }
 
@@ -897,7 +892,7 @@ namespace RemoteMessages
                             if (isAutoUpdate)
                                 FindNewIP();
                             else
-                                DisplayPage();
+                                DisplayPage(url);
                             break;
                         case System.Windows.Forms.DialogResult.Abort:
                             isExiting = true;
@@ -911,7 +906,7 @@ namespace RemoteMessages
                 exceptionRaised = true;
             }
         }
-        private void DisplayPage()
+        private void DisplayPage(string current_url)
         {
             label1.Visible = false;
             documentCompleted = false;
@@ -921,7 +916,7 @@ namespace RemoteMessages
 
             progressBar1.Value = 75;
 
-            HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(current_url);
             wrq.Proxy = null;
             HttpWebResponse wrs = null;
 
@@ -931,7 +926,7 @@ namespace RemoteMessages
 
                 if (wrs.StatusCode == HttpStatusCode.OK)
                 {
-                    webBrowser1.Navigate(url);
+                    webBrowser1.Navigate(current_url);
                     loggedIn = true;
                 }
             }
@@ -944,10 +939,11 @@ namespace RemoteMessages
                         using (LoginForm login = new LoginForm())
                         {
                             DialogResult res = login.ShowDialog();
+                            authentication_needed = true;
                             if (res == System.Windows.Forms.DialogResult.OK)
                             {
-                                webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), url.Substring(7)));
                                 loggedIn = false;
+                                webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), current_url.Substring(7)));
                             }
                             else
                             {
@@ -998,7 +994,7 @@ namespace RemoteMessages
                 url = "http://" + ip + ":" + port;
                 UseWaitCursor = false;
                 Cursor.Current = Cursors.Default;
-                DisplayPage();
+                DisplayPage(url);
             }
             catch
             {
@@ -1025,7 +1021,11 @@ namespace RemoteMessages
                     documentCompleted = true;
 
                     webBrowser1.ScrollBarsEnabled = false;
-
+                    if (authentication_needed && webBrowser1.Document.GetElementById("conversations-window") == null)
+                    {
+                        DisplayPage(url);
+                        return;
+                    }
                     webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
                     webBrowser1.Document.GetElementById("messages-window").MouseDown += new HtmlElementEventHandler(Messages_MouseDown);
                     webBrowser1.Document.GetElementById("conversations-window").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
