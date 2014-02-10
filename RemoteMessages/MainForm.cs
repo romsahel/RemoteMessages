@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.28";
+        private const string VERSION = "4.0.29";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
