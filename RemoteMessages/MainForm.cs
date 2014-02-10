@@ -123,7 +123,7 @@ namespace RemoteMessages
                 WebClient client = new WebClient();
                 client.Proxy = null;
                 // Download string.
-                string changelog = client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt");
+                string changelog = client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt").Replace("---___---___---", "");
                 string value = changelog.Split('\n')[0];
                 if (Int32.Parse(value.Replace(".", "")) > Int32.Parse(VERSION.Replace(".", "")))
                 {

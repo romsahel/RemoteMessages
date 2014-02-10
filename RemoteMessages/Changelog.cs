@@ -16,7 +16,7 @@ namespace RemoteMessages
             InitializeComponent();
             label1.Location = new Point((this.Width / 2) - (label1.Width / 2), 20);
             button1.Location = new Point((this.Width / 2) - (button1.Width / 2), 394);
-            richTextBox1.Text = changelog;
+            richTextBox1.Text = changelog.Replace("---___---___---", "");
 
         }
     }
