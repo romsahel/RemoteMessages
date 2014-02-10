@@ -1,5 +1,6 @@
-4.0.28
+4.0.29
 - Fixed: You can now try again when typing the wrong password for authentication (reported by @jimbooslicee)
+- Minor changelog display improvement
 4.0.27
 - Fixed: Conflict between autoreplacement and URLs (reported by @JonLuca)
 - Adapted changelog on updated to display a certain number of lines
