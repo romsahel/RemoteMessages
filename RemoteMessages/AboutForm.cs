@@ -58,16 +58,16 @@ namespace RemoteMessages
                 client.Proxy = null;
                 // Download string.
                 changelog = (client.DownloadString(@"http://aerr.github.io/RemoteMessages/VERSION.txt"));
-                changelog = changelog.Split(new string[] { "---___---___---" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                MessageBox.Show("Changelog:\n" + changelog, "Changelog", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                using (Changelog window = new Changelog(changelog))
+                {
+                    window.ShowDialog();
+                }
             }
             catch
             {
                 MessageBox.Show(changelog, "Changelog", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
             }
-
             DialogResult = System.Windows.Forms.DialogResult.None;
-            
         }
 
         private void contactButton_Click(object sender, EventArgs e)

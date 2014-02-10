@@ -64,7 +64,7 @@ namespace RemoteMessages
         #endregion
 
         RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-        private const string VERSION = "4.0.25";
+        private const string VERSION = "4.0.26";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
