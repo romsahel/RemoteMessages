@@ -213,12 +213,12 @@ namespace RemoteMessages
 
         private void labelMsg_Click(object sender, EventArgs e)
         {
-            this.InvokeOnClick(this, e);
+            NotificationForm_Click(this, e);
         }
 
         private void labelName_Click(object sender, EventArgs e)
         {
-            this.InvokeOnClick(this, e);
+            NotificationForm_Click(this, e);
         }
 
         public bool hasAlreadyBeenDisplayed(string current)

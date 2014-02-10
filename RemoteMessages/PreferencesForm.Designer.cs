@@ -47,6 +47,7 @@
             this.closeToTray = new System.Windows.Forms.CheckBox();
             this.escapeToTray = new System.Windows.Forms.CheckBox();
             this.panelBackgrounding = new System.Windows.Forms.Panel();
+            this.checkOnstartup = new System.Windows.Forms.CheckBox();
             this.showBalloon = new System.Windows.Forms.CheckBox();
             this.showFlash = new System.Windows.Forms.CheckBox();
             this.panelNotifications = new System.Windows.Forms.Panel();
@@ -63,6 +64,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.port = new System.Windows.Forms.TextBox();
             this.panelReplacement = new System.Windows.Forms.Panel();
+            this.checkReceipt = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.password = new System.Windows.Forms.TextBox();
             this.activateGhostMode = new System.Windows.Forms.CheckBox();
@@ -94,7 +96,7 @@
             this.activateReplacement.Checked = true;
             this.activateReplacement.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateReplacement.Location = new System.Drawing.Point(39, 32);
+            this.activateReplacement.Location = new System.Drawing.Point(39, 50);
             this.activateReplacement.Name = "activateReplacement";
             this.activateReplacement.Size = new System.Drawing.Size(190, 20);
             this.activateReplacement.TabIndex = 1;
@@ -104,7 +106,7 @@
             // 
             // delayReplacement
             // 
-            this.delayReplacement.Location = new System.Drawing.Point(116, 58);
+            this.delayReplacement.Location = new System.Drawing.Point(116, 76);
             this.delayReplacement.Name = "delayReplacement";
             this.delayReplacement.Size = new System.Drawing.Size(100, 20);
             this.delayReplacement.TabIndex = 2;
@@ -112,7 +114,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(37, 61);
+            this.label1.Location = new System.Drawing.Point(37, 79);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 3;
@@ -122,7 +124,7 @@
             // 
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(237, 32);
+            this.label3.Location = new System.Drawing.Point(237, 50);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(224, 46);
             this.label3.TabIndex = 7;
@@ -132,17 +134,17 @@
             // 
             this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(237, 95);
+            this.label21.Location = new System.Drawing.Point(237, 105);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(224, 52);
             this.label21.TabIndex = 11;
             this.label21.Text = "Automatically unfocuses a conversation after a delay so that it is not marked as " +
-                "read.";
+    "read.";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(36, 130);
+            this.label4.Location = new System.Drawing.Point(36, 140);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 10;
@@ -150,7 +152,7 @@
             // 
             // delayUnfocus
             // 
-            this.delayUnfocus.Location = new System.Drawing.Point(115, 127);
+            this.delayUnfocus.Location = new System.Drawing.Point(115, 137);
             this.delayUnfocus.Name = "delayUnfocus";
             this.delayUnfocus.Size = new System.Drawing.Size(100, 20);
             this.delayUnfocus.TabIndex = 9;
@@ -161,7 +163,7 @@
             this.activateUnfocus.Checked = true;
             this.activateUnfocus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.activateUnfocus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activateUnfocus.Location = new System.Drawing.Point(39, 95);
+            this.activateUnfocus.Location = new System.Drawing.Point(39, 105);
             this.activateUnfocus.Name = "activateUnfocus";
             this.activateUnfocus.Size = new System.Drawing.Size(158, 20);
             this.activateUnfocus.TabIndex = 8;
@@ -200,8 +202,8 @@
             this.label5.Size = new System.Drawing.Size(254, 143);
             this.label5.TabIndex = 17;
             this.label5.Text = "Automatically finds the IP address of your device based on its name.\r\nYou must en" +
-                "ter the port you chose on your iDevice.\r\n(This feature might not work depending " +
-                "on your network)";
+    "ter the port you chose on your iDevice.\r\n(This feature might not work depending " +
+    "on your network)";
             // 
             // activateAutoIP
             // 
@@ -239,7 +241,7 @@
             this.minimizeToTray.Checked = true;
             this.minimizeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.minimizeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minimizeToTray.Location = new System.Drawing.Point(24, 74);
+            this.minimizeToTray.Location = new System.Drawing.Point(24, 105);
             this.minimizeToTray.Name = "minimizeToTray";
             this.minimizeToTray.Size = new System.Drawing.Size(383, 20);
             this.minimizeToTray.TabIndex = 28;
@@ -252,7 +254,7 @@
             this.closeToTray.Checked = true;
             this.closeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.closeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.closeToTray.Location = new System.Drawing.Point(24, 35);
+            this.closeToTray.Location = new System.Drawing.Point(24, 79);
             this.closeToTray.Name = "closeToTray";
             this.closeToTray.Size = new System.Drawing.Size(347, 20);
             this.closeToTray.TabIndex = 29;
@@ -265,7 +267,7 @@
             this.escapeToTray.Checked = true;
             this.escapeToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.escapeToTray.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.escapeToTray.Location = new System.Drawing.Point(24, 115);
+            this.escapeToTray.Location = new System.Drawing.Point(24, 131);
             this.escapeToTray.Name = "escapeToTray";
             this.escapeToTray.Size = new System.Drawing.Size(345, 20);
             this.escapeToTray.TabIndex = 30;
@@ -275,6 +277,7 @@
             // panelBackgrounding
             // 
             this.panelBackgrounding.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBackgrounding.Controls.Add(this.checkOnstartup);
             this.panelBackgrounding.Controls.Add(this.minimizeToTray);
             this.panelBackgrounding.Controls.Add(this.closeToTray);
             this.panelBackgrounding.Controls.Add(this.escapeToTray);
@@ -282,6 +285,19 @@
             this.panelBackgrounding.Name = "panelBackgrounding";
             this.panelBackgrounding.Size = new System.Drawing.Size(480, 176);
             this.panelBackgrounding.TabIndex = 35;
+            // 
+            // checkOnstartup
+            // 
+            this.checkOnstartup.AutoSize = true;
+            this.checkOnstartup.Checked = true;
+            this.checkOnstartup.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkOnstartup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkOnstartup.Location = new System.Drawing.Point(24, 24);
+            this.checkOnstartup.Name = "checkOnstartup";
+            this.checkOnstartup.Size = new System.Drawing.Size(179, 20);
+            this.checkOnstartup.TabIndex = 31;
+            this.checkOnstartup.Text = "Open on Windows startup";
+            this.checkOnstartup.UseVisualStyleBackColor = true;
             // 
             // showBalloon
             // 
@@ -452,6 +468,7 @@
             // panelReplacement
             // 
             this.panelReplacement.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelReplacement.Controls.Add(this.checkReceipt);
             this.panelReplacement.Controls.Add(this.label21);
             this.panelReplacement.Controls.Add(this.label4);
             this.panelReplacement.Controls.Add(this.delayUnfocus);
@@ -464,6 +481,18 @@
             this.panelReplacement.Name = "panelReplacement";
             this.panelReplacement.Size = new System.Drawing.Size(480, 176);
             this.panelReplacement.TabIndex = 42;
+            // 
+            // checkReceipt
+            // 
+            this.checkReceipt.AutoSize = true;
+            this.checkReceipt.Enabled = false;
+            this.checkReceipt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkReceipt.Location = new System.Drawing.Point(39, 18);
+            this.checkReceipt.Name = "checkReceipt";
+            this.checkReceipt.Size = new System.Drawing.Size(285, 20);
+            this.checkReceipt.TabIndex = 12;
+            this.checkReceipt.Text = "Activate read receipts in 12-hour time format";
+            this.checkReceipt.UseVisualStyleBackColor = true;
             // 
             // label13
             // 
@@ -563,8 +592,8 @@
             this.label14.Size = new System.Drawing.Size(254, 137);
             this.label14.TabIndex = 11;
             this.label14.Text = "Quickly Hide/Show the app by pressing the hotkey of your choice. \r\nIf Ghost-Mode " +
-                "is enabled, you won\'t get notifications when the window is hidden.\r\nThe hotkey c" +
-                "an still be used when GM is disabled.";
+    "is enabled, you won\'t get notifications when the window is hidden.\r\nThe hotkey c" +
+    "an still be used when GM is disabled.";
             // 
             // checkCtrl
             // 
@@ -597,7 +626,7 @@
             this.navBackgrounding.Name = "navBackgrounding";
             this.navBackgrounding.Size = new System.Drawing.Size(133, 23);
             this.navBackgrounding.TabIndex = 49;
-            this.navBackgrounding.Text = "Backgrounding";
+            this.navBackgrounding.Text = "General";
             this.navBackgrounding.UseVisualStyleBackColor = false;
             this.navBackgrounding.Click += new System.EventHandler(this.navigation_Click);
             // 
@@ -745,5 +774,7 @@
         private System.Windows.Forms.Button navIP;
         private System.Windows.Forms.Button navGhostMode;
         private System.Windows.Forms.Panel navigationPanel;
+        private System.Windows.Forms.CheckBox checkOnstartup;
+        private System.Windows.Forms.CheckBox checkReceipt;
     }
 }

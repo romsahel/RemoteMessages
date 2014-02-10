@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -19,11 +20,10 @@ namespace RemoteMessages
         {
             this.VERSION = version;
             InitializeComponent();
-
             ChangeTab(1);
 
             navBackgrounding.Select();
-                
+
             closeToTray.Checked = bBackgrounds[0];
             minimizeToTray.Checked = bBackgrounds[1];
             escapeToTray.Checked = bBackgrounds[2];
@@ -63,6 +63,11 @@ namespace RemoteMessages
             checkCtrl.Checked = hotkey.Contains('^');
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
 
+            RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if (rkApp.GetValue("RemoteClient") == null) // The value doesn't exist, the application is not set to run at startup
+                checkOnstartup.Checked = false;
+            else // The value exists, the application is set to run at startup
+                checkOnstartup.Checked = true;
 
             soundBox.SelectedIndex = soundIndex;
         }
@@ -78,7 +83,7 @@ namespace RemoteMessages
             Panel panel;
             switch (i)
             {
-                    // Backgrounding
+                // Backgrounding
                 case 1:
                     this.Text = "Preferences - Backgrounding";
                     panelBackgrounding.Visible = true;
@@ -247,6 +252,8 @@ namespace RemoteMessages
 
         public int getReplacementDelay() { return Int32.Parse(delayReplacement.Text); }
         public int getUnfocusDelay() { return Int32.Parse(delayUnfocus.Text); }
+        public bool getOnStartupActivated() { return checkOnstartup.Checked; }
+        public bool getReceiptActivated() { return checkReceipt.Checked; }
 
         public string getDeviceName() { return deviceName.Text; }
         public string getPort() { return port.Text; }
@@ -318,6 +325,7 @@ namespace RemoteMessages
                     aboutDisplayed = false;
                 }
             }
+            e.Cancel = true;
         }
 
         private void checkSound_CheckedChanged(object sender, EventArgs e)

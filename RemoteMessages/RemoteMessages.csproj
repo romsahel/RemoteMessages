@@ -104,6 +104,7 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WebClickSound.cs" />
     <EmbeddedResource Include="CustomEmoji.resx">
       <DependentUpon>CustomEmoji.cs</DependentUpon>
     </EmbeddedResource>
