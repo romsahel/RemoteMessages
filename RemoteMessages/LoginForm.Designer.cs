@@ -38,6 +38,7 @@
             this.labelPass = new System.Windows.Forms.Label();
             this.ghostmodePassword = new System.Windows.Forms.TextBox();
             this.ghostmodeLabel = new System.Windows.Forms.Label();
+            this.checkRemember = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // labelMessage
@@ -49,12 +50,12 @@
             this.labelMessage.Size = new System.Drawing.Size(308, 44);
             this.labelMessage.TabIndex = 0;
             this.labelMessage.Text = "The application requires an authentication. Please enter a username and a passwor" +
-                "d.";
+    "d.";
             this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // OKbutton
             // 
-            this.OKbutton.Location = new System.Drawing.Point(92, 158);
+            this.OKbutton.Location = new System.Drawing.Point(92, 168);
             this.OKbutton.Name = "OKbutton";
             this.OKbutton.Size = new System.Drawing.Size(75, 23);
             this.OKbutton.TabIndex = 3;
@@ -65,7 +66,7 @@
             // Cancelbutton
             // 
             this.Cancelbutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancelbutton.Location = new System.Drawing.Point(186, 158);
+            this.Cancelbutton.Location = new System.Drawing.Point(186, 168);
             this.Cancelbutton.Name = "Cancelbutton";
             this.Cancelbutton.Size = new System.Drawing.Size(75, 23);
             this.Cancelbutton.TabIndex = 4;
@@ -136,13 +137,25 @@
             this.ghostmodeLabel.TabIndex = 8;
             this.ghostmodeLabel.Text = "Please, enter your password:";
             // 
+            // checkRemember
+            // 
+            this.checkRemember.AutoSize = true;
+            this.checkRemember.Location = new System.Drawing.Point(92, 137);
+            this.checkRemember.Name = "checkRemember";
+            this.checkRemember.Size = new System.Drawing.Size(94, 17);
+            this.checkRemember.TabIndex = 9;
+            this.checkRemember.Text = "Remember me";
+            this.checkRemember.UseVisualStyleBackColor = true;
+            this.checkRemember.CheckedChanged += new System.EventHandler(this.checkRemember_CheckedChanged);
+            // 
             // LoginForm
             // 
             this.AcceptButton = this.OKbutton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancelbutton;
-            this.ClientSize = new System.Drawing.Size(333, 193);
+            this.ClientSize = new System.Drawing.Size(333, 203);
+            this.Controls.Add(this.checkRemember);
             this.Controls.Add(this.ghostmodeLabel);
             this.Controls.Add(this.ghostmodePassword);
             this.Controls.Add(this.labelPass);
@@ -178,5 +191,6 @@
         private System.Windows.Forms.Label labelPass;
         private System.Windows.Forms.TextBox ghostmodePassword;
         private System.Windows.Forms.Label ghostmodeLabel;
+        private System.Windows.Forms.CheckBox checkRemember;
     }
 }
