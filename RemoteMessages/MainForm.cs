@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.29";
+        private const string VERSION = "4.0.31";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -1098,11 +1098,18 @@ namespace RemoteMessages
             {
                 string path = ExtractString(elem.Parent.OuterHtml, "href=\"", "\"").Replace("&amp;", "&");
                 // Create web client.
-                using (WebClient client = new WebClient())
+                try
                 {
-                    client.Proxy = null;
-                    client.DownloadFile(webBrowser1.Url + path.Substring(1), "tmp.png");
-                    System.Diagnostics.Process.Start("tmp.png");
+                    using (WebClient client = new WebClient())
+                    {
+                        client.Proxy = null;
+                        client.DownloadFile(webBrowser1.Url + path.Substring(1), "tmp.png");
+                        System.Diagnostics.Process.Start("tmp.png");
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("There was an error when trying to access the image.", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -1400,7 +1407,7 @@ namespace RemoteMessages
         private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WebBrowser page = (WebBrowser)sender;
-            if (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")))
+            if (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")) && !page.StatusText.Contains("media"))
                 System.Diagnostics.Process.Start(page.StatusText);
             e.Cancel = true;
         }
