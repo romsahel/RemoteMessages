@@ -1,3 +1,10 @@
+4.0.30
+- Added: "Remember me" option for authentication
+- Added: Possibility to click on Links (http and www URLs) to open the default navigator
+- Fixed: Unnecessary refresh when hitting OK in Preferences
+- Fixed: "General" tab not working
+- Possible fix when not getting notifications
+- Fixed: Launch at startup feature now really working
 4.0.29
 - Fixed: You can now try again when typing the wrong password for authentication (reported by @jimbooslicee)
 - Minor changelog display improvement
