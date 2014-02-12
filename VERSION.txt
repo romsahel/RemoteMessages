@@ -1,5 +1,6 @@
 4.0.31
 - Fixed: image opening
+
 4.0.30
 - Added: "Remember me" option for authentication
 - Added: Possibility to click on Links (http and www URLs) to open the default navigator
