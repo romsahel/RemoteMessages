@@ -18,7 +18,7 @@ namespace RemoteMessages
         // The path to the key where Windows looks for startup applications
         RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, bool timeformat, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, bool autoscroll, string version)
         {
             this.VERSION = version;
             InitializeComponent();
@@ -65,9 +65,7 @@ namespace RemoteMessages
             checkCtrl.Checked = hotkey.Contains('^');
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
 
-            button24hour.Checked = timeformat;
-            button24hour.Visible = false;
-            button12hour.Visible = false;
+            checkAutoscroll.Checked = autoscroll;
 
             if (rkApp.GetValue("RemoteClient") == null) // The value doesn't exist, the application is not set to run at startup
                 checkOnstartup.Checked = false;
@@ -251,7 +249,7 @@ namespace RemoteMessages
         public bool[] getBackgrounderOptions() { return new bool[] { closeToTray.Checked, minimizeToTray.Checked, escapeToTray.Checked }; }
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
         public int[] getNotifMoreOptions() { return new int[] { Int32.Parse(flashCount.Text), Int32.Parse(delayBalloon.Text) }; }
-        public bool getTimeFormat() { return button24hour.Checked; }
+        public bool getAutoScroll() { return checkAutoscroll.Checked; }
 
         public bool getSoundActivated() { return checkSound.Checked; }
         public int getSoundVolume() { return trackBarVolume.Value; }
@@ -360,18 +358,6 @@ namespace RemoteMessages
                     ChangeTab(5);
                     break;
             }
-        }
-
-        private void button12hour_CheckedChanged(object sender, EventArgs e)
-        {
-            if (button12hour.Checked)
-                button24hour.Checked = false;
-        }
-
-        private void button24hour_CheckedChanged(object sender, EventArgs e)
-        {
-            if (button24hour.Checked)
-                button12hour.Checked = false;
         }
     }
 }

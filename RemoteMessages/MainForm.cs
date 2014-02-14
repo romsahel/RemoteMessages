@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.31";
+        private const string VERSION = "4.0.40";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -73,7 +73,7 @@ namespace RemoteMessages
         private int soundIndex = -1;
         private int editor_previousHeight = -1;
         private bool authentication_needed;
-        private bool timeformat_is24hour;
+        private bool is_autoscrolldown;
 
         public MainForm()
         {
@@ -177,7 +177,7 @@ namespace RemoteMessages
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
                 isGhostMode, password, hotkey, soundEnabled, getVolume(), soundIndex,
-                timeformat_is24hour,
+                is_autoscrolldown,
                 VERSION))
             {
                 isUnfocusing = false;
@@ -215,7 +215,7 @@ namespace RemoteMessages
                     isGhostMode = prefs.getGhostModeActivated();
                     password = prefs.getPassword();
 
-                    timeformat_is24hour = prefs.getTimeFormat();
+                    is_autoscrolldown = prefs.getAutoScroll();
 
                     if (soundIndex != prefs.getSoundIndex())
                     {
@@ -324,7 +324,7 @@ namespace RemoteMessages
                     soundIndex = Int32.Parse(reader.ReadLine());
 
                     string tmp = reader.ReadLine();
-                    Boolean.TryParse(tmp, out timeformat_is24hour);
+                    Boolean.TryParse(tmp, out is_autoscrolldown);
 
                     if (reader.EndOfStream && tmp != "")
                     {
@@ -361,7 +361,7 @@ namespace RemoteMessages
             if (port == null)
                 port = "333";
 
-            timeformat_is24hour = false;
+            is_autoscrolldown = false;
             
             closeToTray = true;
             minimizeToTray = true;
@@ -434,7 +434,7 @@ namespace RemoteMessages
 
                 writer.WriteLine(soundIndex);
 
-                writer.WriteLine(timeformat_is24hour);
+                writer.WriteLine(is_autoscrolldown);
 
                 writer.WriteLine();
             }
@@ -1081,6 +1081,9 @@ namespace RemoteMessages
 
         private void Editor_KeyPress(object sender, HtmlElementEventArgs e)
         {
+            if (!is_autoscrolldown)
+                return;
+
             if (editor_previousHeight != -1)
             {
                 int editor_currentHeight = webBrowser1.Document.GetElementById("editor").ClientRectangle.Height;
