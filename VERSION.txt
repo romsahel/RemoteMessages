@@ -1,3 +1,5 @@
+4.0.41
+- Added some more infos in the image error message ; please transmit so I can solve this.
 4.0.40
 - Added an option to toggle the Autoscroll feature (= Automatically scrolls down when message takes multiple lines)
 - Added a message when image cannot be opened: transmit the message to me so I can fix this, please.
