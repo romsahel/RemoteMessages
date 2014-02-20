@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.40";
+        private const string VERSION = "4.0.41";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -74,6 +74,7 @@ namespace RemoteMessages
         private int editor_previousHeight = -1;
         private bool authentication_needed;
         private bool is_autoscrolldown;
+        private string unopenable_link = "";
 
         public MainForm()
         {
@@ -700,7 +701,15 @@ namespace RemoteMessages
             if (showFlash)
                 Native.Flash(this, (uint)flashCount);
 
-            string name = (list.Children[0].InnerText).Split('×')[0];
+            string name = "";
+            try
+            {
+                name = (list.Children[0].InnerText).Split('×')[0];
+            }
+            catch
+            {
+                return;
+            }
 
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
@@ -1107,12 +1116,13 @@ namespace RemoteMessages
                     {
                         client.Proxy = null;
                         client.DownloadFile(webBrowser1.Url + path.Substring(1), "tmp.png");
+
                         System.Diagnostics.Process.Start("tmp.png");
                     }
                 }
                 catch
                 {
-                    MessageBox.Show("There was an error when trying to access the image.", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    unopenable_link = webBrowser1.Url + path.Substring(1);
                 }
             }
         }
@@ -1410,8 +1420,13 @@ namespace RemoteMessages
         private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WebBrowser page = (WebBrowser)sender;
-            if (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")) && !page.StatusText.Contains("media"))
+            if (unopenable_link != "" || (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")) && !page.StatusText.Contains("media")))
                 System.Diagnostics.Process.Start(page.StatusText);
+            if (unopenable_link != "")
+            {
+                MessageBox.Show("There was an error when trying to access the image.\nURLs (transmit to developper, please!): \n" + unopenable_link + "\n" + page.StatusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                unopenable_link = "";
+            }
             e.Cancel = true;
         }
     }
