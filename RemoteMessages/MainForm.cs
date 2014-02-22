@@ -554,21 +554,6 @@ namespace RemoteMessages
         ///</summary>
         private void ConversationChanged(bool justChanging = true, bool sending = false)
         {
-            //string conversation = Messages_Window.InnerHtml; 
-            //string[] stamps = conversation.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.RemoveEmptyEntries);
-            //bool first = true;
-            //foreach (string elt in stamps)
-            //{
-            //    if (first)
-            //    {
-            //        first = false;
-            //        continue;
-            //    }
-            //    string[] date = ExtractString(elt, "", "</h4>").Split(new char[] { ' ', ':' });
-            //    date[3] = (Int32.Parse(date[3]) + 12).ToString();
-            //}
-            //ExtractString("<h5 class=\"read\">Read 15:35</h5>", "<h5 class=\"read\">", "</h5>");
-
             if (timerReplacing != null)
             {
                 timerReplacing.Interval = delayReplacing;
@@ -584,6 +569,51 @@ namespace RemoteMessages
 
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
+            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
+            for (int i = 1; i < stamps.Length; i++)
+            {
+                string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
+                string[] time = date[0].Split(new char[] { ' ', ':' });
+                if (time[5] == "AM" || time[5] == "PM")
+                {
+                    int add = 0;
+                    if (time[5] == "PM")
+                        add = 12;
+
+                    time[5] = "";
+                    time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
+                    string result = String.Join(" ", time) + "</h4>" + date[1];
+                    result = result.Replace("~|~ ", ":");
+                    stamps[i] = result;
+                }
+            }
+            Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
+
+            string test = "";
+            stamps = test.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
+            for (int i = 1; i < stamps.Length; i++)
+            {
+                string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
+                string[] time = date[0].Split(new char[] { ':' });
+
+                int add = 0;
+                if (Int32.Parse(time[0]) > 11)
+                {
+                    add = -12;
+                    time[1] += " PM";
+                }
+                else
+                    time[1] += " AM";
+
+                time[0] = (Int32.Parse(time[0]) + add).ToString("00");
+                string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
+
+                stamps[i] = result;
+
+            }
+            test = String.Join("data-timeread=\"", stamps);
+
+
             if (isReplacing)
                 fromStringToEmoji(Messages_Window);
 
@@ -670,7 +700,7 @@ namespace RemoteMessages
             }
             previousFirstContact = firstContact;
             previousConversation = Messages_Window.InnerHtml;
-        
+
             justUnfocused = false;
             timerCheckNew.Start();
         }
@@ -683,7 +713,6 @@ namespace RemoteMessages
                 //&& (now.Hour >= 12 ? now.Hour - 12 : now.Hour) == Int32.Parse(elts[3])
                     && now.Minute == Int32.Parse(elts[4]));
         }
-
 
         string ExtractString(string s, string start, string end)
         {
@@ -1427,7 +1456,7 @@ namespace RemoteMessages
                 {
                     MessageBox.Show("There was an error when trying to access the image."
                     + "The image is now displayed/downloaded in your default navigator.\n"
-                    + "URLs (transmit to developper, please!):\n" 
+                    + "URLs (transmit to developper, please!):\n"
                     + unopenable_link + "\n" + page.StatusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

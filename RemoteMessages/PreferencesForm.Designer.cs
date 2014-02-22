@@ -64,6 +64,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.port = new System.Windows.Forms.TextBox();
             this.panelReplacement = new System.Windows.Forms.Panel();
+            this.checkAutoscroll = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.password = new System.Windows.Forms.TextBox();
             this.activateGhostMode = new System.Windows.Forms.CheckBox();
@@ -80,7 +81,7 @@
             this.navIP = new System.Windows.Forms.Button();
             this.navGhostMode = new System.Windows.Forms.Button();
             this.navigationPanel = new System.Windows.Forms.Panel();
-            this.checkAutoscroll = new System.Windows.Forms.CheckBox();
+            this.time_format = new System.Windows.Forms.ComboBox();
             this.panelBackgrounding.SuspendLayout();
             this.panelNotifications.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolume)).BeginInit();
@@ -468,6 +469,7 @@
             // panelReplacement
             // 
             this.panelReplacement.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelReplacement.Controls.Add(this.time_format);
             this.panelReplacement.Controls.Add(this.checkAutoscroll);
             this.panelReplacement.Controls.Add(this.label21);
             this.panelReplacement.Controls.Add(this.label4);
@@ -481,6 +483,19 @@
             this.panelReplacement.Name = "panelReplacement";
             this.panelReplacement.Size = new System.Drawing.Size(480, 176);
             this.panelReplacement.TabIndex = 42;
+            // 
+            // checkAutoscroll
+            // 
+            this.checkAutoscroll.AutoSize = true;
+            this.checkAutoscroll.Checked = true;
+            this.checkAutoscroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutoscroll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkAutoscroll.Location = new System.Drawing.Point(39, 18);
+            this.checkAutoscroll.Name = "checkAutoscroll";
+            this.checkAutoscroll.Size = new System.Drawing.Size(175, 20);
+            this.checkAutoscroll.TabIndex = 12;
+            this.checkAutoscroll.Text = "Activate Auto-Scrolldown";
+            this.checkAutoscroll.UseVisualStyleBackColor = true;
             // 
             // label13
             // 
@@ -666,18 +681,18 @@
             this.navigationPanel.Size = new System.Drawing.Size(134, 176);
             this.navigationPanel.TabIndex = 53;
             // 
-            // checkAutoscroll
+            // time_format
             // 
-            this.checkAutoscroll.AutoSize = true;
-            this.checkAutoscroll.Checked = true;
-            this.checkAutoscroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutoscroll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkAutoscroll.Location = new System.Drawing.Point(39, 18);
-            this.checkAutoscroll.Name = "checkAutoscroll";
-            this.checkAutoscroll.Size = new System.Drawing.Size(175, 20);
-            this.checkAutoscroll.TabIndex = 12;
-            this.checkAutoscroll.Text = "Activate Auto-Scrolldown";
-            this.checkAutoscroll.UseVisualStyleBackColor = true;
+            this.time_format.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.time_format.FormattingEnabled = true;
+            this.time_format.Items.AddRange(new object[] {
+            "Default time format",
+            "12-hour format",
+            "24-hour format"});
+            this.time_format.Location = new System.Drawing.Point(237, 16);
+            this.time_format.Name = "time_format";
+            this.time_format.Size = new System.Drawing.Size(224, 21);
+            this.time_format.TabIndex = 13;
             // 
             // PreferencesForm
             // 
@@ -777,5 +792,6 @@
         private System.Windows.Forms.Panel navigationPanel;
         private System.Windows.Forms.CheckBox checkOnstartup;
         private System.Windows.Forms.CheckBox checkAutoscroll;
+        private System.Windows.Forms.ComboBox time_format;
     }
 }
