@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.41";
+        private const string VERSION = "4.0.45";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -363,7 +363,7 @@ namespace RemoteMessages
                 port = "333";
 
             is_autoscrolldown = false;
-            
+
             closeToTray = true;
             minimizeToTray = true;
             escapeToTray = true;
@@ -450,16 +450,14 @@ namespace RemoteMessages
                 this.webBrowser1.IsWebBrowserContextMenuEnabled = true;
 
             if (e.KeyCode == Keys.F10)
-            {
                 SmileyButton_Click(sender, null);
-            }
+
             if (e.KeyCode == Keys.Escape)
             {
-                if (documentCompleted && !exceptionRaised)
-                {
-                    webBrowser1.Document.GetElementById("editor").RemoveFocus();
-                }
-                if (webBrowser1.Focused && escapeToTray && ((!documentCompleted && !exceptionRaised) || getCurrentContactElement() == null))
+                if (Editor != null)
+                    Editor.RemoveFocus();
+
+                if (escapeToTray && getCurrentContactElement() == null)
                     Form1_FormClosing(sender, null);
             }
 
@@ -503,12 +501,11 @@ namespace RemoteMessages
             else
                 isPreviousF12 = false;
 
-            if (documentCompleted && !exceptionRaised)
+            if (Editor != null)
             {
                 if (e.Modifiers == Keys.Alt && e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9 && !isPreviousAltDown)
                 {
-                    if (documentCompleted && !exceptionRaised)
-                        webBrowser1.Document.GetElementById("editor").RemoveFocus();
+                    Editor.RemoveFocus();
 
                     ConversationChanged();
                     isPreviousAltDown = true;
@@ -518,13 +515,13 @@ namespace RemoteMessages
 
                 if (e.Modifiers == Keys.Control && !isPreviousCtrlDown)
                 {
-                    if (e.KeyCode == Keys.Enter)
-                    {
-                        webBrowser1.Document.GetElementById("send").InvokeMember("click");
-                    }
+                    HtmlElement Send = Document.GetElementById("send");
+
+                    if (e.KeyCode == Keys.Enter && Send != null)
+                        Send.InvokeMember("click");
                     else if (e.KeyCode == Keys.E)
                     {
-                         webBrowser1.Document.GetElementById("editor").Focus();
+                        Editor.Focus();
 
                         isPreviousCtrlDown = true;
                     }
@@ -556,7 +553,7 @@ namespace RemoteMessages
         ///</summary>
         private void ConversationChanged(bool justChanging = true, bool sending = false)
         {
-            //string conversation = webBrowser1.Document.GetElementById("messages-window").InnerHtml; 
+            //string conversation = Messages_Window.InnerHtml; 
             //string[] stamps = conversation.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.RemoveEmptyEntries);
             //bool first = true;
             //foreach (string elt in stamps)
@@ -587,7 +584,7 @@ namespace RemoteMessages
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
             if (isReplacing)
-                fromStringToEmoji(webBrowser1.Document.GetElementById("messages-window"));
+                fromStringToEmoji(Messages_Window);
 
             isPreviousMouse = false;
             timerReplacing.Stop();
@@ -646,33 +643,33 @@ namespace RemoteMessages
         private void Conversations_OnNewMessage(object sender, EventArgs e)
         {
             timerCheckNew.Enabled = false;
-            HtmlElement firstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
+            HtmlElement firstContact = Conversations.FirstChild;
             // We check if the window is not focused
             if (!justUnfocused && !this.Focused && !webBrowser1.Focused && notify.Visible &&
                 // And if First contact has changed
                 previousFirstContact != firstContact)
             {
                 // We check if the notification check came in
-                // if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
+                if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
                     // We check if no conversations are selected
                     if (getCurrentContactElement() == null || getCurrentContactElement() != firstContact)
                     {
-                        NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                        NotifyMe(Conversations);
                     }
                     // If there is a selection, change occurred in conversation
                     // So we check if it's not some of the user's pending/unsent message
-                    else if (previousConversation != webBrowser1.Document.GetElementById("messages-window").InnerHtml)
+                    else if (previousConversation != Messages_Window.InnerHtml)
                     {
-                        HtmlElementCollection children = this.webBrowser1.Document.GetElementById("messages").Children;
+                        HtmlElementCollection children = this.Document.GetElementById("messages").Children;
                         if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
-                            NotifyMe(webBrowser1.Document.GetElementById("conversations"));
+                            NotifyMe(Conversations);
                     }
                 }
             }
             previousFirstContact = firstContact;
-            previousConversation = webBrowser1.Document.GetElementById("messages-window").InnerHtml;
-
+            previousConversation = Messages_Window.InnerHtml;
+        
             justUnfocused = false;
             timerCheckNew.Start();
         }
@@ -730,7 +727,7 @@ namespace RemoteMessages
         {
             ShowMe();
             int X = 30;
-            int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
+            int Y = Document.Body.Children[0].OffsetRectangle.Height + 20;
             DoMouseClick(X, Y);
         }
 
@@ -775,7 +772,7 @@ namespace RemoteMessages
         private void Form1_Activated(object sender, EventArgs e)
         {
             if (isReplacing && documentCompleted && !exceptionRaised)
-                fromStringToEmoji(webBrowser1.Document.GetElementById("messages-window"));
+                fromStringToEmoji(Messages_Window);
 
             notify.Text = "Remote Messages\nClick to Show/Hide";
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon;
@@ -786,13 +783,13 @@ namespace RemoteMessages
             if (timerUnfocusing != null)
                 timerUnfocusing.Stop();
 
-            webBrowser1.Document.Focus();
+            Document.Focus();
 
             if (previousSelectedContact != null && getCurrentContactElement() == null)
             {
                 Rectangle curr = previousSelectedContact.OffsetRectangle;
                 int X = 30;
-                int Y = webBrowser1.Document.Body.Children[0].OffsetRectangle.Height + 20;
+                int Y = Document.Body.Children[0].OffsetRectangle.Height + 20;
                 Y += curr.Y;
                 DoMouseClick(X, Y);
                 ConversationChanged(false);
@@ -805,7 +802,7 @@ namespace RemoteMessages
             if (documentCompleted && !exceptionRaised)
             {
                 previousSelectedContact = getCurrentContactElement();
-                previousConversation = webBrowser1.Document.GetElementById("messages-window").InnerHtml;
+                previousConversation = Messages_Window.InnerHtml;
 
                 if (findCurrentContactName() != "" && isUnfocusing)
                 {
@@ -816,7 +813,7 @@ namespace RemoteMessages
                 }
 
                 timerCheckNew.Start();
-                previousFirstContact = webBrowser1.Document.GetElementById("conversations").FirstChild;
+                previousFirstContact = Conversations.FirstChild;
             }
         }
 
@@ -848,7 +845,7 @@ namespace RemoteMessages
             {
                 if (documentCompleted && !exceptionRaised)
                 {
-                    previousConversation = webBrowser1.Document.GetElementById("messages-window").InnerHtml;
+                    previousConversation = Messages_Window.InnerHtml;
                 }
                 if (e != null)
                     e.Cancel = true;
@@ -978,7 +975,10 @@ namespace RemoteMessages
                 }
                 catch
                 {
-                    FindNewIP();
+                    if (isAutoUpdate)
+                        FindNewIP();
+                    else
+                        DisplayPage(url);
                 }
             }
 
@@ -1028,7 +1028,7 @@ namespace RemoteMessages
         ///</summary>
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (!webBrowser1.Document.Domain.Contains("exception"))
+            if (!Document.Domain.Contains("exception"))
             {
                 if (!loggedIn)
                 {
@@ -1043,16 +1043,15 @@ namespace RemoteMessages
                     documentCompleted = true;
 
                     webBrowser1.ScrollBarsEnabled = false;
-                    if (authentication_needed && webBrowser1.Document.GetElementById("conversations-window") == null)
+                    if (authentication_needed && Document.GetElementById("conversations-window") == null)
                     {
                         DisplayPage(url);
                         return;
                     }
-                    webBrowser1.Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
-                    webBrowser1.Document.GetElementById("messages-window").MouseDown += new HtmlElementEventHandler(Messages_MouseDown);
-                    webBrowser1.Document.GetElementById("conversations-window").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
-                    webBrowser1.Document.GetElementById("editor").KeyUp += new HtmlElementEventHandler(Editor_KeyPress);
-                    webBrowser1.Document.GetElementById("editor").LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
+                    Document.GetElementById("emoji-pane").MouseUp += new HtmlElementEventHandler(EmojiPane_Click);
+                    Document.GetElementById("conversations-window").MouseDown += new HtmlElementEventHandler(ConversationsList_MouseDown);
+                    Editor.KeyUp += new HtmlElementEventHandler(Editor_KeyPress);
+                    Editor.LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
 
 
                     progressBar1.Visible = false;
@@ -1095,36 +1094,19 @@ namespace RemoteMessages
 
             if (editor_previousHeight != -1)
             {
-                int editor_currentHeight = webBrowser1.Document.GetElementById("editor").ClientRectangle.Height;
+                int editor_currentHeight = Editor.ClientRectangle.Height;
                 if (editor_previousHeight < editor_currentHeight)
                     webBrowser1.Navigate("javascript:var s = function() { window.scrollBy(0,25); }; s();");
             }
-            editor_previousHeight = webBrowser1.Document.GetElementById("editor").ClientRectangle.Height;
-        }
-
-        private void Messages_MouseDown(object sender, HtmlElementEventArgs e)
-        {
-            Point BrowserCoord = webBrowser1.PointToClient(new Point(MousePosition.X, MousePosition.Y));
-            HtmlElement elem = webBrowser1.Document.GetElementFromPoint(BrowserCoord);
-            if (elem.TagName == "IMG" && !elem.OuterHtml.Contains("class=\"emoji\""))
+            else
             {
-                string path = ExtractString(elem.Parent.OuterHtml, "href=\"", "\"").Replace("&amp;", "&");
-                // Create web client.
-                try
-                {
-                    using (WebClient client = new WebClient())
-                    {
-                        client.Proxy = null;
-                        client.DownloadFile(webBrowser1.Url + path.Substring(1), "tmp.png");
-
-                        System.Diagnostics.Process.Start("tmp.png");
-                    }
-                }
-                catch
-                {
-                    unopenable_link = webBrowser1.Url + path.Substring(1);
-                }
+                if (Editor.InnerHtml.StartsWith("<br>"))
+                    Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
+                if (Editor.InnerHtml.EndsWith("<br>"))
+                    Editor.InnerHtml = Editor.InnerHtml.TrimEnd(new char[] { '<', 'b', 'r', '>' });
             }
+
+            editor_previousHeight = Editor.ClientRectangle.Height;
         }
 
         void EmojiPane_Click(object sender, HtmlElementEventArgs e)
@@ -1136,7 +1118,7 @@ namespace RemoteMessages
 
                 this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
 
-                HtmlElement el = webBrowser1.Document.GetElementFromPoint(PointToClient(Cursor.Position));
+                HtmlElement el = Document.GetElementFromPoint(PointToClient(Cursor.Position));
                 string currentEmoji = el.OuterHtml;
                 string txt = "";
                 shortcuts.TryGetValue(currentEmoji, out txt);
@@ -1162,11 +1144,11 @@ namespace RemoteMessages
 
             foreach (string s in emojiList)
             {
-                if (webBrowser1.Document.GetElementById("editor").InnerHtml != null)
-                    webBrowser1.Document.GetElementById("editor").InnerHtml = webBrowser1.Document.GetElementById("editor").InnerHtml.Replace(shortcuts[s], s);
+                if (Editor.InnerHtml != null)
+                    Editor.InnerHtml = Editor.InnerHtml.Replace(shortcuts[s], s);
             }
 
-            webBrowser1.Document.GetElementById("editor").Focus();
+            Editor.Focus();
             SendKeys.Send("{PGDN}");
         }
 
@@ -1197,7 +1179,7 @@ namespace RemoteMessages
         /// </summary>
         private string findCurrentContactName()
         {
-            foreach (HtmlElement i in webBrowser1.Document.GetElementById("conversations").Children)
+            foreach (HtmlElement i in Conversations.Children)
             {
                 if (i.InnerHtml.Contains("selected"))
                 {
@@ -1213,7 +1195,7 @@ namespace RemoteMessages
         {
             if (documentCompleted)
             {
-                foreach (HtmlElement i in webBrowser1.Document.GetElementById("conversations").Children)
+                foreach (HtmlElement i in Conversations.Children)
                 {
                     if (i.InnerHtml.Contains("selected"))
                     {
@@ -1279,7 +1261,7 @@ namespace RemoteMessages
         /// </summary>
         private void sendEsc(object sender, EventArgs e)
         {
-            if (!webBrowser1.Document.Focused && getCurrentContactElement() != null
+            if (!Document.Focused && getCurrentContactElement() != null
                 && !previousConversation.Contains("pending") && !previousConversation.Contains("unsent"))
             {
                 timerUnfocusing.Stop();
@@ -1420,14 +1402,51 @@ namespace RemoteMessages
         private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WebBrowser page = (WebBrowser)sender;
-            if (unopenable_link != "" || (page != null && (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www")) && !page.StatusText.Contains("media")))
-                System.Diagnostics.Process.Start(page.StatusText);
-            if (unopenable_link != "")
-            {
-                MessageBox.Show("There was an error when trying to access the image.\nURLs (transmit to developper, please!): \n" + unopenable_link + "\n" + page.StatusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                unopenable_link = "";
-            }
             e.Cancel = true;
+
+            if (page == null)
+                return;
+
+            if (page.StatusText.Contains("media"))
+            {
+                try
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        client.Proxy = null;
+                        client.DownloadFile(page.StatusText, "tmp.png");
+
+                        System.Diagnostics.Process.Start("tmp.png");
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("There was an error when trying to access the image."
+                    + "The image is now displayed/downloaded in your default navigator.\n"
+                    + "URLs (transmit to developper, please!):\n" 
+                    + unopenable_link + "\n" + page.StatusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www"))
+                System.Diagnostics.Process.Start(page.StatusText);
         }
+
+        private HtmlDocument Document
+        {
+            get { return webBrowser1.Document; }
+        }
+        private HtmlElement Editor
+        {
+            get { return Document.GetElementById("editor"); }
+        }
+        private HtmlElement Conversations
+        {
+            get { return Document.GetElementById("conversations"); }
+        }
+        private HtmlElement Messages_Window
+        {
+            get { return Document.GetElementById("messages-window"); }
+        }
+
     }
 }
