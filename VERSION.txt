@@ -1,3 +1,5 @@
+4.0.60
+- NEW: feature to chose the time format you want (for read receipt and time stamps)
 4.0.50
 - Fixed size of window when restoring/hiding
 - Some more fixes
