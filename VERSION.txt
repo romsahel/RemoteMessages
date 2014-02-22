@@ -1,3 +1,15 @@
+4.0.50
+- Fixed size of window when restoring/hiding
+- Some more fixes
+- Fixed another crash
+- Fixed a crash
+- Fixed the trailing newline bug (all leading and trailing newlines are now removed)
+- Improvement to image opening method
+- Performance optimisation
+4.0.45
+- Fixed the trailing newline bug (all leading and trailing newlines are now removed)
+- Improvement to image opening method
+- Performance optimisation
 4.0.41
 - Added some more infos in the image error message ; please transmit so I can solve this.
 4.0.40
