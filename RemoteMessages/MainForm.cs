@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.48";
+        private const string VERSION = "4.0.50";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -75,6 +75,7 @@ namespace RemoteMessages
         private bool authentication_needed;
         private bool is_autoscrolldown;
         private string unopenable_link = "";
+        private FormWindowState previous_WindowState = FormWindowState.Normal;
 
         public MainForm()
         {
@@ -824,11 +825,13 @@ namespace RemoteMessages
                 if (minimizeToTray)
                     Form1_FormClosing(sender, null);
             }
-
+            else
+                previous_WindowState = WindowState;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // When windows ask for shutdown
             if (e != null && e.CloseReason == CloseReason.WindowsShutDown)
             {
                 // Enable the sound on app exit
@@ -841,6 +844,7 @@ namespace RemoteMessages
                 catch { }
                 return;
             }
+
             if ((!isExiting && closeToTray) || e == null)
             {
                 if (documentCompleted && !exceptionRaised)
@@ -850,7 +854,6 @@ namespace RemoteMessages
                 if (e != null)
                     e.Cancel = true;
 
-                WindowState = FormWindowState.Normal;
                 this.Hide();
             }
             else // True exiting
@@ -1098,11 +1101,11 @@ namespace RemoteMessages
                 if (editor_previousHeight < editor_currentHeight)
                     webBrowser1.Navigate("javascript:var s = function() { window.scrollBy(0,25); }; s();");
             }
-            else if (Editor != null && Editor.InnerHtml != null)
+            else
             {
-                if (Editor.InnerHtml.StartsWith("<br>"))
+                if (Editor_isValid && Editor.InnerHtml.StartsWith("<br>"))
                     Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
-                if (Editor.InnerHtml.EndsWith("<br>"))
+                if (Editor_isValid && Editor.InnerHtml.EndsWith("<br>"))
                     Editor.InnerHtml = Editor.InnerHtml.TrimEnd(new char[] { '<', 'b', 'r', '>' });
             }
 
@@ -1299,7 +1302,6 @@ namespace RemoteMessages
                     if (notify.Visible)
                     {
                         this.Focus();
-                        this.WindowState = FormWindowState.Normal;
                         notify.Visible = false;
                         this.Hide();
                     }
@@ -1394,6 +1396,8 @@ namespace RemoteMessages
                 // make our form jump to the top of everything
                 TopMost = true;
                 base.Show();
+                if (WindowState == FormWindowState.Minimized)
+                    WindowState = previous_WindowState;
                 TopMost = false;
                 this.Activate();
             }
@@ -1447,6 +1451,9 @@ namespace RemoteMessages
         {
             get { return Document.GetElementById("messages-window"); }
         }
-
+        private bool Editor_isValid
+        {
+            get { return Editor != null && Editor.InnerHtml != null; }
+        }
     }
 }
