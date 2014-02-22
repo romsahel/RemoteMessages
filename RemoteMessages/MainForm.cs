@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.46";
+        private const string VERSION = "4.0.48";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -1098,7 +1098,7 @@ namespace RemoteMessages
                 if (editor_previousHeight < editor_currentHeight)
                     webBrowser1.Navigate("javascript:var s = function() { window.scrollBy(0,25); }; s();");
             }
-            else if (Editor != null)
+            else if (Editor != null && Editor.InnerHtml != null)
             {
                 if (Editor.InnerHtml.StartsWith("<br>"))
                     Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
