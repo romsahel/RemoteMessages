@@ -4,27 +4,28 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Media;
-using mshtml;
-using Microsoft.Win32;
 
 namespace RemoteMessages
 {
     /// <TODO>
-    /// - Correct drafts (not saving correctly when sent message ; sometimes disappearing)
     /// - Add sound notifications (correct 'em)
     /// - Add embedded image viewer
-    /// - Smiley shortcut (menu to autoreplace smileys) or most recent/used menu
-    /// - 
     /// </TODO>
+
+    public enum Format
+    {
+        Default = 0,
+        AMPM = 1,
+        Full = 2
+    }
 
     public partial class MainForm : Form
     {
+
+
         #region Variables
         private string previousConversation;
         private HtmlElement previousSelectedContact;
@@ -63,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.50";
+        private const string VERSION = "4.0.60";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -76,6 +77,7 @@ namespace RemoteMessages
         private bool is_autoscrolldown;
         private string unopenable_link = "";
         private FormWindowState previous_WindowState = FormWindowState.Normal;
+        private Format time_format = Format.Default;
 
         public MainForm()
         {
@@ -179,7 +181,7 @@ namespace RemoteMessages
                 delayBalloon, flashCount,
                 isAutoUpdate, isReplacing, isUnfocusing, delayReplacing, delayUnfocusing, deviceName, url,
                 isGhostMode, password, hotkey, soundEnabled, getVolume(), soundIndex,
-                is_autoscrolldown,
+                is_autoscrolldown, time_format,
                 VERSION))
             {
                 isUnfocusing = false;
@@ -218,6 +220,7 @@ namespace RemoteMessages
                     password = prefs.getPassword();
 
                     is_autoscrolldown = prefs.getAutoScroll();
+                    time_format = prefs.getTimeFormat();
 
                     if (soundIndex != prefs.getSoundIndex())
                     {
@@ -328,6 +331,11 @@ namespace RemoteMessages
                     string tmp = reader.ReadLine();
                     Boolean.TryParse(tmp, out is_autoscrolldown);
 
+                    tmp = reader.ReadLine();
+                    int format = 0;
+                    Int32.TryParse(tmp, out format);
+                    time_format = (Format)format;
+
                     if (reader.EndOfStream && tmp != "")
                     {
                         reader.Close();
@@ -437,6 +445,8 @@ namespace RemoteMessages
                 writer.WriteLine(soundIndex);
 
                 writer.WriteLine(is_autoscrolldown);
+
+                writer.WriteLine((int)time_format);
 
                 writer.WriteLine();
             }
@@ -569,50 +579,54 @@ namespace RemoteMessages
 
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
-            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
-            for (int i = 1; i < stamps.Length; i++)
+            if (time_format == Format.Full)
             {
-                string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
-                string[] time = date[0].Split(new char[] { ' ', ':' });
-                if (time[5] == "AM" || time[5] == "PM")
+                string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
+                for (int i = 1; i < stamps.Length; i++)
                 {
+                    string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
+                    string[] time = date[0].Split(new char[] { ' ', ':' });
+                    if (time[5] == "AM" || time[5] == "PM")
+                    {
+                        int add = 0;
+                        if (time[5] == "PM")
+                            add = 12;
+
+                        time[5] = "";
+                        time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
+                        string result = String.Join(" ", time) + "</h4>" + date[1];
+                        result = result.Replace("~|~ ", ":");
+                        stamps[i] = result;
+                    }
+                }
+                Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
+            }
+
+            if (time_format == Format.AMPM)
+            {
+                string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
+                for (int i = 1; i < stamps.Length; i++)
+                {
+                    string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
+                    string[] time = date[0].Split(new char[] { ':' });
+
                     int add = 0;
-                    if (time[5] == "PM")
-                        add = 12;
+                    if (Int32.Parse(time[0]) > 11)
+                    {
+                        add = -12;
+                        time[1] += " PM";
+                    }
+                    else
+                        time[1] += " AM";
 
-                    time[5] = "";
-                    time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
-                    string result = String.Join(" ", time) + "</h4>" + date[1];
-                    result = result.Replace("~|~ ", ":");
+                    time[0] = (Int32.Parse(time[0]) + add).ToString("00");
+                    string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
+
                     stamps[i] = result;
+
                 }
+                Messages_Window.InnerHtml = String.Join("data-timeread=\"", stamps);
             }
-            Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
-
-            string test = "";
-            stamps = test.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
-            for (int i = 1; i < stamps.Length; i++)
-            {
-                string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
-                string[] time = date[0].Split(new char[] { ':' });
-
-                int add = 0;
-                if (Int32.Parse(time[0]) > 11)
-                {
-                    add = -12;
-                    time[1] += " PM";
-                }
-                else
-                    time[1] += " AM";
-
-                time[0] = (Int32.Parse(time[0]) + add).ToString("00");
-                string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
-
-                stamps[i] = result;
-
-            }
-            test = String.Join("data-timeread=\"", stamps);
-
 
             if (isReplacing)
                 fromStringToEmoji(Messages_Window);
@@ -1093,7 +1107,7 @@ namespace RemoteMessages
                     timerUnfocusing.Tick += new EventHandler(sendEsc);
 
                     timerReplacing = new Timer();
-                    timerReplacing.Interval = delayReplacing;
+                    timerReplacing.Interval = delayReplacing + 1000;
                     timerReplacing.Tick += new EventHandler(ConversationChangedTimer);
 
                     timerCheckNew = new Timer();

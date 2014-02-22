@@ -683,16 +683,19 @@
             // 
             // time_format
             // 
+            this.time_format.BackColor = System.Drawing.Color.LightGray;
             this.time_format.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.time_format.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.time_format.FormattingEnabled = true;
             this.time_format.Items.AddRange(new object[] {
             "Default time format",
             "12-hour format",
             "24-hour format"});
-            this.time_format.Location = new System.Drawing.Point(237, 16);
+            this.time_format.Location = new System.Drawing.Point(237, 14);
             this.time_format.Name = "time_format";
-            this.time_format.Size = new System.Drawing.Size(224, 21);
+            this.time_format.Size = new System.Drawing.Size(224, 24);
             this.time_format.TabIndex = 13;
+            this.time_format.Tag = "time format";
             // 
             // PreferencesForm
             // 

@@ -18,7 +18,7 @@ namespace RemoteMessages
         // The path to the key where Windows looks for startup applications
         RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, bool autoscroll, string version)
+        public PreferencesForm(bool[] bBackgrounds, bool[] bNotifs, int iB, int iF, bool bA, bool bR, bool bU, int iR, int iU, string sName, string sUrl, bool bGhost, string sGhost, string hotkey, bool soundEnabled, int soundVolume, int soundIndex, bool autoscroll, Format time_format, string version)
         {
             this.VERSION = version;
             InitializeComponent();
@@ -66,6 +66,7 @@ namespace RemoteMessages
             textHotkey.Text = hotkey.Trim(new char[] { '#', '!', '^' });
 
             checkAutoscroll.Checked = autoscroll;
+            this.time_format.SelectedIndex = (int) time_format;
 
             if (rkApp.GetValue("RemoteClient") == null) // The value doesn't exist, the application is not set to run at startup
                 checkOnstartup.Checked = false;
@@ -250,6 +251,7 @@ namespace RemoteMessages
         public bool[] getNotifOptions() { return new bool[] { showBalloon.Checked, showFlash.Checked }; }
         public int[] getNotifMoreOptions() { return new int[] { Int32.Parse(flashCount.Text), Int32.Parse(delayBalloon.Text) }; }
         public bool getAutoScroll() { return checkAutoscroll.Checked; }
+        public Format getTimeFormat() { return (Format) time_format.SelectedIndex; }
 
         public bool getSoundActivated() { return checkSound.Checked; }
         public int getSoundVolume() { return trackBarVolume.Value; }
