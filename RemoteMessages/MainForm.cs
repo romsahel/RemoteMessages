@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.70";
+        private const string VERSION = "4.0.80";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -718,7 +718,7 @@ namespace RemoteMessages
                 if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
                     // We check if no conversations are selected
-                    if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact)  && firstContact.InnerHtml.Contains("unread"))
+                    if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact) && firstContact.InnerHtml.Contains("unread"))
                     {
                         NotifyMe(Conversations);
                     }
@@ -762,16 +762,9 @@ namespace RemoteMessages
             if (showFlash)
                 Native.Flash(this, (uint)flashCount);
 
-            string name = "";
-            try
-            {
-                name = (list.Children[0].InnerText).Split('×')[0];
-            }
-            catch
-            {
-                return;
-            }
-
+            string img_url = this.webBrowser1.Url + ExtractString(list.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
+            string name = (list.Children[0].InnerText).Split('×')[0];
+    
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
             if (soundEnabled && !notification.Visible)
@@ -783,7 +776,7 @@ namespace RemoteMessages
             if (showBalloon && !notification.hasAlreadyBeenDisplayed(currentHash))
             {
                 Native.ShowInactiveTopmost(notification);
-                notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
+                notification.ShowNotification(name, "You just received a new message!", img_url, delayBalloon, currentHash);
             }
         }
 

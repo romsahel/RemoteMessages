@@ -42,10 +42,12 @@ namespace RemoteMessages
             fadeOut = new Thread(fadeOutStart);
 
             isMouseIn = false;
+
         }
 
-        public void ShowNotification(string name, string msg, int delay, string lastHashCode)
+        public void ShowNotification(string name, string msg, string img_url, int delay, string lastHashCode)
         {
+            pictureBox1.Load(img_url);
             this.lastNotification = lastHashCode;
             this.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width - this.Width, Screen.PrimaryScreen.WorkingArea.Height - this.Height);
             this.labelName.Text = name;
