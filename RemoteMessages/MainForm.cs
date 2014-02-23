@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.65";
+        private const string VERSION = "4.0.70";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -718,7 +718,7 @@ namespace RemoteMessages
                 if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
                     // We check if no conversations are selected
-                    if (getCurrentContactElement() == null || getCurrentContactElement() != firstContact)
+                    if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact)  && firstContact.InnerHtml.Contains("unread"))
                     {
                         NotifyMe(Conversations);
                     }
@@ -743,9 +743,9 @@ namespace RemoteMessages
         {
             DateTime now = DateTime.Now;
             string[] elts = date.Split(new char[] { ' ', ':' });
-            return (now.Day == Int32.Parse(elts[0])
+            return (//now.Day == Int32.Parse(elts[0])
                 //&& (now.Hour >= 12 ? now.Hour - 12 : now.Hour) == Int32.Parse(elts[3])
-                    && now.Minute == Int32.Parse(elts[4]));
+                    now.Minute == Int32.Parse(elts[4]));
         }
 
         string ExtractString(string s, string start, string end)
