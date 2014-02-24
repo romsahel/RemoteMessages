@@ -163,6 +163,7 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <None Include="medias\ringtone_Calypso.wav" />
+    <None Include="medias\notification_default.jpg" />
     <Content Include="small_favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -30,7 +30,7 @@ namespace RemoteMessages
 
             this.DoubleBuffered = true;
             this.Opacity = 0;
-            
+
             timerFadeOut = new System.Windows.Forms.Timer();
             timerFadeOut.Tick += new EventHandler(startFadeOut);
 
@@ -40,14 +40,28 @@ namespace RemoteMessages
 
             ThreadStart fadeOutStart = new ThreadStart(FadeOut);
             fadeOut = new Thread(fadeOutStart);
-
+            
             isMouseIn = false;
 
+            pictureBox1.Hide();
         }
 
-        public void ShowNotification(string name, string msg, string img_url, int delay, string lastHashCode)
+        public void Load_Image(string url)
         {
-            pictureBox1.Load(img_url);
+            try
+            {
+                pictureBox1.Hide();
+                pictureBox1.LoadAsync(url);
+                pictureBox1.Show();
+            }
+            catch
+            {
+                pictureBox1.Hide();
+            }
+        }
+
+        public void ShowNotification(string name, string msg, int delay, string lastHashCode)
+        {
             this.lastNotification = lastHashCode;
             this.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width - this.Width, Screen.PrimaryScreen.WorkingArea.Height - this.Height);
             this.labelName.Text = name;
@@ -117,7 +131,7 @@ namespace RemoteMessages
             }
             else if (this.Opacity != 0)
                 ChangeOpacity(0);
-            
+
             this.Invoke(new MethodInvoker(() => this.Hide()));
         }
         private delegate void ChangeOpacityDelegate(double value);

@@ -76,6 +76,9 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pictureBox1.ErrorImage = global::RemoteMessages.Properties.Resources.notification_default;
+            this.pictureBox1.Image = global::RemoteMessages.Properties.Resources.notification_default;
+            this.pictureBox1.InitialImage = global::RemoteMessages.Properties.Resources.notification_default;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(90, 89);

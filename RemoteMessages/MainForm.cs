@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.80";
+        private const string VERSION = "4.0.85";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -717,10 +717,12 @@ namespace RemoteMessages
                 // We check if the notification check came in
                 if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
+                    string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
+                    notification.Load_Image(img_url);
                     // We check if no conversations are selected
                     if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact) && firstContact.InnerHtml.Contains("unread"))
                     {
-                        NotifyMe(Conversations);
+                        NotifyMe();
                     }
                     // If there is a selection, change occurred in conversation
                     // So we check if it's not some of the user's pending/unsent message
@@ -728,7 +730,7 @@ namespace RemoteMessages
                     {
                         HtmlElementCollection children = this.Document.GetElementById("messages").Children;
                         if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
-                            NotifyMe(Conversations);
+                            NotifyMe();
                     }
                 }
             }
@@ -755,15 +757,14 @@ namespace RemoteMessages
             return s.Substring(startIndex, endIndex - startIndex);
         }
 
-        private void NotifyMe(HtmlElement list)
+        private void NotifyMe()
         {
             if (isGhostMode)
                 return;
             if (showFlash)
                 Native.Flash(this, (uint)flashCount);
 
-            string img_url = this.webBrowser1.Url + ExtractString(list.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
-            string name = (list.Children[0].InnerText).Split('×')[0];
+            string name = (Conversations.Children[0].InnerText).Split('×')[0];
     
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
@@ -772,11 +773,11 @@ namespace RemoteMessages
                 ringtone.Stop();
                 ringtone.Play();
             }
-            string currentHash = list.Children[0].InnerHtml;
+            string currentHash = Conversations.Children[0].InnerHtml;
             if (showBalloon && !notification.hasAlreadyBeenDisplayed(currentHash))
             {
                 Native.ShowInactiveTopmost(notification);
-                notification.ShowNotification(name, "You just received a new message!", img_url, delayBalloon, currentHash);
+                notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
             }
         }
 
