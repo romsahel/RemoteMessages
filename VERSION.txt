@@ -1,4 +1,7 @@
-4.0.60
+4.0.90
+- Better handling of image opening
+- Possible fix for notifications
+- Added: 24-hour time format supported for per message timestamp
 - NEW: feature to chose the time format you want (for read receipt and time stamps)
 4.0.50
 - Fixed size of window when restoring/hiding
