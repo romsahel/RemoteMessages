@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.85";
+        private const string VERSION = "4.0.90";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -717,8 +717,9 @@ namespace RemoteMessages
                 // We check if the notification check came in
                 if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
-                    string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
-                    notification.Load_Image(img_url);
+                    //string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
+                    //notification.Load_Image(img_url);
+
                     // We check if no conversations are selected
                     if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact) && firstContact.InnerHtml.Contains("unread"))
                     {
@@ -1475,9 +1476,11 @@ namespace RemoteMessages
                     using (WebClient client = new WebClient())
                     {
                         client.Proxy = null;
-                        client.DownloadFile(page.StatusText, "tmp.png");
 
-                        System.Diagnostics.Process.Start("tmp.png");
+                        string file = "tmp" + page.StatusText.Substring(page.StatusText.LastIndexOf('.'));
+                        client.DownloadFile(page.StatusText, file);
+
+                        System.Diagnostics.Process.Start(file);
                     }
                 }
                 catch
