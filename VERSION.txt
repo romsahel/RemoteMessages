@@ -1,3 +1,5 @@
+4.0.91
+- Minor error fix
 4.0.90
 - Better handling of image opening
 - Possible fix for notifications
