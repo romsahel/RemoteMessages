@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.90";
+        private const string VERSION = "4.0.91";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -580,57 +580,74 @@ namespace RemoteMessages
         private void ConversationChangedTimer(object sender, EventArgs e)
         {
             if (time_format == Format.Full)
+                Format_Full();
+            else if (time_format == Format.AMPM)
+                Format_AMPM();
+
+            if (isReplacing)
+                fromStringToEmoji(Messages_Window);
+
+            isPreviousMouse = false;
+            timerReplacing.Stop();
+        }
+
+        private void Format_Full()
+        {
+            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
+            for (int i = 1; i < stamps.Length; i++)
             {
-                string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
-                for (int i = 1; i < stamps.Length; i++)
+                string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
+                string[] time = date[0].Split(new char[] { ' ', ':' });
+                if (time[5] == "AM" || time[5] == "PM")
                 {
-                    string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
-                    string[] time = date[0].Split(new char[] { ' ', ':' });
-                    if (time[5] == "AM" || time[5] == "PM")
-                    {
-                        int add = 0;
-                        if (time[5] == "PM")
-                            add = 12;
-
-                        time[5] = "";
-                        time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
-                        string result = String.Join(" ", time) + "</h4>" + date[1];
-                        result = result.Replace("~|~ ", ":");
-                        stamps[i] = result;
-                    }
-                }
-                Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
-
-                stamps = Messages_Window.InnerHtml.Split(new string[] { "<div class=\"message-timestamp\">" }, StringSplitOptions.None);
-                for (int i = 1; i < stamps.Length; i++)
-                {
-                    string[] date = stamps[i].Split(new string[] { "</div>" }, StringSplitOptions.None);
-                    string[] time = date[0].Split(new char[] { ' ', ':' });
-                    if (time[5] == "AM" || time[5] == "PM")
-                    {
-                        int add = 0;
-                        if (time[5] == "PM")
-                            add = 12;
-
-                        time[5] = "";
-                        time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
-                        string result = String.Join(" ", time) + "</div>" + String.Join("</div>", date, 1, date.Length - 1);
-                        result = result.Replace("~|~ ", ":");
-                        stamps[i] = result;
-                    }
-                }
-                Messages_Window.InnerHtml = String.Join("<div class=\"message-timestamp\">", stamps);
-            }
-
-            if (time_format == Format.AMPM)
-            {
-                string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
-                for (int i = 1; i < stamps.Length; i++)
-                {
-                    string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
-                    string[] time = date[0].Split(new char[] { ':' });
-
                     int add = 0;
+                    if (time[5] == "PM")
+                        add = 12;
+
+                    time[5] = "";
+                    time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
+                    string result = String.Join(" ", time) + "</h4>" + date[1];
+                    result = result.Replace("~|~ ", ":");
+                    stamps[i] = result;
+                }
+            }
+            Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
+
+            stamps = Messages_Window.InnerHtml.Split(new string[] { "<div class=\"message-timestamp\">" }, StringSplitOptions.None);
+            for (int i = 1; i < stamps.Length; i++)
+            {
+                string[] date = stamps[i].Split(new string[] { "</div>" }, StringSplitOptions.None);
+                string[] time = date[0].Split(new char[] { ' ', ':' });
+                if (time[5] == "AM" || time[5] == "PM")
+                {
+                    int add = 0;
+                    if (time[5] == "PM")
+                        add = 12;
+
+                    time[5] = "";
+                    time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
+                    string result = String.Join(" ", time) + "</div>" + String.Join("</div>", date, 1, date.Length - 1);
+                    result = result.Replace("~|~ ", ":");
+                    stamps[i] = result;
+                }
+            }
+            Messages_Window.InnerHtml = String.Join("<div class=\"message-timestamp\">", stamps);
+        }
+
+        private void Format_AMPM()
+        {
+            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
+            for (int i = 1; i < stamps.Length; i++)
+            {
+                string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
+                string[] time;
+                if (date.Length > 0)
+                    time = date[0].Split(new char[] { ':' });
+                else
+                    continue;
+
+                int add = 0;
+                if (time.Length > 0)
                     if (Int32.Parse(time[0]) > 11)
                     {
                         add = -12;
@@ -638,21 +655,15 @@ namespace RemoteMessages
                     }
                     else
                         time[1] += " AM";
+                else
+                    continue;
 
-                    time[0] = (Int32.Parse(time[0]) + add).ToString("00");
-                    string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
+                time[0] = (Int32.Parse(time[0]) + add).ToString("00");
+                string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
 
-                    stamps[i] = result;
-
-                }
-                Messages_Window.InnerHtml = String.Join("data-timeread=\"", stamps);
+                stamps[i] = result;
             }
-
-            if (isReplacing)
-                fromStringToEmoji(Messages_Window);
-
-            isPreviousMouse = false;
-            timerReplacing.Stop();
+            Messages_Window.InnerHtml = String.Join("data-timeread=\"", stamps);
         }
         ///<summary>
         /// Replaces the smileys by their matching emoticons in messages 
@@ -766,7 +777,7 @@ namespace RemoteMessages
                 Native.Flash(this, (uint)flashCount);
 
             string name = (Conversations.Children[0].InnerText).Split('×')[0];
-    
+
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
             if (soundEnabled && !notification.Visible)
