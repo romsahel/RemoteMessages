@@ -48,6 +48,11 @@ namespace RemoteMessages
 
         public void Load_Image(string url)
         {
+            if (url == "")
+            {
+                pictureBox1.Hide();
+                return;
+            }
             try
             {
                 pictureBox1.Hide();

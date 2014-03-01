@@ -64,6 +64,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.port = new System.Windows.Forms.TextBox();
             this.panelReplacement = new System.Windows.Forms.Panel();
+            this.time_format = new System.Windows.Forms.ComboBox();
             this.checkAutoscroll = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.password = new System.Windows.Forms.TextBox();
@@ -81,7 +82,6 @@
             this.navIP = new System.Windows.Forms.Button();
             this.navGhostMode = new System.Windows.Forms.Button();
             this.navigationPanel = new System.Windows.Forms.Panel();
-            this.time_format = new System.Windows.Forms.ComboBox();
             this.panelBackgrounding.SuspendLayout();
             this.panelNotifications.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolume)).BeginInit();
@@ -484,6 +484,22 @@
             this.panelReplacement.Size = new System.Drawing.Size(480, 176);
             this.panelReplacement.TabIndex = 42;
             // 
+            // time_format
+            // 
+            this.time_format.BackColor = System.Drawing.Color.LightGray;
+            this.time_format.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.time_format.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.time_format.FormattingEnabled = true;
+            this.time_format.Items.AddRange(new object[] {
+            "Default time format",
+            "12-hour format",
+            "24-hour format"});
+            this.time_format.Location = new System.Drawing.Point(237, 14);
+            this.time_format.Name = "time_format";
+            this.time_format.Size = new System.Drawing.Size(224, 24);
+            this.time_format.TabIndex = 13;
+            this.time_format.Tag = "time format";
+            // 
             // checkAutoscroll
             // 
             this.checkAutoscroll.AutoSize = true;
@@ -680,22 +696,6 @@
             this.navigationPanel.Name = "navigationPanel";
             this.navigationPanel.Size = new System.Drawing.Size(134, 176);
             this.navigationPanel.TabIndex = 53;
-            // 
-            // time_format
-            // 
-            this.time_format.BackColor = System.Drawing.Color.LightGray;
-            this.time_format.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.time_format.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.time_format.FormattingEnabled = true;
-            this.time_format.Items.AddRange(new object[] {
-            "Default time format",
-            "12-hour format",
-            "24-hour format"});
-            this.time_format.Location = new System.Drawing.Point(237, 14);
-            this.time_format.Name = "time_format";
-            this.time_format.Size = new System.Drawing.Size(224, 24);
-            this.time_format.TabIndex = 13;
-            this.time_format.Tag = "time format";
             // 
             // PreferencesForm
             // 

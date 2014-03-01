@@ -64,7 +64,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "4.0.91";
+        private const string VERSION = "5.0.00";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -78,6 +78,11 @@ namespace RemoteMessages
         private string unopenable_link = "";
         private FormWindowState previous_WindowState = FormWindowState.Normal;
         private Format time_format = Format.Default;
+        private static string html_backup;
+        public static string HTML_Backup
+        {
+            get { return html_backup;}
+        }
 
         public MainForm()
         {
@@ -176,6 +181,7 @@ namespace RemoteMessages
         /// </summary>
         private void displayOptions()
         {
+            dobackup_htmlpage();
             using (PreferencesForm prefs = new PreferencesForm(new bool[] { closeToTray, minimizeToTray, escapeToTray },
                 new bool[] { showBalloon, showFlash },
                 delayBalloon, flashCount,
@@ -636,10 +642,10 @@ namespace RemoteMessages
 
         private void Format_AMPM()
         {
-            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "data-timeread=\"" }, StringSplitOptions.None);
+            string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h5 class=\"read\">Read " }, StringSplitOptions.None);
             for (int i = 1; i < stamps.Length; i++)
             {
-                string[] date = stamps[i].Split(new string[] { "\"" }, StringSplitOptions.None);
+                string[] date = stamps[i].Split(new string[] { "</h5>" }, StringSplitOptions.None);
                 string[] time;
                 if (date.Length > 0)
                     time = date[0].Split(new char[] { ':' });
@@ -647,7 +653,7 @@ namespace RemoteMessages
                     continue;
 
                 int add = 0;
-                if (time.Length > 0)
+                if (time.Length > 1)
                     if (Int32.Parse(time[0]) > 11)
                     {
                         add = -12;
@@ -659,11 +665,11 @@ namespace RemoteMessages
                     continue;
 
                 time[0] = (Int32.Parse(time[0]) + add).ToString("00");
-                string result = String.Join(":", time) + "\"" + String.Join("\"", date, 1, date.Length - 1);
+                string result = String.Join(":", time) + "</h5>" + String.Join("</h5>", date, 1, date.Length - 1);
 
                 stamps[i] = result;
             }
-            Messages_Window.InnerHtml = String.Join("data-timeread=\"", stamps);
+            Messages_Window.InnerHtml = String.Join("<h5 class=\"read\">Read ", stamps);
         }
         ///<summary>
         /// Replaces the smileys by their matching emoticons in messages 
@@ -726,10 +732,10 @@ namespace RemoteMessages
                 previousFirstContact != firstContact)
             {
                 // We check if the notification check came in
-                if (compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
+                if (delayBalloon == 0 || compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
-                    //string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
-                    //notification.Load_Image(img_url);
+                    string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
+                    notification.Load_Image(img_url);
 
                     // We check if no conversations are selected
                     if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact) && firstContact.InnerHtml.Contains("unread"))
@@ -741,7 +747,7 @@ namespace RemoteMessages
                     else if (previousConversation != Messages_Window.InnerHtml)
                     {
                         HtmlElementCollection children = this.Document.GetElementById("messages").Children;
-                        if (!children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
+                        if (children.Count > 0 && !children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
                             NotifyMe();
                     }
                 }
@@ -764,9 +770,16 @@ namespace RemoteMessages
 
         string ExtractString(string s, string start, string end)
         {
-            int startIndex = s.IndexOf(start) + start.Length;
-            int endIndex = s.IndexOf(end, startIndex);
-            return s.Substring(startIndex, endIndex - startIndex);
+            try
+            {
+                int startIndex = s.IndexOf(start) + start.Length;
+                int endIndex = s.IndexOf(end, startIndex);
+                return s.Substring(startIndex, endIndex - startIndex);
+            }
+            catch
+            { 
+                return "";
+            }
         }
 
         private void NotifyMe()
@@ -789,7 +802,11 @@ namespace RemoteMessages
             if (showBalloon && !notification.hasAlreadyBeenDisplayed(currentHash))
             {
                 Native.ShowInactiveTopmost(notification);
-                notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
+                /* For debug purpose */
+                if (delayBalloon == 0)
+                    notification.ShowNotification(name, "You just received a new message!", 3000, currentHash);
+                else
+                    notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
             }
         }
 
@@ -1125,6 +1142,8 @@ namespace RemoteMessages
                     Editor.KeyUp += new HtmlElementEventHandler(Editor_KeyPress);
                     Editor.LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
 
+                    mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)webBrowser1.Document.DomDocument).createStyleSheet();
+                    styleSheet.addRule("#compose .tools .button, .modal .link", "border-radius: 0px;");
 
                     progressBar1.Visible = false;
 
@@ -1301,6 +1320,7 @@ namespace RemoteMessages
         {
             if (!aboutDisplayed)
             {
+                dobackup_htmlpage();
                 bool currentUnfocusing = isUnfocusing;
                 using (AboutForm about = new AboutForm(VERSION))
                 {
@@ -1504,6 +1524,18 @@ namespace RemoteMessages
             }
             else if (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www"))
                 System.Diagnostics.Process.Start(page.StatusText);
+        }
+
+        private void dobackup_htmlpage()
+        {
+            try
+            {
+                html_backup = Document.Body.InnerHtml;
+            }
+            catch
+            {
+                html_backup = "";
+            }
         }
 
         private HtmlDocument Document

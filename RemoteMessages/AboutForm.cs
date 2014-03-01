@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Net;
+using System.IO;
 
 namespace RemoteMessages
 {
@@ -20,15 +21,6 @@ namespace RemoteMessages
             InitializeComponent();
 
             productVersionLabel.Text = version;
-        }
-
-        public AboutForm(string TopCaption, string Link)
-        {
-            InitializeComponent();
-            this.productNameLabel.Text = Application.ProductName.Length <= 0 ? "{Product Name}" : Application.ProductName;
-
-            this.TopCaption = TopCaption;
-            this.linkLabel.Text = Link;
         }
 
         private void topPanel_Paint(object sender, PaintEventArgs e)
@@ -72,6 +64,18 @@ namespace RemoteMessages
 
         private void contactButton_Click(object sender, EventArgs e)
         {
+            
+            DialogResult result = MessageBox.Show("Your default mail app is about to be started. \nWould you also like to access your html file (might be useful to help with your problem)? \nClick Yes to open it. \nClicking No will still start your mail app.", "Contact the developper", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result == System.Windows.Forms.DialogResult.Cancel)
+                return;
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                using (StreamWriter w = new StreamWriter("log.html"))
+                {
+                    w.WriteLine(MainForm.HTML_Backup);
+                }
+                System.Diagnostics.Process.Start("log.html");
+            }
             System.Diagnostics.Process.Start("mailto:romsahel@gmail.com?subject=[RMCLIENT] Suggestion/Bug report");
         }
     }
