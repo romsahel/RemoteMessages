@@ -10,26 +10,27 @@ using System.Diagnostics;
 namespace RemoteMessages
 {
     // this class just wraps some Win32 stuffthat we're going to use
-    internal class Native
+    internal class NativeMethods
     {
         public const int HWND_BROADCAST = 0xffff;
         public static readonly int WM_SHOWME_AHK = RegisterWindowMessage("WM_SHOWME_AHK");
         public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
         [DllImport("user32")]
         public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
-        [DllImport("user32")]
+        [DllImport("user32", CharSet = CharSet.Unicode)]
         public static extern int RegisterWindowMessage(string message);
 
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, UIntPtr dwExtraInfo);
+        
         public const int MOUSEEVENTF_LEFTDOWN = 0x02;
         public const int MOUSEEVENTF_LEFTUP = 0x04;
 
         public const uint WM_KEYDOWN = 0x0100;
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
 
         #region Flash
         [DllImport("user32.dll")]
@@ -139,14 +140,15 @@ namespace RemoteMessages
 
         [DllImport("winmm.dll")]
         public static extern int waveOutSetVolume(IntPtr hwo, uint dwVolume);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
     }
 
     static class Program
     {
         static String _mutexID = "a8b65a4f-9ffb-46fd-a432-bdd3338c423e-remotemessages";
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
         /// The main entry point for the application.
@@ -167,13 +169,13 @@ namespace RemoteMessages
                 else
                 {
                     string[] args = Environment.GetCommandLineArgs();
-                    int msg = Native.WM_SHOWME;
+                    int msg = NativeMethods.WM_SHOWME;
                     if (args.Length > 1)
-                        msg = Native.WM_SHOWME_AHK;
+                        msg = NativeMethods.WM_SHOWME_AHK;
                     // send our Win32 message to make the currently running instance
                     // jump on top of all the other windows
-                    Native.PostMessage(
-                        (IntPtr)Native.HWND_BROADCAST,
+                    NativeMethods.PostMessage(
+                        (IntPtr)NativeMethods.HWND_BROADCAST,
                         msg,
                         IntPtr.Zero,
                         IntPtr.Zero);

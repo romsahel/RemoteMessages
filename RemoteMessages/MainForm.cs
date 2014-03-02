@@ -7,7 +7,6 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Media;
-
 namespace RemoteMessages
 {
     /// <TODO>
@@ -81,14 +80,20 @@ namespace RemoteMessages
         private static string html_backup;
         public static string HTML_Backup
         {
-            get { return html_backup;}
+            get { return html_backup; }
         }
 
         public MainForm()
         {
-            checkUpdate();
+            System.Threading.Thread checkupdate_thread = new System.Threading.Thread(() => checkUpdate());
+            checkupdate_thread.Start();
 
             InitializeComponent();
+
+            string loading_url = "file:///" + appFolder + "loading.html";
+            System.Threading.Thread loading_thread = new System.Threading.Thread(() => loading.Navigate(loading_url));
+            loading_thread.Start();
+
             // Disable the sound when the program has focus
             WebClickSound.Enabled = false;
 
@@ -267,7 +272,7 @@ namespace RemoteMessages
 
                     if (mustRefresh)
                     {
-                        progressBar1.Visible = true;
+                        loading.Visible = true;
                         if (isAutoUpdate)
                             FindNewIP();
                         else
@@ -286,7 +291,7 @@ namespace RemoteMessages
         {
             uint soundVolume;
             // At this point, CurrVol gets assigned the volume
-            Native.waveOutGetVolume(IntPtr.Zero, out soundVolume);
+            NativeMethods.waveOutGetVolume(IntPtr.Zero, out soundVolume);
             // Calculate the volume
             ushort CalcVol = (ushort)(soundVolume & 0x0000ffff);
             // Get the volume on a scale of 1 to 10 (to fit the trackbar)
@@ -300,55 +305,55 @@ namespace RemoteMessages
 
             try
             {
-                using (StreamReader reader = new StreamReader(appFolder + "remote.cfg"))
+                StreamReader reader = new StreamReader(appFolder + "remote.cfg");
+                
+                url = reader.ReadLine();
+                port = reader.ReadLine();
+
+                closeToTray = Boolean.Parse(reader.ReadLine());
+                minimizeToTray = Boolean.Parse(reader.ReadLine());
+                escapeToTray = Boolean.Parse(reader.ReadLine());
+
+                reader.ReadLine();
+
+                showBalloon = Boolean.Parse(reader.ReadLine());
+                delayBalloon = Int32.Parse(reader.ReadLine());
+                showFlash = Boolean.Parse(reader.ReadLine());
+                flashCount = Int32.Parse(reader.ReadLine());
+
+                soundEnabled = Boolean.Parse(reader.ReadLine());
+                ChangeVolume(Int32.Parse(reader.ReadLine()));
+
+                isAutoUpdate = Boolean.Parse(reader.ReadLine());
+                isReplacing = Boolean.Parse(reader.ReadLine());
+                isUnfocusing = Boolean.Parse(reader.ReadLine());
+
+                deviceName = reader.ReadLine();
+
+                delayReplacing = Int32.Parse(reader.ReadLine());
+
+                delayUnfocusing = Int32.Parse(reader.ReadLine());
+
+                isGhostMode = Boolean.Parse(reader.ReadLine());
+                password = reader.ReadLine();
+                hotkey = reader.ReadLine();
+                soundIndex = Int32.Parse(reader.ReadLine());
+
+                string tmp = reader.ReadLine();
+                Boolean.TryParse(tmp, out is_autoscrolldown);
+
+                tmp = reader.ReadLine();
+                int format = 0;
+                Int32.TryParse(tmp, out format);
+                time_format = (Format)format;
+
+                if (reader.EndOfStream && tmp != "")
                 {
-                    url = reader.ReadLine();
-                    port = reader.ReadLine();
-
-                    closeToTray = Boolean.Parse(reader.ReadLine());
-                    minimizeToTray = Boolean.Parse(reader.ReadLine());
-                    escapeToTray = Boolean.Parse(reader.ReadLine());
-
-                    reader.ReadLine();
-
-                    showBalloon = Boolean.Parse(reader.ReadLine());
-                    delayBalloon = Int32.Parse(reader.ReadLine());
-                    showFlash = Boolean.Parse(reader.ReadLine());
-                    flashCount = Int32.Parse(reader.ReadLine());
-
-                    soundEnabled = Boolean.Parse(reader.ReadLine());
-                    ChangeVolume(Int32.Parse(reader.ReadLine()));
-
-                    isAutoUpdate = Boolean.Parse(reader.ReadLine());
-                    isReplacing = Boolean.Parse(reader.ReadLine());
-                    isUnfocusing = Boolean.Parse(reader.ReadLine());
-
-                    deviceName = reader.ReadLine();
-
-                    delayReplacing = Int32.Parse(reader.ReadLine());
-
-                    delayUnfocusing = Int32.Parse(reader.ReadLine());
-
-                    isGhostMode = Boolean.Parse(reader.ReadLine());
-                    password = reader.ReadLine();
-                    hotkey = reader.ReadLine();
-                    soundIndex = Int32.Parse(reader.ReadLine());
-
-                    string tmp = reader.ReadLine();
-                    Boolean.TryParse(tmp, out is_autoscrolldown);
-
-                    tmp = reader.ReadLine();
-                    int format = 0;
-                    Int32.TryParse(tmp, out format);
-                    time_format = (Format)format;
-
-                    if (reader.EndOfStream && tmp != "")
-                    {
-                        reader.Close();
-                        reader.Dispose();
-                        return configNotFound();
-                    }
+                    reader.Close();
+                    return configNotFound();
                 }
+                reader.Close();
+
                 return true;
             }
             catch
@@ -365,7 +370,7 @@ namespace RemoteMessages
             // Set the same volume for both the left and the right channels
             uint NewVolumeAllChannels = (((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16));
             // Set the volume
-            Native.waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
+            NativeMethods.waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
         }
 
         private bool configNotFound()
@@ -512,7 +517,11 @@ namespace RemoteMessages
 
             if (e.KeyCode == Keys.F12 && !isPreviousF12)
             {
-                FindNewIP();
+                if (isAutoUpdate)
+                    FindNewIP();
+                else
+                    DisplayPage(url);
+
                 isPreviousF12 = true;
             }
             else
@@ -734,13 +743,13 @@ namespace RemoteMessages
                 // We check if the notification check came in
                 if (delayBalloon == 0 || compareDates(ExtractString(firstContact.InnerHtml, "title=\"", "\"")))
                 {
-                    string img_url = this.webBrowser1.Url + ExtractString(Conversations.Children[0].Children[0].InnerHtml, "url(\"/", "\")");
+                    string img_url = this.webBrowser1.Url + ExtractString(firstContact.Children[0].InnerHtml, "url(\"/", "\")");
                     notification.Load_Image(img_url);
 
                     // We check if no conversations are selected
                     if ((getCurrentContactElement() == null || getCurrentContactElement() != firstContact) && firstContact.InnerHtml.Contains("unread"))
                     {
-                        NotifyMe();
+                        NotifyMe(firstContact.InnerHtml);
                     }
                     // If there is a selection, change occurred in conversation
                     // So we check if it's not some of the user's pending/unsent message
@@ -748,7 +757,7 @@ namespace RemoteMessages
                     {
                         HtmlElementCollection children = this.Document.GetElementById("messages").Children;
                         if (children.Count > 0 && !children[children.Count - 1].OuterHtml.Contains("data-name=\"Me\""))
-                            NotifyMe();
+                            NotifyMe(firstContact.InnerHtml);
                     }
                 }
             }
@@ -777,19 +786,19 @@ namespace RemoteMessages
                 return s.Substring(startIndex, endIndex - startIndex);
             }
             catch
-            { 
+            {
                 return "";
             }
         }
 
-        private void NotifyMe()
+        private void NotifyMe(string firstContactHTML)
         {
             if (isGhostMode)
                 return;
             if (showFlash)
-                Native.Flash(this, (uint)flashCount);
+                NativeMethods.Flash(this, (uint)flashCount);
 
-            string name = (Conversations.Children[0].InnerText).Split('×')[0];
+            string name = ExtractString(firstContactHTML, "data-name=\"", "\"");
 
             notify.Icon = RemoteMessages.Properties.Resources.xxsmall_favicon_notif;
 
@@ -798,21 +807,22 @@ namespace RemoteMessages
                 ringtone.Stop();
                 ringtone.Play();
             }
-            string currentHash = Conversations.Children[0].InnerHtml;
-            if (showBalloon && !notification.hasAlreadyBeenDisplayed(currentHash))
+
+            if (showBalloon && !notification.hasAlreadyBeenDisplayed(firstContactHTML))
             {
-                Native.ShowInactiveTopmost(notification);
+                NativeMethods.ShowInactiveTopmost(notification);
                 /* For debug purpose */
                 if (delayBalloon == 0)
-                    notification.ShowNotification(name, "You just received a new message!", 3000, currentHash);
+                    notification.ShowNotification(name, "You just received a new message!", 3000, firstContactHTML);
                 else
-                    notification.ShowNotification(name, "You just received a new message!", delayBalloon, currentHash);
+                    notification.ShowNotification(name, "You just received a new message!", delayBalloon, firstContactHTML);
             }
         }
 
         void notification_Click(object sender, EventArgs e)
         {
-            ShowMe();
+            this.Show();
+
             int X = 30;
             int Y = Document.Body.Children[0].OffsetRectangle.Height + 20;
             DoMouseClick(X, Y);
@@ -982,7 +992,7 @@ namespace RemoteMessages
                 timerTimeOut.Stop();
                 webBrowser1.Stop();
 
-                progressBar1.Visible = false;
+                loading.Visible = false;
                 string msg = "Your device cannot be found.\nPlease click the 'Options' button and check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer) and then click 'Retry'.\nClicking Abort will close the application.";
 
                 if (sender != null && e == null)
@@ -1022,8 +1032,6 @@ namespace RemoteMessages
 
             timerTimeOut.Stop();
 
-            progressBar1.Value = 75;
-
             HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(current_url);
             wrq.Proxy = null;
             HttpWebResponse wrs = null;
@@ -1056,7 +1064,7 @@ namespace RemoteMessages
                             else
                             {
                                 label1.Visible = true;
-                                progressBar1.Visible = false;
+                                loading.Visible = false;
                                 exceptionRaised = true;
                             }
                         }
@@ -1078,30 +1086,28 @@ namespace RemoteMessages
         ///</summary>
         private void FindNewIP()
         {
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
+            loading.Visible = true;
             Cursor.Current = Cursors.WaitCursor;
 
             // Start the child process.
             Process p = new Process();
-            progressBar1.Value += 10;
             // Redirect the output stream of the child process.
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.CreateNoWindow = true;
-            progressBar1.Value += 10;
+
             p.StartInfo.FileName = "cmd";
-            progressBar1.Value += 10;
+
             p.Start();
-            progressBar1.Value += 10;
+
             p.StandardInput.WriteLine("ping -t " + deviceName + " -n 1\nexit");
-            progressBar1.Value += 15;
+
             string output = p.StandardOutput.ReadToEnd();
             try
             {
                 string ip = (output.Split(new string[] { deviceName + ".lan [" }, StringSplitOptions.RemoveEmptyEntries)[1]).Split(']')[0];
-                progressBar1.Value += 15;
+
                 url = "http://" + ip + ":" + port;
                 UseWaitCursor = false;
                 Cursor.Current = Cursors.Default;
@@ -1123,7 +1129,6 @@ namespace RemoteMessages
                 {
                     webBrowser1.Navigate(url);
                     exceptionRaised = false;
-                    progressBar1.Visible = false;
                 }
 
                 timerTimeOut.Stop();
@@ -1145,7 +1150,6 @@ namespace RemoteMessages
                     mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)webBrowser1.Document.DomDocument).createStyleSheet();
                     styleSheet.addRule("#compose .tools .button, .modal .link", "border-radius: 0px;");
 
-                    progressBar1.Visible = false;
 
                     timerUnfocusing = new Timer();
                     timerUnfocusing.Interval = delayUnfocusing;
@@ -1164,6 +1168,7 @@ namespace RemoteMessages
                         Form1_Deactivate(null, null);
 
                     url = webBrowser1.Url.ToString();
+                    loading.Visible = false;
                 }
                 loggedIn = true;
             }
@@ -1344,7 +1349,8 @@ namespace RemoteMessages
             //Call the imported function with the cursor's current position
             Cursor.Position = PointToScreen(new Point(X, Y));
             fakeClick = true;
-            Native.mouse_event(Native.MOUSEEVENTF_LEFTDOWN | Native.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
+
+            NativeMethods.mouse_event(NativeMethods.MOUSEEVENTF_LEFTDOWN | NativeMethods.MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, UIntPtr.Zero);
             Cursor.Position = prevPos;
         }
 
@@ -1357,7 +1363,7 @@ namespace RemoteMessages
                 && !previousConversation.Contains("pending") && !previousConversation.Contains("unsent"))
             {
                 timerUnfocusing.Stop();
-                Native.PostMessage(webBrowser1.Handle, Native.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
+                NativeMethods.PostMessage(webBrowser1.Handle, NativeMethods.WM_KEYDOWN, (IntPtr)Keys.Escape, IntPtr.Zero);
                 justUnfocused = true;
             }
         }
@@ -1369,13 +1375,13 @@ namespace RemoteMessages
         ///</summary>
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == Native.WM_SHOWME)
+            if (m.Msg == NativeMethods.WM_SHOWME)
             {
-                ShowMe(Native.WM_SHOWME);
+                ShowMe(NativeMethods.WM_SHOWME);
             }
-            else if (m.Msg == Native.WM_SHOWME_AHK && !loginDisplayed)
+            else if (m.Msg == NativeMethods.WM_SHOWME_AHK && !loginDisplayed)
             {
-                ShowMe(Native.WM_SHOWME_AHK);
+                ShowMe(NativeMethods.WM_SHOWME_AHK);
             }
             base.WndProc(ref m);
         }
@@ -1384,7 +1390,7 @@ namespace RemoteMessages
         ///</summary>
         private void ShowMe(object sender = null, EventArgs e = null)
         {
-            if (sender != null && sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK)
+            if (sender != null && sender.GetType().Name == "Int32" && (int)sender == NativeMethods.WM_SHOWME_AHK)
             {
                 if (isGhostMode)
                 {
@@ -1452,7 +1458,7 @@ namespace RemoteMessages
         {
             if (e == null || e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if ((!this.Visible) || (sender.GetType().Name == "Int32" && (int)sender == Native.WM_SHOWME_AHK && (!this.Focused && !this.webBrowser1.Focused)))
+                if ((!this.Visible) || (sender.GetType().Name == "Int32" && (int)sender == NativeMethods.WM_SHOWME_AHK && (!this.Focused && !this.webBrowser1.Focused)))
                     this.Show();
                 else
                     Form1_FormClosing(sender, null);
@@ -1557,6 +1563,12 @@ namespace RemoteMessages
         private bool Editor_isValid
         {
             get { return Editor != null && Editor.InnerHtml != null; }
+        }
+
+        private void loading_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)loading.Document.DomDocument).createStyleSheet();
+            styleSheet.addRule("body", "margin-left: " + ((this.Width / 2) - (340 / 2)) + "px");
         }
     }
 }

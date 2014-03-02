@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.notify = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextShowHide = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,6 +39,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextExit = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
+            this.loading = new System.Windows.Forms.WebBrowser();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,16 +57,6 @@
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
             this.webBrowser1.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser1_NewWindow);
             this.webBrowser1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.webBrowser1_PreviewKeyDown);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.progressBar1.Location = new System.Drawing.Point(0, 0);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(860, 36);
-            this.progressBar1.Step = 100;
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 1;
             // 
             // notify
             // 
@@ -123,7 +113,7 @@
             this.label1.BackColor = System.Drawing.Color.White;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(0, 36);
+            this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(860, 74);
             this.label1.TabIndex = 2;
@@ -131,14 +121,29 @@
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label1.Visible = false;
             // 
+            // loading
+            // 
+            this.loading.AllowNavigation = false;
+            this.loading.AllowWebBrowserDrop = false;
+            this.loading.CausesValidation = false;
+            this.loading.Dock = System.Windows.Forms.DockStyle.Top;
+            this.loading.IsWebBrowserContextMenuEnabled = false;
+            this.loading.Location = new System.Drawing.Point(0, 74);
+            this.loading.MinimumSize = new System.Drawing.Size(20, 20);
+            this.loading.Name = "loading";
+            this.loading.ScrollBarsEnabled = false;
+            this.loading.Size = new System.Drawing.Size(860, 80);
+            this.loading.TabIndex = 4;
+            this.loading.WebBrowserShortcutsEnabled = false;
+            this.loading.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.loading_DocumentCompleted);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(860, 896);
+            this.Controls.Add(this.loading);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.webBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -158,7 +163,6 @@
         #endregion
 
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.NotifyIcon notify;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem contextShowHide;
@@ -167,6 +171,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.WebBrowser loading;
 
     }
 }

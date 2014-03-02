@@ -16,7 +16,7 @@ namespace RemoteMessages
         private Thread fadeOut;
 
         private System.Windows.Forms.Timer timerFadeOut;
-        private const double fadeRateDefault = 0.0001;
+        private const double fadeRateDefault = 0.00025;
         private double fadeRate = fadeRateDefault;
 
         private bool isMouseIn;
@@ -234,17 +234,22 @@ namespace RemoteMessages
 
         private void labelMsg_Click(object sender, EventArgs e)
         {
-            NotificationForm_Click(this, e);
+            this.InvokeOnClick(this, e);
         }
 
         private void labelName_Click(object sender, EventArgs e)
         {
-            NotificationForm_Click(this, e);
+            this.InvokeOnClick(this, e);
         }
 
         public bool hasAlreadyBeenDisplayed(string current)
         {
             return current.Equals(lastNotification);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            this.InvokeOnClick(this, e);
         }
     }
 }
