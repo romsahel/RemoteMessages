@@ -176,6 +176,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="medias\small_image.png" />
     <None Include="medias\loading.gif" />
     <None Include="medias\ringtone_Calypso.wav" />
     <None Include="medias\notification_default.jpg" />

@@ -29,44 +29,24 @@ namespace RemoteMessages
         /// </summary>
         private void InitializeComponent()
         {
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.topPanel = new Microsoft.VisualBasic.PowerPacks.RectangleShape();
             this.productNameLabel = new System.Windows.Forms.Label();
             this.companyNameLabel = new System.Windows.Forms.Label();
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.productVersionLabel = new System.Windows.Forms.Label();
             this.bottomPanel = new System.Windows.Forms.Panel();
+            this.contactButton = new System.Windows.Forms.Button();
             this.logButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.linkLabel = new System.Windows.Forms.LinkLabel();
             this.mainPicture = new System.Windows.Forms.PictureBox();
-            this.contactButton = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.bottomPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // shapeContainer1
-            // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.topPanel});
-            this.shapeContainer1.Size = new System.Drawing.Size(394, 272);
-            this.shapeContainer1.TabIndex = 0;
-            this.shapeContainer1.TabStop = false;
-            // 
-            // topPanel
-            // 
-            this.topPanel.BorderColor = System.Drawing.Color.Transparent;
-            this.topPanel.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(133)))), ((int)(((byte)(148)))));
-            this.topPanel.FillGradientColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(170)))));
-            this.topPanel.FillGradientStyle = Microsoft.VisualBasic.PowerPacks.FillGradientStyle.Horizontal;
-            this.topPanel.FillStyle = Microsoft.VisualBasic.PowerPacks.FillStyle.Solid;
-            this.topPanel.Location = new System.Drawing.Point(-1, -1);
-            this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(398, 50);
-            this.topPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.topPanel_Paint);
             // 
             // productNameLabel
             // 
@@ -124,6 +104,16 @@ namespace RemoteMessages
             this.bottomPanel.Size = new System.Drawing.Size(394, 42);
             this.bottomPanel.TabIndex = 7;
             // 
+            // contactButton
+            // 
+            this.contactButton.Location = new System.Drawing.Point(160, 10);
+            this.contactButton.Name = "contactButton";
+            this.contactButton.Size = new System.Drawing.Size(75, 23);
+            this.contactButton.TabIndex = 2;
+            this.contactButton.Text = "&Contact";
+            this.contactButton.UseVisualStyleBackColor = true;
+            this.contactButton.Click += new System.EventHandler(this.contactButton_Click);
+            // 
             // logButton
             // 
             this.logButton.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -167,15 +157,37 @@ namespace RemoteMessages
             this.mainPicture.TabIndex = 6;
             this.mainPicture.TabStop = false;
             // 
-            // contactButton
+            // panel1
             // 
-            this.contactButton.Location = new System.Drawing.Point(160, 10);
-            this.contactButton.Name = "contactButton";
-            this.contactButton.Size = new System.Drawing.Size(75, 23);
-            this.contactButton.TabIndex = 2;
-            this.contactButton.Text = "&Contact";
-            this.contactButton.UseVisualStyleBackColor = true;
-            this.contactButton.Click += new System.EventHandler(this.contactButton_Click);
+            this.panel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(394, 48);
+            this.panel1.TabIndex = 8;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::RemoteMessages.Properties.Resources.small_image;
+            this.pictureBox1.Location = new System.Drawing.Point(20, 4);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Calibri Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(66, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(214, 29);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "About Remote Client";
             // 
             // AboutForm
             // 
@@ -183,6 +195,7 @@ namespace RemoteMessages
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(394, 272);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.linkLabel);
             this.Controls.Add(this.bottomPanel);
             this.Controls.Add(this.mainPicture);
@@ -190,7 +203,6 @@ namespace RemoteMessages
             this.Controls.Add(this.copyrightLabel);
             this.Controls.Add(this.companyNameLabel);
             this.Controls.Add(this.productNameLabel);
-            this.Controls.Add(this.shapeContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -201,6 +213,9 @@ namespace RemoteMessages
             this.Text = "About";
             this.bottomPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,8 +223,6 @@ namespace RemoteMessages
 
         #endregion
 
-        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
-        private Microsoft.VisualBasic.PowerPacks.RectangleShape topPanel;
         private Label productNameLabel;
         private Label companyNameLabel;
         private Label copyrightLabel;
@@ -220,6 +233,9 @@ namespace RemoteMessages
         private LinkLabel linkLabel;
         private Button logButton;
         private Button contactButton;
+        private Panel panel1;
+        private PictureBox pictureBox1;
+        private Label label1;
 
     }
 }

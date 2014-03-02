@@ -36,7 +36,7 @@ namespace RemoteMessages
         private bool isPreviousCtrlDown;
         private bool isPreviousMouse;
 
-        private Timer timerReplacing, timerUnfocusing, timerCheckNew, timerTimeOut;
+        private Timer timerReplacing, timerUnfocusing, timerCheckNew;
         private Dictionary<string, string> shortcuts;
         private bool isPreviousF12;
         private string url, port;
@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "5.0.00";
+        private const string VERSION = "5.0.05";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -78,6 +78,7 @@ namespace RemoteMessages
         private FormWindowState previous_WindowState = FormWindowState.Normal;
         private Format time_format = Format.Default;
         private static string html_backup;
+        private System.Threading.Thread connect;
         public static string HTML_Backup
         {
             get { return html_backup; }
@@ -306,7 +307,7 @@ namespace RemoteMessages
             try
             {
                 StreamReader reader = new StreamReader(appFolder + "remote.cfg");
-                
+
                 url = reader.ReadLine();
                 port = reader.ReadLine();
 
@@ -831,10 +832,6 @@ namespace RemoteMessages
         #region Form modification (Focus, Size, Closing, Title)
         private void Form1_Shown(object sender, EventArgs e)
         {
-            timerTimeOut = new Timer();
-            timerTimeOut.Interval = 30000;
-            timerTimeOut.Tick += new EventHandler(raiseException);
-
             using (StreamWriter w = File.AppendText(appFolder + "drafts")) { }
             using (StreamWriter w = File.AppendText(appFolder + "customemoji.cfg")) { }
 
@@ -989,7 +986,6 @@ namespace RemoteMessages
         {
             if (!exceptionRaised)
             {
-                timerTimeOut.Stop();
                 webBrowser1.Stop();
 
                 loading.Visible = false;
@@ -1024,15 +1020,21 @@ namespace RemoteMessages
                 exceptionRaised = true;
             }
         }
+
         private void DisplayPage(string current_url)
         {
-            label1.Visible = false;
             documentCompleted = false;
             exceptionRaised = false;
 
-            timerTimeOut.Stop();
 
+            connect = new System.Threading.Thread(() => Connect_Device(current_url));
+            connect.Start();
+        }
+
+        private void Connect_Device(string current_url)
+        {
             HttpWebRequest wrq = (HttpWebRequest)WebRequest.Create(current_url);
+
             wrq.Proxy = null;
             HttpWebResponse wrs = null;
 
@@ -1042,8 +1044,12 @@ namespace RemoteMessages
 
                 if (wrs.StatusCode == HttpStatusCode.OK)
                 {
-                    webBrowser1.Navigate(current_url);
-                    loggedIn = true;
+                    if (InvokeRequired)
+                    {
+                        this.Invoke(new Action(() => webBrowser1.Navigate(current_url)));
+                        loggedIn = true;
+                        return;
+                    }
                 }
             }
             catch (System.Net.WebException protocolError)
@@ -1052,34 +1058,49 @@ namespace RemoteMessages
                 {
                     if (((HttpWebResponse)protocolError.Response).StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        using (LoginForm login = new LoginForm())
-                        {
-                            DialogResult res = login.ShowDialog();
-                            authentication_needed = true;
-                            if (res == System.Windows.Forms.DialogResult.OK)
-                            {
-                                loggedIn = false;
-                                webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), current_url.Substring(7)));
-                            }
-                            else
-                            {
-                                label1.Visible = true;
-                                loading.Visible = false;
-                                exceptionRaised = true;
-                            }
-                        }
+                        if (InvokeRequired)
+                            this.Invoke(new Action(() => Connect_Secure(current_url)));
+                        return;
                     }
                 }
                 catch
                 {
-                    if (isAutoUpdate)
-                        FindNewIP();
-                    else
-                        DisplayPage(url);
+                    if (InvokeRequired)
+                        this.Invoke(new Action(() => raiseException(null, null)));
+                    return;
                 }
             }
+        }
 
-            timerTimeOut.Start();
+        private void Connect_Secure(string current_url)
+        {
+            try
+            {
+
+                using (LoginForm login = new LoginForm())
+                {
+                    DialogResult res = login.ShowDialog();
+                    authentication_needed = true;
+                    if (res == System.Windows.Forms.DialogResult.OK)
+                    {
+                        loggedIn = false;
+                        webBrowser1.Navigate(String.Format(@"http://{0}:{1}@{2}", login.getUsername(), login.getPassword(), current_url.Substring(7)));
+                    }
+                    else
+                    {
+                        loading.Visible = false;
+                        exceptionRaised = true;
+                    }
+                }
+            }
+            catch
+            {
+                if (isAutoUpdate)
+                    FindNewIP();
+                else
+                    DisplayPage(url);
+                return;
+            }
         }
         ///<summary>
         /// Finds IP of the device and displays the RemoteMessages webpage
@@ -1131,7 +1152,6 @@ namespace RemoteMessages
                     exceptionRaised = false;
                 }
 
-                timerTimeOut.Stop();
                 if (loggedIn && !documentCompleted)
                 {
                     documentCompleted = true;
