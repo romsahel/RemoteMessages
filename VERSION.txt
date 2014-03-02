@@ -1,3 +1,6 @@
+5.0.05
+- Improved performance (mainly startup time)
+- Fixed incompatibility for About window
 5.0.00
 - New: Contacts' pictures are now displayed on notifications
 - Fixed: 12-hour format for read receipt should now be better handled
