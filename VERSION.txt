@@ -1,3 +1,10 @@
+5.0.00
+- New: Contacts' pictures are now displayed on notifications
+- Fixed: 12-hour format for read receipt should now be better handled
+- Improved quality of the default icons (at the right of "Send")
+- Redone icons and loading bar for more uniformity with iOS 7
+- Many bug fixes (Fix for notifications!)
+- Performance improvements
 4.0.91
 - Minor error fix
 4.0.90
