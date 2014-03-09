@@ -78,5 +78,15 @@ namespace RemoteMessages
             }
             System.Diagnostics.Process.Start("mailto:romsahel@gmail.com?subject=[RMCLIENT] Suggestion/Bug report");
         }
+
+        private void AboutForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.DialogResult = System.Windows.Forms.DialogResult.OK;
+                this.Close();
+            }
+        }
+
     }
 }

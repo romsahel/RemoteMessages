@@ -40,8 +40,8 @@ namespace RemoteMessages
             this.linkLabel = new System.Windows.Forms.LinkLabel();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.bottomPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.panel1.SuspendLayout();
@@ -168,16 +168,6 @@ namespace RemoteMessages
             this.panel1.Size = new System.Drawing.Size(394, 48);
             this.panel1.TabIndex = 8;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::RemoteMessages.Properties.Resources.small_image;
-            this.pictureBox1.Location = new System.Drawing.Point(20, 4);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -188,6 +178,16 @@ namespace RemoteMessages
             this.label1.Size = new System.Drawing.Size(214, 29);
             this.label1.TabIndex = 10;
             this.label1.Text = "About Remote Client";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::RemoteMessages.Properties.Resources.small_image;
+            this.pictureBox1.Location = new System.Drawing.Point(20, 4);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
             // 
             // AboutForm
             // 
@@ -204,6 +204,7 @@ namespace RemoteMessages
             this.Controls.Add(this.companyNameLabel);
             this.Controls.Add(this.productNameLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutForm";
@@ -211,6 +212,7 @@ namespace RemoteMessages
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "About";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AboutForm_KeyDown);
             this.bottomPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).EndInit();
             this.panel1.ResumeLayout(false);

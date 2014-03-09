@@ -63,7 +63,7 @@ namespace RemoteMessages
         public static string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Remote Client\";
         #endregion
 
-        private const string VERSION = "5.0.05";
+        private const string VERSION = "5.0.10";
         private bool aboutDisplayed;
 
         private NotificationForm notification;
@@ -74,11 +74,11 @@ namespace RemoteMessages
         private int editor_previousHeight = -1;
         private bool authentication_needed;
         private bool is_autoscrolldown;
-        private string unopenable_link = "";
         private FormWindowState previous_WindowState = FormWindowState.Normal;
         private Format time_format = Format.Default;
         private static string html_backup;
         private System.Threading.Thread connect;
+        private bool isPreviousF3;
         public static string HTML_Backup
         {
             get { return html_backup; }
@@ -130,6 +130,7 @@ namespace RemoteMessages
             this.webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.DocumentTitleChanged += new EventHandler(DocumentTitleChanged);
         }
+
 
         private void checkUpdate(bool manual = false)
         {
@@ -500,6 +501,14 @@ namespace RemoteMessages
             else
                 isPreviousF2 = false;
 
+            if (e.KeyCode == Keys.F3 && !isPreviousF3)
+            {
+                toggle_popup();
+                isPreviousF3 = true;
+            }
+            else
+                isPreviousF3 = false;
+
             if (e.KeyCode == Keys.F11 && !isPreviousF11)
             {
                 if (FormBorderStyle == System.Windows.Forms.FormBorderStyle.None)
@@ -578,7 +587,7 @@ namespace RemoteMessages
         ///<summary>
         /// Waits for the conversation to be loaded and displayed before replacing the smileys.
         ///</summary>
-        private void ConversationChanged(bool justChanging = true, bool sending = false)
+        private void ConversationChanged(bool sending = false)
         {
             if (timerReplacing != null)
             {
@@ -865,6 +874,9 @@ namespace RemoteMessages
 
         private void Form1_Activated(object sender, EventArgs e)
         {
+            if (this.FormBorderStyle == System.Windows.Forms.FormBorderStyle.None)
+                this.Opacity = 0.90;
+
             if (isReplacing && documentCompleted && !exceptionRaised)
                 fromStringToEmoji(Messages_Window);
 
@@ -886,13 +898,19 @@ namespace RemoteMessages
                 int Y = Document.Body.Children[0].OffsetRectangle.Height + 20;
                 Y += curr.Y;
                 DoMouseClick(X, Y);
-                ConversationChanged(false);
+                ConversationChanged();
             }
         }
         private void Form1_Deactivate(object sender, EventArgs e)
         {
+
             notify.Text = "Remote Messages\nNo new activity";
 
+            if (this.FormBorderStyle == System.Windows.Forms.FormBorderStyle.None)
+            {
+                this.Opacity = 0.0040;
+                return;
+            }
             if (documentCompleted && !exceptionRaised)
             {
                 previousSelectedContact = getCurrentContactElement();
@@ -1167,9 +1185,13 @@ namespace RemoteMessages
                     Editor.KeyUp += new HtmlElementEventHandler(Editor_KeyPress);
                     Editor.LosingFocus += new HtmlElementEventHandler(Editor_LosingFocus);
 
+                    Document.GetElementById("send").Click += new HtmlElementEventHandler(SendButton_Click);
+                    Document.GetElementById("strip").MouseDown += new HtmlElementEventHandler(Strip_Click);
+
                     mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)webBrowser1.Document.DomDocument).createStyleSheet();
                     styleSheet.addRule("#compose .tools .button, .modal .link", "border-radius: 0px;");
-
+                    styleSheet.addRule("#character-count", "align-text: right !important; line-height: 15px !important;");
+                    styleSheet.addRule("#editor", "padding-right: 0px !important; ");
 
                     timerUnfocusing = new Timer();
                     timerUnfocusing.Interval = delayUnfocusing;
@@ -1205,26 +1227,25 @@ namespace RemoteMessages
 
         private void Editor_KeyPress(object sender, HtmlElementEventArgs e)
         {
-            if (!is_autoscrolldown)
-                return;
-
-            if (editor_previousHeight != -1)
+            if (editor_previousHeight != -1 && is_autoscrolldown)
             {
                 int editor_currentHeight = Editor.ClientRectangle.Height;
                 if (editor_previousHeight < editor_currentHeight)
                     webBrowser1.Navigate("javascript:var s = function() { window.scrollBy(0,25); }; s();");
             }
-            else
-            {
-                if (Editor_isValid && Editor.InnerHtml.StartsWith("<br>"))
-                    Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
-                if (Editor_isValid && Editor.InnerHtml.EndsWith("<br>"))
-                    Editor.InnerHtml = Editor.InnerHtml.TrimEnd(new char[] { '<', 'b', 'r', '>' });
-            }
+            
+            if (Editor_isValid && Editor.InnerHtml.StartsWith("<br>"))
+                Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
+            if (Editor_isValid && Editor.InnerHtml.EndsWith("<br>"))
+                Editor.InnerHtml = Editor.InnerHtml.TrimEnd(new char[] { '<', 'b', 'r', '>' });
 
             editor_previousHeight = Editor.ClientRectangle.Height;
         }
 
+        void SendButton_Click(object sender, HtmlElementEventArgs e)
+        {
+            ConversationChanged();
+        }
         void EmojiPane_Click(object sender, HtmlElementEventArgs e)
         {
             if (e.MouseButtonsPressed == System.Windows.Forms.MouseButtons.Right)
@@ -1509,11 +1530,13 @@ namespace RemoteMessages
             if (!loginDisplayed)
             {
                 // make our form jump to the top of everything
+                bool tmp = this.TopMost;
+                TopMost = false;
                 TopMost = true;
                 base.Show();
                 if (WindowState == FormWindowState.Minimized)
                     WindowState = previous_WindowState;
-                TopMost = false;
+                TopMost = tmp;
                 this.Activate();
             }
         }
@@ -1521,12 +1544,13 @@ namespace RemoteMessages
         private void webBrowser1_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WebBrowser page = (WebBrowser)sender;
+            string statusText = page.StatusText;
             e.Cancel = true;
 
             if (page == null)
                 return;
 
-            if (page.StatusText.Contains("media"))
+            if (statusText.Contains("media"))
             {
                 try
                 {
@@ -1534,18 +1558,22 @@ namespace RemoteMessages
                     {
                         client.Proxy = null;
 
-                        string file = "tmp" + page.StatusText.Substring(page.StatusText.LastIndexOf('.'));
-                        client.DownloadFile(page.StatusText, file);
+                        string file = "tmp" + statusText.Substring(page.StatusText.LastIndexOf('.'));
+                        client.DownloadFile(statusText, file);
 
                         System.Diagnostics.Process.Start(file);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    string[] array = ex.ToString().Split(new char[] { 'à' });
                     MessageBox.Show("There was an error when trying to access the image."
                     + "The image is now displayed/downloaded in your default navigator.\n"
-                    + "URLs (transmit to developper, please!):\n"
-                    + unopenable_link + "\n" + page.StatusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    + "Transmit this message to developper, please.\n"
+                    + ex.Message + "\nat" + array[array.Length - 1] + "\n"
+                    + statusText, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    System.Diagnostics.Process.Start(statusText);
                 }
             }
             else if (page.StatusText.StartsWith("http://") || page.StatusText.StartsWith("www"))
@@ -1590,5 +1618,6 @@ namespace RemoteMessages
             mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)loading.Document.DomDocument).createStyleSheet();
             styleSheet.addRule("body", "margin-left: " + ((this.Width / 2) - (340 / 2)) + "px");
         }
+
     }
 }
