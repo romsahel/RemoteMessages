@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Media;
+using System.Text.RegularExpressions;
 namespace RemoteMessages
 {
 	/// <TODO>
@@ -20,6 +21,11 @@ namespace RemoteMessages
 		AMPM = 1,
 		Full = 2
 	}
+
+	/// <summary>
+	///  Add scheduling message
+	///  Add pre-configured message (to self) to use with activator
+	/// </summary>
 
 	public partial class MainForm : Form
 	{
@@ -509,7 +515,7 @@ namespace RemoteMessages
 			}
 			else
 				isPreviousF3 = false;
-			
+
 			if (e.KeyCode == Keys.F12 && !isPreviousF12)
 			{
 				if (isAutoUpdate)
@@ -861,7 +867,7 @@ namespace RemoteMessages
 		{
 			if (this.FormBorderStyle == System.Windows.Forms.FormBorderStyle.None)
 				this.Opacity = 0.90;
-			
+
 			if (isReplacing && documentCompleted && !exceptionRaised)
 				fromStringToEmoji(Messages_Window);
 
@@ -991,7 +997,10 @@ namespace RemoteMessages
 				webBrowser1.Stop();
 
 				loading.Visible = false;
-				string msg = "Your device cannot be found.\nPlease click the 'Options' button and check if you have not mistyped your devices' name.\nIf not, check your wifi connection (both on your device and on your computer) and then click 'Retry'.\nClicking Abort will close the application.";
+				string msg = "Your device cannot be found.\n"
+				+ "Please click the 'Options' button and check if you have not mistyped your devices' name.\n"
+				+ "If not, check your wifi connection (both on your device and on your computer) and then click 'Retry'.\n"
+				+ "Clicking Abort will close the application.";
 
 				if (sender != null && e == null)
 					msg = (string)sender;
@@ -1176,7 +1185,7 @@ namespace RemoteMessages
 					// IE bug makes the images very blurry with border radius greater than 0
 					styleSheet.addRule("#compose .tools .button, .modal .link", "border-radius: 0px;");
 					/// Centers the character count on the lign so that it displays nicely
-					styleSheet.addRule("#character-count", "align-text: right !important; line-height: 15px !important;");
+					styleSheet.addRule("#character-count", "align-text: right !important; line-height: 15px !import	ant;");
 					// Fixes the right padding in the editor so that character count doesn't overlap with text
 					// And because a bug causes the padding to be far too large in reduced mode
 					styleSheet.addRule("#editor", "padding-right: 76px !important; ");
@@ -1221,11 +1230,12 @@ namespace RemoteMessages
 				if (editor_previousHeight < editor_currentHeight)
 					webBrowser1.Navigate("javascript:var s = function() { window.scrollBy(0,25); }; s();");
 			}
-
-			if (Editor_isValid && Editor.InnerHtml.StartsWith("<br>"))
-				Editor.InnerHtml = Editor.InnerHtml.TrimStart(new char[] { '<', 'b', 'r', '>' });
-			if (Editor_isValid && Editor.InnerHtml.EndsWith("<br>"))
-				Editor.InnerHtml = Editor.InnerHtml.TrimEnd(new char[] { '<', 'b', 'r', '>' });
+			if (editor_previousHeight == -1)
+				if (Editor_isValid && Editor.InnerHtml.StartsWith("<br>"))
+				{
+					Regex regex = new Regex("^(<br>( |\n|\t|\b)*)+");
+					Editor.InnerHtml = regex.Replace(Editor.InnerHtml, "");
+				}
 
 			editor_previousHeight = Editor.ClientRectangle.Height;
 		}
