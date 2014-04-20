@@ -596,7 +596,10 @@ namespace RemoteMessages
 		private void ConversationChangedTimer(object sender, EventArgs e)
 		{
 			if (time_format == Format.Full)
-				Format_Full();
+			{
+				Format_Full("h4", "timestamp");
+				Format_Full("div", "message-timestamp");
+			}
 			else if (time_format == Format.AMPM)
 				Format_AMPM();
 
@@ -607,47 +610,40 @@ namespace RemoteMessages
 			timerReplacing.Stop();
 		}
 
-		private void Format_Full()
+		private void Format_Full(string openTag, string classTag)
 		{
-			string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<h4 class=\"timestamp\">" }, StringSplitOptions.None);
+			string[] stamps = Messages_Window.InnerHtml.Split(new string[] { "<" + openTag + " class=\"" + classTag + "\">" }, StringSplitOptions.None);
 			for (int i = 1; i < stamps.Length; i++)
 			{
-				string[] date = stamps[i].Split(new string[] { "</h4>" }, StringSplitOptions.None);
+				string[] date = stamps[i].Split(new string[] { "</" + openTag + ">" }, StringSplitOptions.None);
 				string[] time = date[0].Split(new char[] { ' ', ':' });
 				if (time[5] == "AM" || time[5] == "PM")
 				{
-					int add = 0;
+					int hour = Int32.Parse(time[3]);
 					if (time[5] == "PM")
-						add = 12;
+					{
+						if (hour != 12)
+							hour += 12;
+					}
+					else if (hour == 12)
+						hour = 0;
 
 					time[5] = "";
-					time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
-					string result = String.Join(" ", time) + "</h4>" + date[1];
+
+					time[3] = hour.ToString("00") + "~|~";
+
+					string result = String.Join(" ", time) + "</" + openTag + ">";
+					if (openTag == "h4")
+						result += date[1];
+					else if (openTag == "div")
+						result += String.Join("</" + openTag + ">", date, 1, date.Length - 1);
+
 					result = result.Replace("~|~ ", ":");
 					stamps[i] = result;
 				}
 			}
-			Messages_Window.InnerHtml = String.Join("<h4 class=\"timestamp\">", stamps);
+			Messages_Window.InnerHtml = String.Join("<" + openTag + " class=\"" + classTag + "\">", stamps);
 
-			stamps = Messages_Window.InnerHtml.Split(new string[] { "<div class=\"message-timestamp\">" }, StringSplitOptions.None);
-			for (int i = 1; i < stamps.Length; i++)
-			{
-				string[] date = stamps[i].Split(new string[] { "</div>" }, StringSplitOptions.None);
-				string[] time = date[0].Split(new char[] { ' ', ':' });
-				if (time[5] == "AM" || time[5] == "PM")
-				{
-					int add = 0;
-					if (time[5] == "PM")
-						add = 12;
-
-					time[5] = "";
-					time[3] = (Int32.Parse(time[3]) + add).ToString() + "~|~";
-					string result = String.Join(" ", time) + "</div>" + String.Join("</div>", date, 1, date.Length - 1);
-					result = result.Replace("~|~ ", ":");
-					stamps[i] = result;
-				}
-			}
-			Messages_Window.InnerHtml = String.Join("<div class=\"message-timestamp\">", stamps);
 		}
 
 		private void Format_AMPM()
@@ -1113,7 +1109,7 @@ namespace RemoteMessages
 				return;
 			}
 		}
-		///<summary>
+		///<summar>y
 		/// Finds IP of the device and displays the RemoteMessages webpage
 		///</summary>
 		private void FindNewIP()
@@ -1180,6 +1176,8 @@ namespace RemoteMessages
 
 					Document.GetElementById("send").Click += new HtmlElementEventHandler(SendButton_Click);
 					Document.GetElementById("status").Children[1].MouseDown += new HtmlElementEventHandler(Strip_Click);
+					Document.GetElementById("status-signal").MouseDown += new HtmlElementEventHandler(Signal_Click);
+
 
 					mshtml.IHTMLStyleSheet styleSheet = ((mshtml.HTMLDocument)webBrowser1.Document.DomDocument).createStyleSheet();
 					// IE bug makes the images very blurry with border radius greater than 0
@@ -1215,6 +1213,11 @@ namespace RemoteMessages
 			{
 				raiseException(null, null);
 			}
+		}
+
+		private void Signal_Click(object sender, HtmlElementEventArgs e)
+		{
+
 		}
 
 		private void Editor_LosingFocus(object sender, HtmlElementEventArgs e)
